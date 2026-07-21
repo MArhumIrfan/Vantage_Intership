@@ -16,6 +16,9 @@ namespace daySecond
             Console.WriteLine(intro);
             string outro = " Thank you for using this program. ";
             //===========================================================================================================================
+            Console.WriteLine(buffer);
+            Console.WriteLine("This code will use int, string , input, output, if else, and math operations.");
+            Console.WriteLine(buffer);
 
             int a = 10;
             Console.WriteLine("Enter your first name: ");
@@ -41,6 +44,10 @@ namespace daySecond
              Console.WriteLine(buffer);
 
             //===========================================================================================================================
+            Console.WriteLine(buffer);
+            Console.WriteLine("This code will use double and mathematical operation to calculate the area of a circle using the radius.");
+            Console.WriteLine(buffer);
+
 
             double pi=3.142;
             Console.WriteLine("Enter the radius of the cirlcle:");
@@ -49,6 +56,9 @@ namespace daySecond
             Console.WriteLine("The area of the cirlce with radius "+ radius + " is =" + area); 
              Console.WriteLine(buffer);
             //===========================================================================================================================
+            Console.WriteLine(buffer);
+            Console.WriteLine("This code will use double, if else, and mathematical operation to calculate the final amount after tax based on the payment method.");
+            Console.WriteLine(buffer);
 
             double cashTax = 0.15;
             double cardTax = 0.05;
@@ -71,6 +81,9 @@ namespace daySecond
             Console.WriteLine("The final amount after tax is: " + Payment);
              Console.WriteLine(buffer);   
             //===========================================================================================================================
+            Console.WriteLine(buffer);
+            Console.WriteLine("This code will use boolean and if else to check if the user is above 18 years old.");
+            Console.WriteLine(buffer);
             bool isTrue = true;
             bool isFalse = false;
             Console.WriteLine("The value of isTrue is: " + isTrue);
@@ -78,7 +91,9 @@ namespace daySecond
             Console.WriteLine("The current age  of user " + age + " is greater than 18? " + (age > 18));
              Console.WriteLine(buffer);
             //===========================================================================================================================
-
+            Console.WriteLine(buffer);
+            Console.WriteLine("This code will use boolean and if else to check if the snow is white."); 
+            Console.WriteLine(buffer);  
             Console.WriteLine("Is the snow white? ");
             string ans1 = Console.ReadLine();
             if (ans1.ToLower() == "yes" || ans1.ToLower() == "y")
@@ -92,12 +107,17 @@ namespace daySecond
 
             Console.WriteLine(buffer);
             //===========================================================================================================================
-
+            Console.WriteLine(buffer);
+            Console.WriteLine("This code will use var and output to display the name and age of the user.");
+            Console.WriteLine(buffer);
            var myName = "John Doe";
            var myAge = 30;
            Console.WriteLine("My name is " + myName + " and I am " + myAge + " years old."); 
             Console.WriteLine(buffer);
             //===========================================================================================================================
+            Console.WriteLine(buffer);
+            Console.WriteLine("This  code will use var to show the inputted string by the user and output it back to the console.");
+            Console.WriteLine(buffer);
 
             Console.WriteLine("Enter any text you want to output: ");
 
@@ -113,14 +133,18 @@ namespace daySecond
 
             Console.WriteLine(buffer);
             //===========================================================================================================================
-             
+             Console.WriteLine(buffer);
+             Console.WriteLine("This code will use char to display the grades of the user.");
+                Console.WriteLine(buffer); 
              char Grade = 'A';
              char grade2 = 'B';
              char grade3 = 'C';
              Console.WriteLine("The grades are: " + Grade + ", " + grade2 + ", " + grade3);
              Console.WriteLine(buffer);
              //===========================================================================================================================
-
+            Console.WriteLine(buffer);
+            Console.WriteLine("This code will use char to display the secret layer of the user.");
+            Console.WriteLine(buffer);
 
                 char alpha = 'a';
                 char beta = 'b';
