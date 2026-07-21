@@ -1,1 +1,1 @@
-             char Grade = 'A';
+            if(paymentMethod.ToLower() == "cash")
