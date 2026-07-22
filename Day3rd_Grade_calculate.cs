@@ -75,6 +75,7 @@ namespace ConsoleApp1
             double totalPossiblePoints = 100.0 * loop; 
             double percentage = (sum / totalPossiblePoints) * 100;
             string finalGrade = "";
+            
             if (percentage >= 90) finalGrade ="A+";
             else if (percentage >= 80) finalGrade ="B+";
             else if (percentage >= 70) finalGrade ="B";
