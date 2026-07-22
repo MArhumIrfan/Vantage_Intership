@@ -24,11 +24,11 @@ namespace ConsoleApp1
                 case "user":
                     int guess = random.Next(1, 101);
                     bool correct = false;
-
+                    Console.WriteLine("I'm thinking of a number between 1-100");
                     do
                     {
-                        Console.WriteLine("I'm thinking of a number between 1-100");
-                        Console.WriteLine("Enter your answer");
+                        
+                        Console.WriteLine("Enter your answer: ");
                         int userGuess = Convert.ToInt32(Console.ReadLine());
 
                         if (userGuess > guess && userGuess <= 100)
