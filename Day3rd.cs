@@ -15,6 +15,7 @@
             //========================================================================================================
             // If Statement
             Console.WriteLine("If Statement");
+            Console.WriteLine(gap);
             Console.WriteLine("Please enter first lenght of a four sided shape: ");
             int lenght1 =Convert.ToInt32((Console.ReadLine()));
             Console.WriteLine("Please enter second lenght of a four sided shape:");
@@ -27,6 +28,7 @@
             //========================================================================================================
             //if else Statement
             Console.WriteLine("If else Statement");
+            Console.WriteLine(gap);
             Console.WriteLine("Please enter first lenght of a four sided shape:");
             int lenght3 = Convert.ToInt32((Console.ReadLine()));
             Console.WriteLine("Please enter second lenght of a four sided shape:");
@@ -43,6 +45,7 @@
             //========================================================================================================
             //if elseif else Statement
             Console.WriteLine("If elseif else Statement");
+            Console.WriteLine(gap);
             Console.WriteLine("Please enter first lenght of a four sided shape:");
             int lenght5 = Convert.ToInt32((Console.ReadLine()));
             Console.WriteLine("PLease enter second lenght of a four sided shape:");
@@ -50,7 +53,7 @@
             Console.WriteLine("Please enter third lenght of a four sided shape:");
             int lenght7 = Convert.ToInt32((Console.ReadLine()));
             Console.WriteLine("Please enter fourth lenght of a four sided shape:");
-            int lenght8 = Convert.ToInt32((COnsole.Readline()));
+            int lenght8 = Convert.ToInt32(Console.ReadLine());
             if(lenght5 == lenght6 && lenght5 == lenght7 && lenght5 == lenght8)
             {
                 Console.WriteLine("the shape is a square.");
@@ -65,28 +68,29 @@
             Console.WriteLine(gap);
             //======================================================================================
             //switch statement
-
+            Console.WriteLine(" This code will use Switch statemnet");
             Console.WriteLine(gap);
 
-            Console.WriteLine(" This code will use Switch statemnet");
 
             Console.WriteLine("there are four diections areound you, pick a direction using 1-4");
-            var direction = Console.ReadLine();
+            var direction = Convert.ToInt32(Console.ReadLine());
 
             switch (direction)
             {
                 case 1:
                 Console.WriteLine("You are heading south");
+                break;
 
                 case 2:
                 Console.WriteLine("You are heading west.");
+                break;
 
                 case 3:
                 Console.WriteLine("You are heading north.");
-
+                break;
                 case 4:
                 Console.WriteLine("You are heading north.");
-
+                break;
             }
 
             Console.WriteLine(gap);
@@ -123,10 +127,21 @@
             Console.WriteLine("this code will use do while loop");
             Console.WriteLine(gap);
             
+            int k = 100;
+            
+            Console.WriteLine("The value of k is : " +k);
+            do
+            {
+                Console.WriteLine(k);
+                k=k*2;
 
+            }
+            while(k>1000);
+            Console.WriteLine(gap);
+            
 
-
-
+        Console.WriteLine(gap);
+        Console.WriteLine(end);
         }
     }
 }
