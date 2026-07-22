@@ -20,6 +20,7 @@ namespace ConsoleApp1
 
             switch (choice)
             {
+                //==========================================================================
                 case "user":
                     int guess = random.Next(1, 101);
                     bool correct = false;
@@ -54,7 +55,7 @@ namespace ConsoleApp1
                     }
                     while (!correct);
                     break;
-
+                //===============================================================================
                 case "computer":
                     Console.WriteLine("Think of a number between 1-100");
                     int min = 1;
@@ -102,7 +103,7 @@ namespace ConsoleApp1
                 default:
                     Console.WriteLine("Invalid choice");
                     break;
-            }
+            }//=============================================================================
         }
     }
 }
