@@ -107,6 +107,22 @@
             //  while loop
             Console.WriteLine("This program will use While loop");
             Console.WriteLine(gap);
+            
+            int j = 10;
+            Console.WriteLine("the value of j is: "+j);
+
+            while (j > 1)
+            {
+                Console.WriteLine(j);
+                j--;
+            }
+            Console.WriteLine(gap);
+            //===========================================================================
+            // do while loop
+
+            Console.WriteLine("this code will use do while loop");
+            Console.WriteLine(gap);
+            
 
 
 
