@@ -74,11 +74,19 @@ namespace ConsoleApp1
 
             double totalPossiblePoints = 100.0 * loop; 
             double percentage = (sum / totalPossiblePoints) * 100;
+            string finalGrade = "";
+            if (percentage >= 90) finalGrade ="A+";
+            else if (percentage >= 80) finalGrade ="B+";
+            else if (percentage >= 70) finalGrade ="B";
+            else if (percentage >= 60) finalGrade ="C+";
+            else if (percentage >= 50) finalGrade ="C";
+            else finalGrade ="C";
             
             Console.WriteLine("\n" + gap);
             Console.WriteLine("Total grades sum: " + sum);
             Console.WriteLine("Average grade: " + ((double)sum / loop));
             Console.WriteLine("The total percentage is: " + percentage + "%");
+            Console.WriteLine("The Final Grade Given is : "+ finalGrade);
             Console.WriteLine(gap);
         }
     }
