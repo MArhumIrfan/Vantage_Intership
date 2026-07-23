@@ -10,24 +10,24 @@ namespace ConsoleApp1
         }
 
         static void User()
-        {   
-            int attempt = 0; 
+        {
+            int attempt = 0;
             Random random = new Random();
             int guess = random.Next(1, 101);
             bool correct = false;
-            Console.WriteLine("Im thinking of a number between 1-100");
+            Console.WriteLine("I'm thinking of a number between 1-100");
 
             while (!correct)
             {
                 Console.WriteLine("Enter your guess : ");
                 int userGuess = Convert.ToInt32(Console.ReadLine());
-                attempt++; n
+                attempt++;
 
                 if (userGuess > guess && userGuess <= 100)
                 {
                     Console.WriteLine("Too High!");
                 }
-                else if (userGuess < guess && userGuess >= 0)
+                else if (userGuess < guess && userGuess >= 1)
                 {
                     Console.WriteLine("Too Low!");
                 }
@@ -42,7 +42,8 @@ namespace ConsoleApp1
                 else
                 {
                     Console.WriteLine("Invalid input! The numbers are between 1-100!");
-                    attempt--; 
+                    attempt--;
+                }
             }
         }
 
@@ -61,10 +62,10 @@ namespace ConsoleApp1
                 attempt++;
                 int compGuess = (min + max) / 2;
                 Console.WriteLine("My guess is " + compGuess);
-                Console.WriteLine("Am i correct?");
+                Console.WriteLine("Am I correct?");
                 Console.WriteLine("Enter the correct choice: (H)igh, (L)ow & (C)orrect?");
                 string ans = Console.ReadLine().ToLower();
-                
+
                 if (ans == "c")
                 {
                     Console.WriteLine("Yay! I got it right!");
@@ -82,12 +83,14 @@ namespace ConsoleApp1
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect Input!, please choose one");
-                    attempt--; 
+                    Console.WriteLine("Incorrect input! Please choose one.");
+                    attempt--;
+                }
 
                 if (min > max)
                 {
                     Console.WriteLine("Answer has changed! Don't cheat!");
+                    break;
                 }
             }
         }
