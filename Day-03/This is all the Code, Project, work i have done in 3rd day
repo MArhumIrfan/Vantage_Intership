@@ -1,1 +1,5 @@
-
+- C# codes with Control flow: if/else, switch, loops (for,while, foreach) used.
+-Build a number-guessing game / grade calculator.
+-day3rd(pratice code).
+-grade calculate(calculate the grades iputed by the user).
+-number guess(play a text based number guessing game between the computer and user, both can take part guessing each other number)
