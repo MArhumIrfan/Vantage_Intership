@@ -1,6 +1,8 @@
 using System;
 
-namespace Day4th{
+
+namespace Day4th
+{
 class Methods
 {   
 
@@ -12,6 +14,7 @@ class Methods
     static void callFunction()
     {
         Console.WriteLine("Hello World!");
+        Buffer();
     }
     
     static void nameFunction(string name)
@@ -36,6 +39,31 @@ class Methods
 
 
     }    
+
+    static void sumMethod(int num1,int num2)
+    {
+        Buffer();
+        Console.Beep();
+        Console.WriteLine("The sum of "+num1+" and "+num2+" = "+(num1+num2));
+        Buffer();
+    }
+
+    static void MMethod(int num)
+    {
+        
+        Console.WriteLine("The result of the number " + num + " is " + (num * 5));
+
+        Buffer();
+    }
+
+    static void Mymethod(string nam1,string nam2,string nam3)
+    {
+
+        Console.WriteLine("im currently studying at : "+nam3);
+        Buffer();
+
+    }
+
 
     static void Main(string [] args)
     {  
@@ -62,8 +90,18 @@ class Methods
         defualtMethod("Ghayyur");
         defualtMethod("Wazir");
         defualtMethod();
+        Buffer();
 
+        sumMethod(10,95);
+        sumMethod(20,30);
+        Buffer();
 
+        for (int i=0;i<11;i++)
+        {
+          MMethod(i);      
+        }
+
+        Mymethod(nam1: "Beaconhouse", nam2: "Concordia", nam3: "Iqra University");
 
     }
 
