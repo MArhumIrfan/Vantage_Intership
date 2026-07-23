@@ -64,6 +64,26 @@ class Methods
 
     }
 
+    static int PlusIntMethod(int x, int y)
+    {
+        Buffer();
+        Console.WriteLine("This is the method overloading");
+        Console.WriteLine("this method will ads to int number and give you and output");
+        Console.WriteLine("THe sum of two numbers "+ x +" and "+ y +" = "+(x+y));
+        return(x+y);
+        Buffer();
+    }
+
+
+    static double PlusDoubleMethod(Double x, Double y)
+    {
+        Buffer();
+        Console.WriteLine("This is the method overloading");
+        Console.WriteLine("this method will ads to double number and give you and output");
+        Console.WriteLine("THe sum of two numbers "+ x +" and "+ y +" = "+(x+y));
+        return(x+y);
+        Buffer();
+    }
 
     static void Main(string [] args)
     {  
@@ -102,6 +122,10 @@ class Methods
         }
 
         Mymethod(nam1: "Beaconhouse", nam2: "Concordia", nam3: "Iqra University");
+
+        int Num1 = PlusIntMethod(50,50);
+        double Num2 = PlusDoubleMethod(45.39,329.3);
+        
 
     }
 
