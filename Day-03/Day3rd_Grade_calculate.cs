@@ -81,7 +81,7 @@ namespace ConsoleApp1
             else if (percentage >= 70) finalGrade ="B";
             else if (percentage >= 60) finalGrade ="C+";
             else if (percentage >= 50) finalGrade ="C";
-            else finalGrade ="C";
+            else finalGrade ="F";
             
             Console.WriteLine("\n" + gap);
             Console.WriteLine("Total grades sum: " + sum);
