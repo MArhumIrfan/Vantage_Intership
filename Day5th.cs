@@ -1,3 +1,4 @@
+//dotnet run Day5th.cs
 using System;
 
 namespace ConsoleApp1
