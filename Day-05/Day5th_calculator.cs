@@ -104,6 +104,7 @@ namespace ConsoleApp1
                 {
                     Console.WriteLine("Enter the operation (+, -, *, /):");
                     sign[i] = Console.ReadLine() ?? "";
+                    Gap();
                 }
             }
 
@@ -118,8 +119,10 @@ namespace ConsoleApp1
                 {
                     if (input[i + 1] != 0) result /= input[i + 1];
                     else Console.WriteLine("Error: Division by zero.");
+                    Gap();
                 }
                 else Console.WriteLine("Invalid operator entered.");
+                Gap();
             }
 
             return result;
@@ -148,6 +151,7 @@ namespace ConsoleApp1
 
                 double totalAnswer = Cal();
                 Console.WriteLine($"Total answer is: {totalAnswer}");
+                Gap();
             }
             else if (choice == "unit")
             {
@@ -159,6 +163,7 @@ namespace ConsoleApp1
             else
             {
                 Console.WriteLine("Invalid choice entered.");
+                Gap();
             }
         }    
     }
