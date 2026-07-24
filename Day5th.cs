@@ -12,7 +12,7 @@ namespace ConsoleApp1
         {   
             gap();
             string[] cars = { "suzuki", "toyota", "honda" };
-            cars[0] = "suzuki"; // FIXED: Changed 'cars =' to 'cars[0] =' to prevent compilation errors
+            cars[0] = "suzuki"; 
             Console.WriteLine(cars[0]);
             gap();
             Console.WriteLine(cars.Length);
@@ -36,10 +36,10 @@ namespace ConsoleApp1
             Console.WriteLine("Enter you second name : ");
             string sname = Console.ReadLine();
 
-            // Modern strings with space formatting
+            
             string name = fname + " " + sname;
             string Name = string.Concat(fname, " ", sname);
-            string NAME = $"My full name is : {fname} {sname}"; // FIXED: Clean modern interpolation with a space
+            string NAME = $"My full name is : {fname} {sname}"; 
             
             Console.WriteLine("your full name is : " + name + " by using simple +");
             gap();
