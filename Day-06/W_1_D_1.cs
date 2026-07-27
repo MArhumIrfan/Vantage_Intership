@@ -3,7 +3,7 @@ using System;
 
 namespace Lib{ 
 public  class Book
-{
+{   
     public string name;
 
     public string publisher;
@@ -12,6 +12,13 @@ public  class Book
 
     public string genre;
 
+    public Book()
+        {
+            name = "unknown";
+            publisher = "unknown";
+            datePublish = 2026;
+            genre = "unkown";
+        }
 
 }
 
