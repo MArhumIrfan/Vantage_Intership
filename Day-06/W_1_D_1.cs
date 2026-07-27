@@ -11,7 +11,18 @@ namespace Lib
         public int Cost
         {
             get { return _cost; }
-            set { _cost = value; } 
+            set
+            {
+                if (value <0)
+                {
+                    Console.WriteLine("Warning!, Price is incorrect !");
+                    _cost = 0;
+                }
+                else
+                {
+                    _cost = value;
+                }
+            } 
         }
 
         public string name;
