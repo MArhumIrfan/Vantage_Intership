@@ -1,56 +1,70 @@
+// dotnet run W_1_D_1.cs
 using System;
 
+namespace Lib
+{ 
+    public class Book
+    {   
+        
+        private int _cost; 
 
-namespace Lib{ 
-public  class Book
-{   
-    public string name;
+        public int Cost
+        {
+            get { return _cost; }
+            set { _cost = value; } 
+        }
 
-    public string publisher;
+        public string name;
+        public string publisher;
+        public int datePublish;
+        public string genre;
 
-    public int datePublish;
-
-    public string genre;
-
-    public Book()
+        public Book()
         {
             name = "unknown";
             publisher = "unknown";
             datePublish = 2026;
-            genre = "unkown";
+            genre = "unknown";
+            _cost = 0; 
         }
-
-}
-
-class Imp
-{
-    public static void gap()
-    {
-    Console.WriteLine("__--==++****++==--__");        
     }
-    
-    static void Main(string[] args)
+
+    class Imp
     {
+        public static void gap()
+        {
+            Console.WriteLine("__--==++****++==--__");        
+        }
         
-        Book book = new Book();
-        gap();
-        Console.WriteLine("Enter the book Name:");
-        book.name=Console.ReadLine();
-        gap();
-        Console.WriteLine("Enter the book publisher:");
-        book.publisher=Console.ReadLine();
-        gap();
-        Console.WriteLine("Enter the year published:");
-        book.datePublish = Convert.ToInt32(Console.ReadLine());
-        gap();
-        Console.WriteLine("Enter the book genre");
-        book.genre = Console.ReadLine();
-        gap();
+        static void Main(string[] args)
+        {
+            Book book = new Book();
+            gap();
+            Console.WriteLine("Enter the book Name:");
+            book.name = Console.ReadLine() ?? "";
+            
+            gap();
+            Console.WriteLine("Enter the book publisher:");
+            book.publisher = Console.ReadLine() ?? "";
+            
+            gap();
+            Console.WriteLine("Enter the year published:");
+           
+            book.datePublish = Convert.ToInt32(Console.ReadLine() ?? "0");
+            
+            gap();
+            Console.WriteLine("Enter the book genre:");
+            book.genre = Console.ReadLine() ?? "";
+            
+            gap();
+            Console.WriteLine("Enter the Book Price: ");
+            
+            book.Cost = Convert.ToInt32(Console.ReadLine() ?? "0");
 
-        Console.WriteLine($"The Book entered is {book.name} and is the publisher of the book is {book.publisher} and was published at {book.datePublish} and is a {book.genre} book");
-
+            gap();
+            Console.WriteLine($"The Book entered is {book.name} and the publisher of the book is {book.publisher} ");
+            Console.WriteLine($"and was published in {book.datePublish} and is a {book.genre} book");
+            Console.WriteLine($"The book costs around: {book.Cost}");
+        }
     }
-
-}
-
 }
