@@ -1,0 +1,1 @@
+            if(paymentMethod.ToLower() == "cash")

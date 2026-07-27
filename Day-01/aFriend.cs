@@ -1,16 +1,10 @@
-<<<<<<< HEAD
-
-            bool isTrue = true;
-            bool isFalse = false;
-            Console.WriteLine("The cureent age :" + age + " is greater than 18:" + (age > 18));
-=======
 using System;
 
 class Program
 {
     static void Main()
     {
-        string aFriend = "\aSaad";
+        string aFriend = "Saad";
         Console.WriteLine("Hello " + aFriend + "!");
         string firstFriend = "Ghayyur";
         Console.WriteLine("Hello " + firstFriend + "!");
@@ -72,4 +66,3 @@ class Program
 
     }
 }
->>>>>>> 9f6a493b637c6e0c318fbd138bf529bf5bf1a4b7
