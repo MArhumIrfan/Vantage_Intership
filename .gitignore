@@ -1,11 +1,19 @@
-# Block files globally across all day folders
-**/*.zip
-**/*.docx
-**/*.exe
-**/*.dll
-
-# Block build directories globally
+# Ignore everything inside build, bin, and obj folders anywhere they exist
 **/bin/
 **/obj/
+**/[Bb]in/
+**/[Oo]bj/
+
+# Ignore compiled executables and system configuration files
+**/*.exe
+**/*.dll
+**/*.pdb
+**/*.suo
+**/*.user
 **/.vs/
 **/.vscode/
+
+# Ignore heavy media and document files cluttering your days
+**/*.zip
+**/*.docx
+**/*.pdf
