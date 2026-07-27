@@ -1,10 +1,11 @@
-# Build folders
-bin/
-obj/
+# Block files globally across all day folders
+**/*.zip
+**/*.docx
+**/*.exe
+**/*.dll
 
-# Executables
-*.exe
-*.dll
-
-# VS Code settings
-.vscode/
+# Block build directories globally
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
