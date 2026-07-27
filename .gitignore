@@ -1,11 +1,30 @@
-# Build folders
-bin/
-obj/
+# Ignore everything inside build, bin, and obj folders anywhere they exist
+**/bin/
+**/obj/
+**/[Bb]in/
+**/[Oo]bj/
 
-# Executables
-*.exe
-*.dll
+# Ignore compiled executables and system configuration files
+**/*.exe
+**/*.dll
+**/*.pdb
+**/*.suo
+**/*.user
+**/.vs/
+**/.vscode/
 
+# Ignore heavy media and document files cluttering your days
+**/*.zip
+**/*.docx
+**/*.pdf
+
+VSCode-win32-x64-1.129.1/
+
+**/VSCode-win32-x64-1.129.1/**
+**/VSCode-win32-x64-1.129.1/
+
+
+<<<<<<< HEAD
 # VS Code settings
 .vscode/
 VSCode-win32-x64-1.129.1.zip
@@ -1771,3 +1790,5 @@ Learning code/DaySecond.cs
 Learning code/Numbers.cs
 Learning code/aFriend.cs
 Learning code/App.cs
+=======
+>>>>>>> be83043da96cfdd7adac9078c5b416a7d082acdc
