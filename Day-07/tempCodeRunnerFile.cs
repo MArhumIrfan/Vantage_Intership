@@ -11,25 +11,27 @@ namespace Lib
 
         public int Age
         {
-            get { return age; }
+            
+            get{return age;}
 
             set
             {
-                if (value < 18)
+                if (age < 18)
                 {
                     Console.WriteLine("you are Under 18!");
                 }
-                else if (value > 110)
+
+                else if ( age> 110)
                 {
                     Console.WriteLine("To Old !");
                 }
-                else if (value >= 18 && value <= 110)
+
+                else if (age>18 && age < 110)
                 {
                     Console.WriteLine("Access Allowed");
                 }
-
-                age = value;
             }
+
         }
 
     }
@@ -77,30 +79,15 @@ namespace Lib
         {
             Console.WriteLine("__--==++****++==--__");        
         }
-
-        private static int ReadInt(string prompt)
-        {
-            while (true)
-            {
-                Console.Write(prompt);
-                string? input = Console.ReadLine();
-
-                if (int.TryParse(input, out int value))
-                {
-                    return value;
-                }
-
-                Console.WriteLine("Invalid number. Please try again.");
-            }
-        }
         
         static void Main(string[] args)
         {   
 
-            Verify ageChecker = new Verify();
+            verify Age = new verify();
             Book book = new Book();
             gap();
-            ageChecker.Age = ReadInt("Enter your age: ");
+            Console.WriteLine("Enter your age: ");
+            verify.Age = Convert.ToInt32(Console.ReadLine());
             gap();
             Console.WriteLine("Enter the book Name:");
             book.name = Console.ReadLine() ?? "";
@@ -110,14 +97,18 @@ namespace Lib
             book.publisher = Console.ReadLine() ?? "";
             
             gap();
-            book.datePublish = ReadInt("Enter the year published: ");
+            Console.WriteLine("Enter the year published:");
+           
+            book.datePublish = Convert.ToInt32(Console.ReadLine() ?? "0");
             
             gap();
             Console.WriteLine("Enter the book genre:");
             book.genre = Console.ReadLine() ?? "";
             
             gap();
-            book.Cost = ReadInt("Enter the Book Price: ");
+            Console.WriteLine("Enter the Book Price: ");
+            
+            book.Cost = Convert.ToInt32(Console.ReadLine() ?? "0");
 
             gap();
             Console.WriteLine($"The Book entered is {book.name} and the publisher of the book is {book.publisher} ");
