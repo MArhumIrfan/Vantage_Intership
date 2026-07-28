@@ -1,18 +1,18 @@
+
+
+
 // dotnet run W_1_D_2.cs
 using System;
 
 namespace Lib
 { 
-
     public class Verify
     {
-        
         private int age;
 
         public int Age
         {
             get { return age; }
-
             set
             {
                 if (value < 18)
@@ -31,12 +31,10 @@ namespace Lib
                 age = value;
             }
         }
-
     }
 
     public class Book
     {   
-        
         private int _cost; 
 
         public int Cost
@@ -44,7 +42,7 @@ namespace Lib
             get { return _cost; }
             set
             {
-                if (value <0)
+                if (value < 0)
                 {
                     Console.WriteLine("Warning!, Price is incorrect !");
                     _cost = 0;
@@ -78,29 +76,27 @@ namespace Lib
             Console.WriteLine("__--==++****++==--__");        
         }
 
-        private static int ReadInt(string prompt)
-        {
-            while (true)
-            {
-                Console.Write(prompt);
-                string? input = Console.ReadLine();
-
-                if (int.TryParse(input, out int value))
-                {
-                    return value;
-                }
-
-                Console.WriteLine("Invalid number. Please try again.");
-            }
-        }
         
+        public static int ReadInt32(string prompt)
+        {
+            Console.Write(prompt);
+            string input = Console.ReadLine() ?? "";
+         
+            if (int.TryParse(input, out int result))
+            {
+                return result;
+            }
+            
+            Console.WriteLine("Invalid entry! Defaulting to 0.");
+            return 0;
+        }
+
         static void Main(string[] args)
         {   
-
             Verify ageChecker = new Verify();
             Book book = new Book();
             gap();
-            ageChecker.Age = ReadInt("Enter your age: ");
+            ageChecker.Age = ReadInt32("Enter your age: ");
             gap();
             Console.WriteLine("Enter the book Name:");
             book.name = Console.ReadLine() ?? "";
@@ -110,14 +106,14 @@ namespace Lib
             book.publisher = Console.ReadLine() ?? "";
             
             gap();
-            book.datePublish = ReadInt("Enter the year published: ");
+            book.datePublish = ReadInt32("Enter the year published: ");
             
             gap();
             Console.WriteLine("Enter the book genre:");
             book.genre = Console.ReadLine() ?? "";
             
             gap();
-            book.Cost = ReadInt("Enter the Book Price: ");
+            book.Cost = ReadInt32("Enter the Book Price: ");
 
             gap();
             Console.WriteLine($"The Book entered is {book.name} and the publisher of the book is {book.publisher} ");
