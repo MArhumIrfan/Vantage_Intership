@@ -1,7 +1,3 @@
-
-
-
-// dotnet run W_1_D_2.cs
 using System;
 
 namespace Lib
@@ -16,19 +12,22 @@ namespace Lib
             set
             {
                 if (value < 18)
-                {
+                {   
+                  
                     Console.WriteLine("you are Under 18!");
-                    Environment.exit(0);
+                   
+                    Environment.Exit(0); 
                 }
                 else if (value > 110)
-                {
-                    Console.WriteLine("To Old !");
-                    Environment.Exit(0);
+                {   
+                   Console.WriteLine("To Old !");
+                                            Environment.Exit(0); 
                 }
                 else if (value >= 18 && value <= 110)
                 {
+                  
                     Console.WriteLine("Access Allowed");
-                }
+                                 }
 
                 age = value;
             }
@@ -78,7 +77,6 @@ namespace Lib
             Console.WriteLine("__--==++****++==--__");        
         }
 
-        
         public static int ReadInt32(string prompt)
         {
             Console.Write(prompt);
@@ -97,8 +95,11 @@ namespace Lib
         {   
             Verify ageChecker = new Verify();
             Book book = new Book();
+            
             gap();
             ageChecker.Age = ReadInt32("Enter your age: ");
+            
+            // If the age was invalid, the code above will exit, and these lines won't run:
             gap();
             Console.WriteLine("Enter the book Name:");
             book.name = Console.ReadLine() ?? "";
