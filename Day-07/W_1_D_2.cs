@@ -98,8 +98,8 @@ namespace Lib
             
             gap();
             ageChecker.Age = ReadInt32("Enter your age: ");
+            gap();
             
-            // If the age was invalid, the code above will exit, and these lines won't run:
             gap();
             Console.WriteLine("Enter the book Name:");
             book.name = Console.ReadLine() ?? "";
