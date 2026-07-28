@@ -18,10 +18,12 @@ namespace Lib
                 if (value < 18)
                 {
                     Console.WriteLine("you are Under 18!");
+                    Environment.exit(0);
                 }
                 else if (value > 110)
                 {
                     Console.WriteLine("To Old !");
+                    Environment.Exit(0);
                 }
                 else if (value >= 18 && value <= 110)
                 {
