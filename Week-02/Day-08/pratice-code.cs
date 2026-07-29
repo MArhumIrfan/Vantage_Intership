@@ -24,10 +24,10 @@ namespace Pratice
         
         public string modelName = "Mustang BOSS 429";
         private int modelYear = 1969;
-        public string ModelYear
+        public int ModelYear
         {
             get{return modelYear;}
-            set{modelYear = date;}
+            set{modelYear = value;}
         }
 
     }
@@ -37,11 +37,11 @@ namespace Pratice
     {
         public static void Main(string[] args)
         {
-           vehicle Vehicle = new vehicle();
+           Car myCar = new Car();
 
-            vehicle.honk();
-            vehicle.honk();
-            Console.WriteLine("The car is : "+Vehicle.Brand()+" and the model is :"+Vehicle.modelName()+" which was produced in :"+Vehicle.modelYear());
+            myCar.Horn();
+            myCar.Horn();
+            Console.WriteLine("The car is : "+myCar.Brand+" and the model is : "+myCar.modelName+" which was produced in : "+myCar.ModelYear);
 
             
         }
