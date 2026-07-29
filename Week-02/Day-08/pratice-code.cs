@@ -3,7 +3,7 @@ using System;
 namespace Pratice
 {
     
-    public class vehicle
+    public class Vehicle
     {
         private string brand ="Ford";
         public string Brand
