@@ -27,9 +27,15 @@ namespace Lib
         public static List<Book> Books = new List<Book>();
     }
 
-    public class Login
+    public interface IBorrower
     {
-        public virtual void ExecuteRoleActions()
+        void BorrowBook();
+        void RetrunrBook();
+    }
+
+    public abstract class Login
+    {
+        public abstract void ExecuteRoleActions()
         {
             Console.WriteLine("Login Related actions");
         } 
@@ -114,9 +120,16 @@ namespace Lib
         {
             Imp.gap(); 
             Console.WriteLine("User-Dashboard");
-            Console.WriteLine("Borrow Book: Not implemented");
-            Console.WriteLine("Return Book: Not implemented");
-            Console.WriteLine("Pay Fine: Not implemented");
+            BorrowBook();
+            ReturnBook();
+        }
+        public void BorrowBook()
+        {
+            Console.WriteLine("Borrow Book: Code not implemented");
+        }
+        public void ReturnBook()
+        {
+            Console.WriteLine("Return Book : Code not implemented");
         }
     }
 
