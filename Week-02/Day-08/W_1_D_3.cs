@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Lib 
-{   
+ {   
     public static class LibarayDatabase
     {
         public static List<Book> Books = new List<Book>();
@@ -30,15 +30,14 @@ namespace Lib
     public interface IBorrower
     {
         void BorrowBook();
-        void RetrunrBook();
+        void ReturnBook(); 
     }
 
+   
     public abstract class Login
     {
-        public abstract void ExecuteRoleActions()
-        {
-            Console.WriteLine("Login Related actions");
-        } 
+        
+        public abstract void ExecuteRoleActions(); 
     }
     
     public class VerifyAdmin : Login
@@ -92,7 +91,8 @@ namespace Lib
         }
     }
 
-    public class VerifyUser : Login
+    
+    public class VerifyUser : Login, IBorrower 
     {
         private string username = "User";
         public string Username 
@@ -101,7 +101,7 @@ namespace Lib
             set
             {
                 if (value != "User") { Console.WriteLine("Incorrect username !"); Environment.Exit(0); }
-                else { Console.WriteLine("Correct password input"); username = value; }
+                else { Console.WriteLine("Correct Username input"); username = value; }
             }
         }
 
@@ -123,6 +123,8 @@ namespace Lib
             BorrowBook();
             ReturnBook();
         }
+
+       
         public void BorrowBook()
         {
             Console.WriteLine("Borrow Book: Code not implemented");
@@ -203,12 +205,11 @@ namespace Lib
             string input = Console.ReadLine() ?? "";
             int result;
 
-            if (int.TryParse(input, out  result)) return result;
+           
+            if (int.TryParse(input, out result)) return result;
 
             Console.WriteLine("Invalid entry! Defaulting to 0.");
-
             return 0;
-
         }
 
         static void Main(string[] args)
