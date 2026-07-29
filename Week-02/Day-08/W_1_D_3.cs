@@ -1,10 +1,16 @@
 using System;
+using System.Collections.Generic;
 
-namespace Lib
+namespace Lib 
 {   
+    public static class LibarayDatabase
+    {
+        public static List<Book> Books = new List<Book>();
+    }
+
     public class Login
     {
-       public void Exetcute()
+        public virtual void ExecuteRoleActions()
         {
             Console.WriteLine("Login Related actions");
         } 
@@ -13,112 +19,116 @@ namespace Lib
     public class VerifyAdmin : Login
     {
         private String adminUserName = "Admin";
-        
         public string AdminUserName
         {
             get { return adminUserName; }
             set
             {
-                if (value != "Admin")
-                {
-                    Console.WriteLine("Incorrect Username entered!");
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    Console.WriteLine("Correct Username entered.");
-                    adminUserName = value; 
-                }
+                if (value != "Admin") { Console.WriteLine("Incorrect Username entered!"); Environment.Exit(0); }
+                else { Console.WriteLine("Correct Username entered."); adminUserName = value; }
             }
         }
         
         private String adminPassword = "admin123";
-
         public string AdminPassword
         {
             get { return adminPassword; }
             set
             {
-                if (value != "admin123")
-                {
-                    Console.WriteLine("Incorrect password Entred");
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    Console.WriteLine("Correct password entered."); 
-                    adminPassword = value; 
-                }
+                if (value != "admin123") { Console.WriteLine("Incorrect password Entred"); Environment.Exit(0); }
+                else { Console.WriteLine("Correct password entered."); adminPassword = value; }
             }
+        }
+
+        public override void ExecuteRoleActions()
+        {
+            Imp.gap(); 
+            Console.WriteLine("--ADMIN--: BOOK ENTRY PANAL:");
+
+            Book book = new Book();
+
+            Console.WriteLine("Enter the book name : ");
+            book.name = Console.ReadLine() ?? "";
+
+            Console.WriteLine("Enter your book publihser : ");
+            book.publisher = Console.ReadLine() ?? "";
+
+            book.datePublish = Imp.ReadInt32("Enter the Book Year: ");
+
+            Console.WriteLine("Enter the book genre: ");
+            book.genre = Console.ReadLine() ?? "";
+
+            book.Cost = Imp.ReadInt32("Enter the book price:");
+
+            LibarayDatabase.Books.Add(book);
+
+            Imp.gap();
+            Console.WriteLine("Successfully added " + book.name + " ! ");    
         }
     }
 
     public class VerifyUser : Login
     {
         private string username = "User";
-
         public string Username 
         {
             get { return username; }
             set
             {
-                if (value != "User")
-                {
-                    Console.WriteLine("Incorrect username !");
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    Console.WriteLine("Correct password input");
-                    username = value; 
-                }
+                if (value != "User") { Console.WriteLine("Incorrect username !"); Environment.Exit(0); }
+                else { Console.WriteLine("Correct password input"); username = value; }
             }
         }
 
         private string userPassword = "user123";
-
         public string UserPassword
         {
             get { return userPassword; }
             set
             {
-                if (value != "user123")
-                {
-                    Console.WriteLine("Incorrect password !");
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    userPassword = value; 
-                }
+                if (value != "user123") { Console.WriteLine("Incorrect password !"); Environment.Exit(0); }
+                else { userPassword = value; }
             }
+        }
+
+        public override void ExecuteRoleActions()
+        {
+            Imp.gap(); 
+            Console.WriteLine("User-Dashboard");
+            Console.WriteLine("Borrow Book: Not implemented");
+            Console.WriteLine("Return Book: Not implemented");
+            Console.WriteLine("Pay Fine: Not implemented");
         }
     }
 
-    public class verifyAge : Login
+    public class GuestUser : Login
     {
         private int age;
-
         public int Age
         {
             get { return age; }
             set
             {
-                if (value < 18)
-                {   
-                    Console.WriteLine("you are Under 18!");
-                    Environment.Exit(0); 
-                }
-                else if (value > 110)
-                {   
-                    Console.WriteLine("To Old !");
-                    Environment.Exit(0); 
-                }
-                else if (value >= 18 && value <= 110)
-                {
-                    Console.WriteLine("Access Allowed");
-                    age = value; 
-                }
+                if (value < 18) { Console.WriteLine("you are Under 18!"); Environment.Exit(0); }
+                else if (value > 110) { Console.WriteLine("To Old !"); Environment.Exit(0); }
+                else { Console.WriteLine("Access Allowed"); age = value; }
+            }
+        }
+
+        public override void ExecuteRoleActions()
+        {
+            Imp.gap();
+            Console.WriteLine("--Guest Catalog--");
+
+            if (LibarayDatabase.Books.Count == 0) 
+            {
+                Console.WriteLine("No Book avaliable");
+                return;
+            }
+
+            foreach(var book in LibarayDatabase.Books)
+            {
+                Console.WriteLine(" " + book.name + "," + book.genre + " by " + book.publisher + "; Price = " + book.Cost + " PKR ");
             }
         }
     }
@@ -126,22 +136,10 @@ namespace Lib
     public class Book
     {   
         private int _cost; 
-
         public int Cost
         {
             get { return _cost; }
-            set
-            {
-                if (value < 0)
-                {
-                    Console.WriteLine("Warning!, Price is incorrect !");
-                    _cost = 0;
-                }
-                else
-                {
-                    _cost = value;
-                }
-            } 
+            set { _cost = value < 0 ? 0 : value; } 
         }
 
         public string name;
@@ -161,57 +159,73 @@ namespace Lib
 
     class Imp
     {
-        public static void gap()
+        public static void gap()  
         {
-            Console.WriteLine("__--==++****++==--__");        
-        }
+            Console.WriteLine("__--==++****++==--__");
+        }       
 
         public static int ReadInt32(string prompt)
         {
             Console.Write(prompt);
-            string input = Console.ReadLine() ?? "";
-         
-            if (int.TryParse(input, out int result))
-            {
-                return result;
-            }
             
+            string input = Console.ReadLine() ?? "";
+            int result;
+
+            if (int.TryParse(input, out  result)) return result;
+
             Console.WriteLine("Invalid entry! Defaulting to 0.");
+
             return 0;
+
         }
 
         static void Main(string[] args)
         {   
-            
-            verifyAge ageChecker = new verifyAge(); 
-            Book book = new Book();
-            
             gap();
-            ageChecker.Age = ReadInt32("Enter your age: ");
-            gap();
-            
-            gap();
-            Console.WriteLine("Enter the book Name:");
-            book.name = Console.ReadLine() ?? "";
-            
-            gap();
-            Console.WriteLine("Enter the book publisher:");
-            book.publisher = Console.ReadLine() ?? "";
-            
-            gap();
-            book.datePublish = ReadInt32("Enter the year published: ");
-            
-            gap();
-            Console.WriteLine("Enter the book genre:");
-            book.genre = Console.ReadLine() ?? "";
-            
-            gap();
-            book.Cost = ReadInt32("Enter the Book Price: ");
+            Console.WriteLine(" Identify your role (Admin/User/Guest) ");
+            string inputRole = Console.ReadLine() ?? "";
 
-            gap();
-            Console.WriteLine($"The Book entered is {book.name} and the publisher of the book is {book.publisher} ");
-            Console.WriteLine($"and was published in {book.datePublish} and is a {book.genre} book");
-            Console.WriteLine($"The book costs around: {book.Cost}");
+            Login userSession = null;
+
+            if (inputRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                VerifyAdmin admin = new VerifyAdmin();
+                Console.WriteLine("Enter the Admin Username : ");
+                admin.AdminUserName = Console.ReadLine() ?? "";
+
+                Console.WriteLine("Enter the Admin Password : ");
+                admin.AdminPassword = Console.ReadLine() ?? "";
+
+                userSession = admin; 
+            }
+            else if (inputRole.Equals("User", StringComparison.OrdinalIgnoreCase))
+            {
+                VerifyUser user = new VerifyUser();
+                Console.WriteLine("Enter the username : ");
+                user.Username = Console.ReadLine() ?? "";
+                
+                Console.WriteLine("Enter the password : ");
+                user.UserPassword = Console.ReadLine() ?? ""; 
+
+                userSession = user; 
+            }
+            else if (inputRole.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+            {
+                GuestUser guest = new GuestUser(); 
+                guest.Age = ReadInt32("Enter your age to proceed: ");
+                
+                userSession = guest; 
+            }
+            else
+            {
+                Console.WriteLine("Invalid system chosen!");
+                return;
+            }
+
+            if (userSession != null)
+            {
+                userSession.ExecuteRoleActions();
+            }
         }
     }
 }
