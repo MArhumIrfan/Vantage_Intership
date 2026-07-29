@@ -1,3 +1,22 @@
+/*
+
+UserNames & Password
+
+--Admin:
+UserName:"Admin"
+Password:"admin123"
+----
+
+--User
+UserName:"User"
+Password:"User123"
+----
+
+--Guest
+No UserName or PassWord Required
+----
+
+*/
 using System;
 using System.Collections.Generic;
 
