@@ -5,7 +5,7 @@
 --
 --User: UserName: "User", Password: "User123".--
 --
---Guest: No UserName or Password Required, just have to be 18 and above.
+--Guest: No UserName or Password Required, just have to be 18 and above.--
 --
 */
 
