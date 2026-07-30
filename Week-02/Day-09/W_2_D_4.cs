@@ -22,7 +22,24 @@ namespace Lib
         Unknown
     }
 
-    public record Book(string Name, string Publisher, int DatePublish, string Genre, int Cost);
+    // FIX: Converted the record to a standard class to pass C# 5 compiler verification
+    public class Book
+    {
+        public string Name { get; set; }
+        public string Publisher { get; set; }
+        public int DatePublish { get; set; }
+        public string Genre { get; set; }
+        public int Cost { get; set; }
+
+        public Book(string name, string publisher, int datePublish, string genre, int cost)
+        {
+            Name = name;
+            Publisher = publisher;
+            DatePublish = datePublish;
+            Genre = genre;
+            Cost = cost;
+        }
+    }
 
     public static class LibarayDatabase
     {
@@ -140,7 +157,7 @@ namespace Lib
             Console.WriteLine("\nEnter the name of the book to be borrowed: ");
             string target = Console.ReadLine() ?? "";
             
-            Book? foundBook = null; 
+            Book foundBook = null; 
             
             foreach (var book in LibarayDatabase.Books)
             {
