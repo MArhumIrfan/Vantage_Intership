@@ -112,7 +112,7 @@ namespace Lib
             Console.WriteLine("Enter the book genre: ");
             string bGenre = Console.ReadLine() ?? "";
 
-            int bCost = Imp.ReadInt32("Enter the book price:");
+            int bCost = Imp.ReadInt32("Enter the book price: ");
 
             Book book = new Book(bName, bPub, bYear, bGenre, bCost);
             LibarayDatabase.Books.Add(book);
