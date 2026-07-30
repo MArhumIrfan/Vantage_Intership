@@ -223,7 +223,7 @@ namespace Lib
 
             foreach(var book in LibarayDatabase.Books)
             {
-                Console.WriteLine(" " + book.name + "," + book.genre + " by " + book.publisher + "; Price = " + book.Cost + " PKR ");
+                Console.WriteLine(" " + book.name + "," + book.Genre + " by " + book.publisher + "; Price = " + book.Cost + " PKR ");
             }
         }
     }
