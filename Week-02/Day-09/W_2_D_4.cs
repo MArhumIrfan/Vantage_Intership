@@ -31,6 +31,8 @@ namespace Lib
         public string Genre { get; set; }
         public int Cost { get; set; }
 
+        public int FineDue{get; set; }
+
         public Book(string name, string publisher, int datePublish, string genre, int cost)
         {
             Name = name;
