@@ -240,7 +240,7 @@ namespace Lib
         public void ReturnBook()
         {
 
-            LibarayDatabase.DisplayAvailableTitles();
+            LibarayDatabase.DisplayAvalibleTitles();
 
             Console.WriteLine("\nEnter the book to return: ");
             string target = Console.ReadLine() ?? "";
