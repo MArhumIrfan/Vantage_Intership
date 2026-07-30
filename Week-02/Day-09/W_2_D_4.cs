@@ -98,7 +98,7 @@ namespace Lib
             set
             {
                 if (value != "Admin") { Console.WriteLine("Incorrect Username entered!"); Environment.Exit(0); }
-                else { adminUserName = value; }
+                else {Console.WriteLine(" Correct Admin Username input "); adminUserName = value; }
             }
         }
         
@@ -109,7 +109,7 @@ namespace Lib
             set
             {
                 if (value != "admin123") { Console.WriteLine("Incorrect password Entered"); Environment.Exit(0); }
-                else { adminPassword = value; }
+                else {Console.WriteLine(" Correct Admin Password Input ");  adminPassword = value; }
             }
         }
 
@@ -186,7 +186,7 @@ namespace Lib
             set
             {
                 if (value != "User") { Console.WriteLine("Incorrect username !"); Environment.Exit(0); }
-                else { Console.WriteLine("Correct Username input"); username = value; }
+                else { Console.WriteLine(" Correct Username Input "); username = value; }
             }
         }
 
@@ -197,7 +197,7 @@ namespace Lib
             set
             {
                 if (value != "user123") { Console.WriteLine("Incorrect password !"); Environment.Exit(0); }
-                else { userPassword = value; }
+                else { Console.WriteLine(" Correct Passwrod Input "); userPassword = value; }
             }
         }
 
@@ -373,11 +373,11 @@ namespace Lib
         public override void ExecuteRoleActions()
         {
             Imp.gap();
-            Console.WriteLine("--Guest Catalog--");
+            Console.WriteLine("\n --Guest Catalog--");
 
             if (LibarayDatabase.Books.Count == 0) 
             {
-                Console.WriteLine("No Book available");
+                Console.WriteLine("\n No Book available");
                 return;
             }
 
