@@ -22,7 +22,7 @@ namespace Lib
         Unknown
     }
 
-    // FIX: Converted the record to a standard class to pass C# 5 compiler verification
+    
     public class Book
     {
         public string Name { get; set; }
