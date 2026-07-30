@@ -166,7 +166,7 @@ namespace Lib
             BorrowBook();
 
             }
-            else if (selection = 2)
+            else if (selection == 2)
             {
                 
             
