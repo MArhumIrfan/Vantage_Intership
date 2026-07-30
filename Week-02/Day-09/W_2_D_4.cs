@@ -1,11 +1,11 @@
 /*
-UserNames & Password
+UserNames & Password 
 --
---Admin: UserName: "Admin", Password: "admin123"
+--Admin: UserName: "Admin", Password: "admin123".
 --
---User: UserName: "User", Password: "User123"
+--User: UserName: "User", Password: "User123".
 --
---Guest: No UserName or PassWord Required
+--Guest: No UserName or Password Required, just have to be 18 and above.
 --
 */
 
