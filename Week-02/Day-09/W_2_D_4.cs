@@ -173,7 +173,7 @@ namespace Lib
             ReturnBook();
 
             }
-            else if (selection = 3)
+            else if (selection == 3)
             {
                 
             
