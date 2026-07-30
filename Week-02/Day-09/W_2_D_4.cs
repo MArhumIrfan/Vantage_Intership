@@ -114,9 +114,22 @@ namespace Lib
         }
 
         public override void ExecuteRoleActions()
-        {
+        {   
+
+            while(true){
             Imp.gap(); 
             Console.WriteLine("--ADMIN--: BOOK ENTRY PANEL:");
+            Console.WriteLine("1.Add a new book");
+            Console.WriteLine("2.View current Inventory");
+            Console.WriteLine("3.Logout / Mainmenu");
+
+            int selection = Imp.ReadInt32("Please chose a choice number");
+
+            if (selection == 1)
+            {
+
+            Imp.gap();    
+            Console.WriteLine(" Admin Book Entry Panel ");   
 
             Console.WriteLine("Enter the book name : ");
             string bName = Console.ReadLine() ?? "";
@@ -139,6 +152,26 @@ namespace Lib
             Imp.gap();
             Console.WriteLine("Successfully added " + book.Name + " ! ");    
             Console.WriteLine("Total books in live runtime memory: " + LibarayDatabase.TotalBooksCount);
+            }
+
+            else if (selection == 2)
+                {
+                    Imp.gap();
+                    Console.WriteLine("Live tracking Inventory count: "+LibarayDatabase.TotalBooksCount+" Books stored. ");
+                    LibarayDatabase.DisplayAvalibleTitles();
+                }
+            else if (selection == 3)
+                {
+                    Imp.gap();
+                    Console.WriteLine("Logging out of the System.......");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect input! try again");
+                }    
+
+            }
         }
     }
 
