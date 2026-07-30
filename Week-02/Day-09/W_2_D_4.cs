@@ -58,6 +58,23 @@ namespace Lib
             book2.FineDue = 500;
             Books.Add(book2);
         }
+
+        public static void DisplayAvalibleTitles()
+        {
+            Console.WriteLine("\n---Current Libaray Catalog Inventory---");
+            if (books.count)
+            {
+                Console.WriteLine("No Books stored in memory");
+                return;
+            }
+
+            for (int i = 0; i< Books.Count; i++)
+            {
+                Console.WriteLine((i+1)+" . "+Books[i].Name+"("+Books[i].Genre+")");
+
+            }
+            Console.WriteLine("-------------------------------------");
+        }
     }
 
     public interface IBorrower
@@ -126,7 +143,9 @@ namespace Lib
     }
 
     public class VerifyUser : Login, IBorrower 
-    {
+    {   
+
+
         private string username = "User";
         public string Username 
         {
@@ -189,6 +208,11 @@ namespace Lib
 
         public void BorrowBook()
         {
+
+            
+            DisplayAvalibleTitles();
+
+
             Console.WriteLine("\nEnter the name of the book to be borrowed: ");
             string target = Console.ReadLine() ?? "";
             
@@ -215,6 +239,9 @@ namespace Lib
 
         public void ReturnBook()
         {
+
+            DisplayAvalibleTitles();
+
             Console.WriteLine("\nEnter the book to return: ");
             string target = Console.ReadLine() ?? "";
             
@@ -242,6 +269,9 @@ namespace Lib
         public void PayFineBook()
         {
             Console.WriteLine("\n---Fine--Payement---");
+
+            DisplayAvalibleTitles();
+            
             Console.WriteLine("Enter the exact name of book to settle fines");
             string target = Console.ReadLine();
             Book foundBook = null;
