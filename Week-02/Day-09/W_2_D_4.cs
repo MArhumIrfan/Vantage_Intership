@@ -54,8 +54,8 @@ namespace Lib
             Book book1 = new Book("The Great Gatsby", "Penguin", 1990, "Fantasy", 1000);
             Books.Add(book1);
 
-            Book book1 = new Book("To kill a Mockingbirf","Lippincott",1960,"Classic",1200);
-            Books.FineDue = 500;
+            Book book2 = new Book("To kill a Mockingbirf","Lippincott",1960,"Classic",1200);
+            book2.FineDue = 500;
             Books.Add(books2);
         }
     }
