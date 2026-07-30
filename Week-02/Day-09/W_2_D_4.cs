@@ -153,9 +153,38 @@ namespace Lib
         {
             Imp.gap(); 
             Console.WriteLine("User-Dashboard");
+            Console.WriteLine("1.To Borrow a Book");
+            Console.WriteLine("2.Return a Book");
+            Console.WriteLine("3.Pay Outstanding Fine");
+            Console.WriteLine("4.Log out/Main menu");
+            int selection = Imp.ReadInt32("Enter your choice");
+
+            if (selection = 1)
+            {
+                
+            
             BorrowBook();
+
+            }
+            else if (selection = 2)
+            {
+                
+            
             ReturnBook();
+
+            }
+            else if (selection = 3)
+            {
+                
+            
             PayFineBook();
+
+            }
+
+            else
+            {
+                Console.WriteLine("Invalid Input!, Logging out!");
+            }
         }
 
         public void BorrowBook()
