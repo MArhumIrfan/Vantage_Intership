@@ -270,7 +270,7 @@ namespace Lib
         {
             Console.WriteLine("\n---Fine--Payement---");
 
-            LibarayDatabase.DisplayAvailableTitles();
+            LibarayDatabase.DisplayAvalibleTitles();
 
             Console.WriteLine("Enter the exact name of book to settle fines");
             string target = Console.ReadLine();
