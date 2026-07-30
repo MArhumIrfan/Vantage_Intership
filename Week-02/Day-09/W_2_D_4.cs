@@ -14,7 +14,6 @@ using System.Collections.Generic;
 
 namespace Lib 
 {   
-    // ADVANCED CONCEPT: Enum definition to prevent typos in role routing
     public enum SystemRole
     {
         Admin,
@@ -23,19 +22,16 @@ namespace Lib
         Unknown
     }
 
-    // ADVANCED CONCEPT: Postional Record definition for data-centric objects
     public record Book(string Name, string Publisher, int DatePublish, string Genre, int Cost);
 
     public static class LibarayDatabase
     {
         public static List<Book> Books = new List<Book>();
         
-        // ADVANCED CONCEPT: Static member counter to track system metrics
         public static int TotalBooksCount = 1;
 
         public static void seed()
         {   
-            // FIX: Removed string quotes from 1000 to match the integer data type
             Book book1 = new Book("The Great Gatsby", "Penguin", 1990, "Fantasy", 1000);
             Books.Add(book1);
         }
@@ -95,7 +91,6 @@ namespace Lib
 
             int bCost = Imp.ReadInt32("Enter the book price:");
 
-            // FIX: Resolved duplicate variables by populating the record via input variables
             Book book = new Book(bName, bPub, bYear, bGenre, bCost);
             LibarayDatabase.Books.Add(book);
 
@@ -145,7 +140,6 @@ namespace Lib
             Console.WriteLine("\nEnter the name of the book to be borrowed: ");
             string target = Console.ReadLine() ?? "";
             
-            // ADVANCED CONCEPT: Explicit Nullable Type declaration to avoid crashes
             Book? foundBook = null; 
             
             foreach (var book in LibarayDatabase.Books)
@@ -159,7 +153,6 @@ namespace Lib
 
             if (foundBook != null)
             {
-                // FIX: Synchronized parameter casing to match global PascalCase definitions
                 Console.WriteLine(foundBook.Name + " Book available for borrowing. Price = " + foundBook.Cost + " PKR");
             }
             else
@@ -230,7 +223,6 @@ namespace Lib
 
             foreach(var book in LibarayDatabase.Books)
             {
-                // FIX: Standardized string property values to clean capital letters
                 Console.WriteLine(" " + book.Name + "," + book.Genre + " by " + book.Publisher + "; Price = " + book.Cost + " PKR ");
             }
         }
@@ -249,7 +241,6 @@ namespace Lib
             string input = Console.ReadLine() ?? "";
             int result;
 
-            // FIX: Split 'out' assignment parameter for C# 5 engine backwards-compatibility
             if (int.TryParse(input, out result)) return result;
 
             Console.WriteLine("Invalid entry! Defaulting to 0.");
@@ -272,16 +263,13 @@ namespace Lib
                     break;
                 }
 
-                // ADVANCED CONCEPT: Convert text values securely into custom Enums
                 SystemRole chosenRole = SystemRole.Unknown;
                 if (Enum.TryParse(inputRole, true, out chosenRole))
                 {
-                    // Successfully parsed
                 }
 
                 Login userSession = null;
 
-                // Evaluates the compiled Enum structure rather than volatile raw text
                 if (chosenRole == SystemRole.Admin)
                 {
                     VerifyAdmin admin = new VerifyAdmin();
@@ -306,19 +294,22 @@ namespace Lib
                 }
                 else if (chosenRole == SystemRole.Guest)
                 {
-                 GuestUser guest = new GuestUser();guest.Age = ReadInt32("Enter your age to proceed: ");
-                userSession = guest;
+                    GuestUser guest = new GuestUser(); 
+                    guest.Age = ReadInt32("Enter your age to proceed: ");
+                    
+                    userSession = guest; 
                 }
                 else
-                {Console.WriteLine("Invalid system chosen! Try again.");
-                continue;
-                }
-                if (userSession != null)
                 {
-                suserSession.ExecuteRoleActions();
-                }
-                }
-                }
+                    Console.WriteLine("Invalid system chosen! Try again.");
+                    continue;
                 }
 
+                if (userSession != null)
+                {
+                    userSession.ExecuteRoleActions();
                 }
+            }
+        }
+    }
+}
