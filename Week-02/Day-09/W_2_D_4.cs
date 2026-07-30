@@ -414,7 +414,7 @@ namespace Lib
             while (true)
             {
                 gap();
-                Console.WriteLine("Identify your role (Admin/User/Guest) or type 'exit' to quit: ");
+                Console.WriteLine("\n Identify your role (Admin/User/Guest) or type 'exit' to quit: ");
                 string inputRole = Console.ReadLine() ?? "";
 
                 if (inputRole.Equals("exit", StringComparison.OrdinalIgnoreCase))
