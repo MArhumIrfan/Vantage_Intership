@@ -56,7 +56,7 @@ namespace Lib
 
             Book book2 = new Book("To kill a Mockingbirf","Lippincott",1960,"Classic",1200);
             book2.FineDue = 500;
-            Books.Add(books2);
+            Books.Add(book2);
         }
     }
 
