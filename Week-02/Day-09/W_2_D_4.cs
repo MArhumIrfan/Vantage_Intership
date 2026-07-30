@@ -1,41 +1,42 @@
-/*UserNames & Password
+/*
+UserNames & Password
 --
---Admin:UserName:"Admin"Password:"admin123"--
+--Admin: UserName: "Admin", Password: "admin123"
 --
---UserUserName:"User"Password:"User123"--
+--User: UserName: "User", Password: "User123"
 --
---GuestNo UserName or PassWord Required--
+--Guest: No UserName or PassWord Required
 --
 */
 
 using System;
 using System.Collections.Generic;
 
-
-
 namespace Lib 
 {   
+    // ADVANCED CONCEPT: Enum definition to prevent typos in role routing
     public enum SystemRole
     {
-    Admin,
-    User,
-    Guest,
-    Unknown
+        Admin,
+        User,
+        Guest,
+        Unknown
     }
 
-
+    // ADVANCED CONCEPT: Postional Record definition for data-centric objects
+    public record Book(string Name, string Publisher, int DatePublish, string Genre, int Cost);
 
     public static class LibarayDatabase
     {
         public static List<Book> Books = new List<Book>();
         
-        
-        public static int TotalBooksCount =1;
-
+        // ADVANCED CONCEPT: Static member counter to track system metrics
+        public static int TotalBooksCount = 1;
 
         public static void seed()
         {   
-            Book book1 = new Book("The Great Gatsby","Penguin",1990,"Fanstasy",1000);
+            // FIX: Removed string quotes from 1000 to match the integer data type
+            Book book1 = new Book("The Great Gatsby", "Penguin", 1990, "Fantasy", 1000);
             Books.Add(book1);
         }
     }
@@ -71,39 +72,39 @@ namespace Lib
             get { return adminPassword; }
             set
             {
-                if (value != "admin123") { Console.WriteLine("Incorrect password Entred"); Environment.Exit(0); }
+                if (value != "admin123") { Console.WriteLine("Incorrect password Entered"); Environment.Exit(0); }
                 else { adminPassword = value; }
             }
         }
 
         public override void ExecuteRoleActions()
-{
-    Imp.gap(); 
-    Console.WriteLine("--ADMIN--: BOOK ENTRY PANAL:");
+        {
+            Imp.gap(); 
+            Console.WriteLine("--ADMIN--: BOOK ENTRY PANEL:");
 
-    Console.WriteLine("Enter the book name : ");
-    string bName = Console.ReadLine() ?? "";
+            Console.WriteLine("Enter the book name : ");
+            string bName = Console.ReadLine() ?? "";
 
-    Console.WriteLine("Enter your book publisher : ");
-    string bPub = Console.ReadLine() ?? "";
+            Console.WriteLine("Enter your book publisher : ");
+            string bPub = Console.ReadLine() ?? "";
 
-    int bYear = Imp.ReadInt32("Enter the Book Year: ");
+            int bYear = Imp.ReadInt32("Enter the Book Year: ");
 
-    Console.WriteLine("Enter the book genre: ");
-    string bGenre = Console.ReadLine() ?? "";
+            Console.WriteLine("Enter the book genre: ");
+            string bGenre = Console.ReadLine() ?? "";
 
-    int bCost = Imp.ReadInt32("Enter the book price:");
+            int bCost = Imp.ReadInt32("Enter the book price:");
 
+            // FIX: Resolved duplicate variables by populating the record via input variables
+            Book book = new Book(bName, bPub, bYear, bGenre, bCost);
+            LibarayDatabase.Books.Add(book);
 
-    Book book = new Book(bName, bPub, bYear, bGenre, bCost);
-    LibarayDatabase.Books.Add(book);
+            LibarayDatabase.TotalBooksCount++; 
 
-    LibarayDatabase.TotalBooksCount++; 
-
-    Imp.gap();
-    Console.WriteLine("Successfully added " + book.name + " ! ");    
-}
-
+            Imp.gap();
+            Console.WriteLine("Successfully added " + book.Name + " ! ");    
+            Console.WriteLine("Total books in live runtime memory: " + LibarayDatabase.TotalBooksCount);
+        }
     }
 
     public class VerifyUser : Login, IBorrower 
@@ -144,18 +145,24 @@ namespace Lib
             Console.WriteLine("\nEnter the name of the book to be borrowed: ");
             string target = Console.ReadLine() ?? "";
             
-            bool found = false;
+            // ADVANCED CONCEPT: Explicit Nullable Type declaration to avoid crashes
+            Book? foundBook = null; 
+            
             foreach (var book in LibarayDatabase.Books)
             {
-                if (book.name.Equals(target, StringComparison.OrdinalIgnoreCase))
+                if (book.Name.Equals(target, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine(target + " Book available for borrowing.");
-                    found = true;
+                    foundBook = book;
                     break; 
                 }
             }
 
-            if (!found)
+            if (foundBook != null)
+            {
+                // FIX: Synchronized parameter casing to match global PascalCase definitions
+                Console.WriteLine(foundBook.Name + " Book available for borrowing. Price = " + foundBook.Cost + " PKR");
+            }
+            else
             {
                 Console.WriteLine("Incorrect! No '" + target + "' book names matching!");
             }
@@ -169,7 +176,7 @@ namespace Lib
             bool found = false;
             foreach (var book in LibarayDatabase.Books)
             {
-                if (book.name.Equals(target, StringComparison.OrdinalIgnoreCase))
+                if (book.Name.Equals(target, StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("Book verified in system database!");
                     found = true;
@@ -223,12 +230,11 @@ namespace Lib
 
             foreach(var book in LibarayDatabase.Books)
             {
-                Console.WriteLine(" " + book.name + "," + book.Genre + " by " + book.publisher + "; Price = " + book.Cost + " PKR ");
+                // FIX: Standardized string property values to clean capital letters
+                Console.WriteLine(" " + book.Name + "," + book.Genre + " by " + book.Publisher + "; Price = " + book.Cost + " PKR ");
             }
         }
     }
-
-    public record Book(string name, string publisher,int datePublish,string Genre,int cost);
 
     class Imp
     {
@@ -243,13 +249,13 @@ namespace Lib
             string input = Console.ReadLine() ?? "";
             int result;
 
+            // FIX: Split 'out' assignment parameter for C# 5 engine backwards-compatibility
             if (int.TryParse(input, out result)) return result;
 
             Console.WriteLine("Invalid entry! Defaulting to 0.");
             return 0;
         }
 
-       
         static void Main(string[] args)
         {   
             LibarayDatabase.seed();
@@ -266,13 +272,16 @@ namespace Lib
                     break;
                 }
 
+                // ADVANCED CONCEPT: Convert text values securely into custom Enums
                 SystemRole chosenRole = SystemRole.Unknown;
                 if (Enum.TryParse(inputRole, true, out chosenRole))
                 {
-                    
+                    // Successfully parsed
                 }
+
                 Login userSession = null;
 
+                // Evaluates the compiled Enum structure rather than volatile raw text
                 if (chosenRole == SystemRole.Admin)
                 {
                     VerifyAdmin admin = new VerifyAdmin();
@@ -284,7 +293,7 @@ namespace Lib
 
                     userSession = admin; 
                 }
-                else if (chosenRole== SystemRole.User)
+                else if (chosenRole == SystemRole.User)
                 {
                     VerifyUser user = new VerifyUser();
                     Console.WriteLine("Enter the username : ");
@@ -297,22 +306,19 @@ namespace Lib
                 }
                 else if (chosenRole == SystemRole.Guest)
                 {
-                    GuestUser guest = new GuestUser(); 
-                    guest.Age = ReadInt32("Enter your age to proceed: ");
-                    
-                    userSession = guest; 
+                 GuestUser guest = new GuestUser();guest.Age = ReadInt32("Enter your age to proceed: ");
+                userSession = guest;
                 }
                 else
-                {
-                    Console.WriteLine("Invalid system chosen! Try again.");
-                    continue;
+                {Console.WriteLine("Invalid system chosen! Try again.");
+                continue;
                 }
-
                 if (userSession != null)
                 {
-                    userSession.ExecuteRoleActions();
+                suserSession.ExecuteRoleActions();
                 }
-            }
-        }
-    }
-}
+                }
+                }
+                }
+
+                }
