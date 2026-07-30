@@ -159,7 +159,7 @@ namespace Lib
             Console.WriteLine("4.Log out/Main menu");
             int selection = Imp.ReadInt32("Enter your choice");
 
-            if (selection = 1)
+            if (selection == 1)
             {
                 
             
