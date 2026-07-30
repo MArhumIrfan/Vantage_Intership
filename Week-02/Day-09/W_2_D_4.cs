@@ -47,7 +47,7 @@ namespace Lib
     {
         public static List<Book> Books = new List<Book>();
         
-        public static int TotalBooksCount = 1;
+        public static int TotalBooksCount=2;
 
         public static void seed()
         {   
@@ -62,7 +62,7 @@ namespace Lib
         public static void DisplayAvalibleTitles()
         {
             Console.WriteLine("\n---Current Libaray Catalog Inventory---");
-            if (book.count)
+            if (Books.count == 0)
             {
                 Console.WriteLine("No Books stored in memory");
                 return;
