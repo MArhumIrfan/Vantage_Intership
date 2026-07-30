@@ -77,35 +77,33 @@ namespace Lib
         }
 
         public override void ExecuteRoleActions()
-        {
-            Imp.gap(); 
-            Console.WriteLine("--ADMIN--: BOOK ENTRY PANAL:");
+{
+    Imp.gap(); 
+    Console.WriteLine("--ADMIN--: BOOK ENTRY PANAL:");
 
-            Book book = new Book();
+    Console.WriteLine("Enter the book name : ");
+    string bName = Console.ReadLine() ?? "";
 
-            Console.WriteLine("Enter the book name : ");
-            book.name = Console.ReadLine() ?? "";
+    Console.WriteLine("Enter your book publisher : ");
+    string bPub = Console.ReadLine() ?? "";
 
-            Console.WriteLine("Enter your book publisher : ");
-            book.publisher = Console.ReadLine() ?? "";
+    int bYear = Imp.ReadInt32("Enter the Book Year: ");
 
-            book.datePublish = Imp.ReadInt32("Enter the Book Year: ");
+    Console.WriteLine("Enter the book genre: ");
+    string bGenre = Console.ReadLine() ?? "";
 
-            Console.WriteLine("Enter the book genre: ");
-            book.genre = Console.ReadLine() ?? "";
+    int bCost = Imp.ReadInt32("Enter the book price:");
 
-            book.Cost = Imp.ReadInt32("Enter the book price:");
 
-            LibarayDatabase.Books.Add(book);
+    Book book = new Book(bName, bPub, bYear, bGenre, bCost);
+    LibarayDatabase.Books.Add(book);
 
-            Book book = new Book( bName, bPub, bYear, bGenre, bCost);
-            LibarayDatabase.Books.Add(book);
+    LibarayDatabase.TotalBooksCount++; 
 
-            LibarayDatabase.TotalBooksCount++; 
+    Imp.gap();
+    Console.WriteLine("Successfully added " + book.name + " ! ");    
+}
 
-            Imp.gap();
-            Console.WriteLine("Successfully added " + book.name + " ! ");    
-        }
     }
 
     public class VerifyUser : Login, IBorrower 
