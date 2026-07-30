@@ -62,7 +62,7 @@ namespace Lib
         public static void DisplayAvalibleTitles()
         {
             Console.WriteLine("\n---Current Libaray Catalog Inventory---");
-            if (books.count)
+            if (book.count)
             {
                 Console.WriteLine("No Books stored in memory");
                 return;
@@ -210,7 +210,7 @@ namespace Lib
         {
 
             
-            DisplayAvalibleTitles();
+            LibarayDatabase.DisplayAvailableTitles();
 
 
             Console.WriteLine("\nEnter the name of the book to be borrowed: ");
@@ -240,7 +240,7 @@ namespace Lib
         public void ReturnBook()
         {
 
-            DisplayAvalibleTitles();
+            LibarayDatabase.DisplayAvailableTitles();
 
             Console.WriteLine("\nEnter the book to return: ");
             string target = Console.ReadLine() ?? "";
@@ -270,8 +270,8 @@ namespace Lib
         {
             Console.WriteLine("\n---Fine--Payement---");
 
-            DisplayAvalibleTitles();
-            
+            LibarayDatabase.DisplayAvailableTitles();
+
             Console.WriteLine("Enter the exact name of book to settle fines");
             string target = Console.ReadLine();
             Book foundBook = null;
