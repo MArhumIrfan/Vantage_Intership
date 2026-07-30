@@ -62,7 +62,7 @@ namespace Lib
         public static void DisplayAvalibleTitles()
         {
             Console.WriteLine("\n---Current Libaray Catalog Inventory---");
-            if (Books.count == 0)
+            if (Books.Count == 0)
             {
                 Console.WriteLine("No Books stored in memory");
                 return;
@@ -210,7 +210,7 @@ namespace Lib
         {
 
             
-            LibarayDatabase.DisplayAvailableTitles();
+            LibarayDatabase.DisplayAvalibleTitles();
 
 
             Console.WriteLine("\nEnter the name of the book to be borrowed: ");
