@@ -1,5 +1,5 @@
 /*
-UserNames & Password for all
+UserNames & Password for all types
 --
 --Admin: UserName: "Admin", Password: "admin123".
 --
