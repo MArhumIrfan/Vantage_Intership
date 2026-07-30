@@ -11,20 +11,31 @@
 using System;
 using System.Collections.Generic;
 
+
+
 namespace Lib 
 {   
+    public enum SystemRole
+    {
+    Admin,
+    User,
+    Guest,
+    Unknown
+    }
+
+
+
     public static class LibarayDatabase
     {
         public static List<Book> Books = new List<Book>();
         
+        
+        public static int TotalBooksCount =1;
+
+
         public static void seed()
         {   
-            Book book1 = new Book();
-            book1.name = "The Great Gatsby";
-            book1.publisher = "Penguin"; 
-            book1.datePublish = 1990;
-            book1.genre = "fantasy";
-            book1.Cost = 1500;
+            Book book1 = new Book("The Great Gatsby","Penguin",1990,"Fanstasy","1000");
             Books.Add(book1);
         }
     }
@@ -86,6 +97,11 @@ namespace Lib
             book.Cost = Imp.ReadInt32("Enter the book price:");
 
             LibarayDatabase.Books.Add(book);
+
+            Book book = new Book( bName, bPub, bYear, bGenre, bCost);
+            LibarayDatabase.Books.Add(book);
+
+            LibarayDatabase.TotalBooksCount++; 
 
             Imp.gap();
             Console.WriteLine("Successfully added " + book.name + " ! ");    
@@ -214,29 +230,7 @@ namespace Lib
         }
     }
 
-    public class Book
-    {   
-        private int _cost; 
-        public int Cost
-        {
-            get { return _cost; }
-            set { _cost = value < 0 ? 0 : value; } 
-        }
-
-        public string name;
-        public string publisher;
-        public int datePublish;
-        public string genre;
-
-        public Book()
-        {
-            name = "unknown";
-            publisher = "unknown";
-            datePublish = 2026;
-            genre = "unknown";
-            _cost = 0; 
-        }
-    }
+    public record Book(string name, string publisher,int datePublish,string Genre,int cost);
 
     class Imp
     {
@@ -274,9 +268,14 @@ namespace Lib
                     break;
                 }
 
+                SystemRole chosenRole = SystemRole.Unknown;
+                if (Enum.TryParse(inputRole, true, out chosenRole))
+                {
+                    
+                }
                 Login userSession = null;
 
-                if (inputRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                if (chosenRole == SystemRole.Admin)
                 {
                     VerifyAdmin admin = new VerifyAdmin();
                     Console.WriteLine("Enter the Admin Username : ");
@@ -287,7 +286,7 @@ namespace Lib
 
                     userSession = admin; 
                 }
-                else if (inputRole.Equals("User", StringComparison.OrdinalIgnoreCase))
+                else if (chosenRole== SystemRole.User)
                 {
                     VerifyUser user = new VerifyUser();
                     Console.WriteLine("Enter the username : ");
@@ -298,7 +297,7 @@ namespace Lib
 
                     userSession = user; 
                 }
-                else if (inputRole.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+                else if (chosenRole == SystemRole.Guest)
                 {
                     GuestUser guest = new GuestUser(); 
                     guest.Age = ReadInt32("Enter your age to proceed: ");
