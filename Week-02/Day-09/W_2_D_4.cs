@@ -35,7 +35,7 @@ namespace Lib
 
         public static void seed()
         {   
-            Book book1 = new Book("The Great Gatsby","Penguin",1990,"Fanstasy","1000");
+            Book book1 = new Book("The Great Gatsby","Penguin",1990,"Fanstasy",1000);
             Books.Add(book1);
         }
     }
