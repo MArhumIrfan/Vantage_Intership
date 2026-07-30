@@ -53,6 +53,10 @@ namespace Lib
         {   
             Book book1 = new Book("The Great Gatsby", "Penguin", 1990, "Fantasy", 1000);
             Books.Add(book1);
+
+            Book book1 = new Book("To kill a Mockingbirf","Lippincott",1960,"Classic",1200);
+            Books.FineDue = 500;
+            Books.Add(books2);
         }
     }
 
@@ -208,10 +212,55 @@ namespace Lib
 
         public void PayFineBook()
         {
-            Console.WriteLine("\nPay the fine due: Code active");
-            Console.WriteLine("Enter the book name: ");
-            string target = Console.ReadLine() ?? ""; 
-            Console.WriteLine("Processing fine clearance for: " + target);
+            Console.WriteLine("\n---Fine--Payement---");
+            Console.WriteLine("Enter the exact name of book to settle fines");
+            string target = Console.ReadLine();
+            Book foundBook = null;
+
+            foreach (var book in LibarayDatabase.Books)
+            {
+                if (book.Name.Equals(target, StringComparison.OrdinalIgnoreCase))
+                {
+                    foundBook = book;
+                    break;
+                }
+            }
+
+            if (foundBook != null)
+            {
+                if (foundBook.FineDue <= 0)
+                {
+                    Console.WriteLine("Good News!, There is no outstanding fine for the book!");
+                }
+
+                else
+                {
+                    Console.WriteLine("Outstanding late fess for the "+ foundBook.Name+" is fine:  "+foundBook.FineDue+" PKR ");
+                    int payment = Imp.ReadInt32("Enter the Amount to pay for the fine");
+
+
+                    if (payment <= 0)
+                    {
+                        Console.WriteLine("Invalid amount of payment value given, Transaction cancelled");
+                    }
+
+                    else if (payment > foundBook.FineDue)
+                    {
+                        int change = payment - foundBook.FineDue;
+                        Console.WriteLine("Transaction Completed! your change is : "+change+" PKR ");
+                        foundBook.FineDue = 0;
+                    }
+                    else
+                    {
+                        foundBook.FineDue -= payment;
+                        Console.WriteLine("Payment accpected!, Your remaining payment is : "+foundBook.FineDue +" PKR ");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error: '"+target+"could not be found in our system records");
+            }
         }
     }
 
