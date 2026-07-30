@@ -1,42 +1,43 @@
-/*
-
-UserNames & Password
-
---Admin:
-UserName:"Admin"
-Password:"admin123"
-----
-
---User
-UserName:"User"
-Password:"User123"
-----
-
---Guest
-No UserName or PassWord Required
-----
-
+/*UserNames & Password
+--
+--Admin:UserName:"Admin"Password:"admin123"--
+--
+--UserUserName:"User"Password:"User123"--
+--
+--GuestNo UserName or PassWord Required--
+--
 */
+
 using System;
 using System.Collections.Generic;
 
 namespace Lib 
- {   
+{   
     public static class LibarayDatabase
     {
         public static List<Book> Books = new List<Book>();
+        
+        public static void seed()
+        {   
+            Book book1 = new Book();
+            book1.name = "The Great Gatsby";
+            book1.publisher = "Penguin"; 
+            book1.datePublish = 1990;
+            book1.genre = "fantasy";
+            book1.Cost = 1500;
+            Books.Add(book1);
+        }
     }
 
     public interface IBorrower
     {
         void BorrowBook();
         void ReturnBook(); 
+        void PayFineBook(); 
     }
 
-   
     public abstract class Login
     {
-        
         public abstract void ExecuteRoleActions(); 
     }
     
@@ -49,7 +50,7 @@ namespace Lib
             set
             {
                 if (value != "Admin") { Console.WriteLine("Incorrect Username entered!"); Environment.Exit(0); }
-                else { Console.WriteLine("Correct Username entered."); adminUserName = value; }
+                else { adminUserName = value; }
             }
         }
         
@@ -60,7 +61,7 @@ namespace Lib
             set
             {
                 if (value != "admin123") { Console.WriteLine("Incorrect password Entred"); Environment.Exit(0); }
-                else { Console.WriteLine("Correct password entered."); adminPassword = value; }
+                else { adminPassword = value; }
             }
         }
 
@@ -74,7 +75,7 @@ namespace Lib
             Console.WriteLine("Enter the book name : ");
             book.name = Console.ReadLine() ?? "";
 
-            Console.WriteLine("Enter your book publihser : ");
+            Console.WriteLine("Enter your book publisher : ");
             book.publisher = Console.ReadLine() ?? "";
 
             book.datePublish = Imp.ReadInt32("Enter the Book Year: ");
@@ -91,7 +92,6 @@ namespace Lib
         }
     }
 
-    
     public class VerifyUser : Login, IBorrower 
     {
         private string username = "User";
@@ -122,16 +122,63 @@ namespace Lib
             Console.WriteLine("User-Dashboard");
             BorrowBook();
             ReturnBook();
+            PayFineBook();
         }
 
-       
         public void BorrowBook()
         {
-            Console.WriteLine("Borrow Book: Code not implemented");
+            Console.WriteLine("\nEnter the name of the book to be borrowed: ");
+            string target = Console.ReadLine() ?? "";
+            
+            bool found = false;
+            foreach (var book in LibarayDatabase.Books)
+            {
+                if (book.name.Equals(target, StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine(target + " Book available for borrowing.");
+                    found = true;
+                    break; 
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("Incorrect! No '" + target + "' book names matching!");
+            }
         }
+
         public void ReturnBook()
         {
-            Console.WriteLine("Return Book : Code not implemented");
+            Console.WriteLine("\nEnter the book to return: ");
+            string target = Console.ReadLine() ?? "";
+            
+            bool found = false;
+            foreach (var book in LibarayDatabase.Books)
+            {
+                if (book.name.Equals(target, StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Book verified in system database!");
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("That book does not belong to our catalog inventory registry.");
+            }
+            else
+            {
+                Console.WriteLine("Thank you for returning the book: " + target);
+            }
+        }
+
+        public void PayFineBook()
+        {
+            Console.WriteLine("\nPay the fine due: Code active");
+            Console.WriteLine("Enter the book name: ");
+            string target = Console.ReadLine() ?? ""; 
+            Console.WriteLine("Processing fine clearance for: " + target);
         }
     }
 
@@ -156,7 +203,7 @@ namespace Lib
 
             if (LibarayDatabase.Books.Count == 0) 
             {
-                Console.WriteLine("No Book avaliable");
+                Console.WriteLine("No Book available");
                 return;
             }
 
@@ -201,63 +248,73 @@ namespace Lib
         public static int ReadInt32(string prompt)
         {
             Console.Write(prompt);
-            
             string input = Console.ReadLine() ?? "";
             int result;
 
-           
             if (int.TryParse(input, out result)) return result;
 
             Console.WriteLine("Invalid entry! Defaulting to 0.");
             return 0;
         }
 
+       
         static void Main(string[] args)
         {   
-            gap();
-            Console.WriteLine(" Identify your role (Admin/User/Guest) ");
-            string inputRole = Console.ReadLine() ?? "";
-
-            Login userSession = null;
-
-            if (inputRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            LibarayDatabase.seed();
+            
+            while (true)
             {
-                VerifyAdmin admin = new VerifyAdmin();
-                Console.WriteLine("Enter the Admin Username : ");
-                admin.AdminUserName = Console.ReadLine() ?? "";
+                gap();
+                Console.WriteLine("Identify your role (Admin/User/Guest) or type 'exit' to quit: ");
+                string inputRole = Console.ReadLine() ?? "";
 
-                Console.WriteLine("Enter the Admin Password : ");
-                admin.AdminPassword = Console.ReadLine() ?? "";
+                if (inputRole.Equals("exit", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Closing execution thread session. Goodbye!");
+                    break;
+                }
 
-                userSession = admin; 
-            }
-            else if (inputRole.Equals("User", StringComparison.OrdinalIgnoreCase))
-            {
-                VerifyUser user = new VerifyUser();
-                Console.WriteLine("Enter the username : ");
-                user.Username = Console.ReadLine() ?? "";
-                
-                Console.WriteLine("Enter the password : ");
-                user.UserPassword = Console.ReadLine() ?? ""; 
+                Login userSession = null;
 
-                userSession = user; 
-            }
-            else if (inputRole.Equals("Guest", StringComparison.OrdinalIgnoreCase))
-            {
-                GuestUser guest = new GuestUser(); 
-                guest.Age = ReadInt32("Enter your age to proceed: ");
-                
-                userSession = guest; 
-            }
-            else
-            {
-                Console.WriteLine("Invalid system chosen!");
-                return;
-            }
+                if (inputRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    VerifyAdmin admin = new VerifyAdmin();
+                    Console.WriteLine("Enter the Admin Username : ");
+                    admin.AdminUserName = Console.ReadLine() ?? "";
 
-            if (userSession != null)
-            {
-                userSession.ExecuteRoleActions();
+                    Console.WriteLine("Enter the Admin Password : ");
+                    admin.AdminPassword = Console.ReadLine() ?? "";
+
+                    userSession = admin; 
+                }
+                else if (inputRole.Equals("User", StringComparison.OrdinalIgnoreCase))
+                {
+                    VerifyUser user = new VerifyUser();
+                    Console.WriteLine("Enter the username : ");
+                    user.Username = Console.ReadLine() ?? "";
+                    
+                    Console.WriteLine("Enter the password : ");
+                    user.UserPassword = Console.ReadLine() ?? ""; 
+
+                    userSession = user; 
+                }
+                else if (inputRole.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+                {
+                    GuestUser guest = new GuestUser(); 
+                    guest.Age = ReadInt32("Enter your age to proceed: ");
+                    
+                    userSession = guest; 
+                }
+                else
+                {
+                    Console.WriteLine("Invalid system chosen! Try again.");
+                    continue;
+                }
+
+                if (userSession != null)
+                {
+                    userSession.ExecuteRoleActions();
+                }
             }
         }
     }
