@@ -32,15 +32,20 @@ namespace Lib
         public int Cost { get; set; }
         public int FineDue { get; set; }
 
-        // --- New: borrow tracking ---
         public bool IsBorrowed { get; set; }
         public string BorrowedBy { get; set; }
+
+        // --- New: Due Date Tracking ---
+        public DateTime BorrowedDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         // Parameterless constructor
         public Book()
         {
             IsBorrowed = false;
             BorrowedBy = "";
+            BorrowedDate = DateTime.MinValue;
+            DueDate = DateTime.MinValue;
         }
 
         public Book(string name, string publisher, int datePublish, string genre, int cost)
@@ -52,6 +57,8 @@ namespace Lib
             Cost = cost;
             IsBorrowed = false;
             BorrowedBy = "";
+            BorrowedDate = DateTime.MinValue;
+            DueDate = DateTime.MinValue;
         }
     }
 
@@ -64,7 +71,6 @@ namespace Lib
             get { return Books.Count; }
         }
 
-        // Changed to a standard text file
         private const string SaveFilePath = "library.txt";
 
         public static void Seed()
@@ -77,7 +83,6 @@ namespace Lib
             Books.Add(book2);
         }
 
-        // --- Pure System.IO Load ---
         public static void LoadFromFile()
         {
             try
@@ -91,7 +96,8 @@ namespace Lib
                     {
                         string[] parts = line.Split('|');
                         
-                        if (parts.Length == 8)
+                        // Updated to expect 10 properties instead of 8
+                        if (parts.Length == 10)
                         {
                             Book b = new Book();
                             b.Name = parts[0];
@@ -102,6 +108,8 @@ namespace Lib
                             b.FineDue = int.Parse(parts[5]);
                             b.IsBorrowed = bool.Parse(parts[6]);
                             b.BorrowedBy = parts[7];
+                            b.BorrowedDate = DateTime.Parse(parts[8]); // Parse saved date
+                            b.DueDate = DateTime.Parse(parts[9]);      // Parse saved date
                             
                             Books.Add(b);
                         }
@@ -121,7 +129,6 @@ namespace Lib
             }
         }
 
-        // --- Pure System.IO Save ---
         public static void SaveToFile()
         {
             try
@@ -130,8 +137,10 @@ namespace Lib
                 
                 foreach (Book b in Books)
                 {
-                    // C# 5 Compatible string formatting (no $ character)
-                    string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}", b.Name, b.Publisher, b.DatePublish, b.Genre, b.Cost, b.FineDue, b.IsBorrowed, b.BorrowedBy);
+                    // Added {8} and {9} to save the BorrowedDate and DueDate as strings
+                    string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}", 
+                        b.Name, b.Publisher, b.DatePublish, b.Genre, b.Cost, b.FineDue, 
+                        b.IsBorrowed, b.BorrowedBy, b.BorrowedDate.ToString(), b.DueDate.ToString());
                     lines.Add(line);
                 }
                 
@@ -154,7 +163,7 @@ namespace Lib
 
             for (int i = 0; i < Books.Count; i++)
             {
-                string status = Books[i].IsBorrowed ? "BORROWED" : "Available";
+                string status = Books[i].IsBorrowed ? "BORROWED (Due: " + Books[i].DueDate.ToString("yyyy-MM-dd") + ")" : "Available";
                 Console.WriteLine((i + 1) + " . " + Books[i].Name + " (" + Books[i].Genre + ") - " + status);
             }
             Console.WriteLine("-------------------------------------");
@@ -427,11 +436,17 @@ namespace Lib
                 return;
             }
 
+            // --- New: Assigning the Dates ---
             foundBook.IsBorrowed = true;
             foundBook.BorrowedBy = Username;
+            foundBook.BorrowedDate = DateTime.Now; // Gets current exact date and time
+            foundBook.DueDate = DateTime.Now.AddDays(14); // Due exactly 14 days from now
+
             LibraryDatabase.SaveToFile();
 
+            Imp.Gap();
             Console.WriteLine(foundBook.Name + " borrowed successfully! Price = " + foundBook.Cost + " PKR");
+            Console.WriteLine("IMPORTANT: Your due date is " + foundBook.DueDate.ToString("yyyy-MM-dd") + ".");
         }
 
         public void ReturnBook()
@@ -463,10 +478,30 @@ namespace Lib
                 return;
             }
 
+            // --- New: Calculating the Fine ---
+            if (DateTime.Now > foundBook.DueDate)
+            {
+                // Subtracting DueDate from Current Date gives us a TimeSpan. We pull the total .Days from it.
+                int daysLate = (DateTime.Now - foundBook.DueDate).Days; 
+                
+                // If it's less than a full 24 hours late, it might register as 0 days. We ensure at least 1 day is charged.
+                if (daysLate == 0) daysLate = 1; 
+                
+                int fineAmount = daysLate * 50; // 50 PKR per day
+                foundBook.FineDue += fineAmount;
+
+                Imp.Gap();
+                Console.WriteLine("WARNING: This book is " + daysLate + " days late.");
+                Console.WriteLine("An automatic late fee of " + fineAmount + " PKR has been added to the account for this book.");
+            }
+
             foundBook.IsBorrowed = false;
             foundBook.BorrowedBy = "";
+            foundBook.BorrowedDate = DateTime.MinValue; // Reset dates
+            foundBook.DueDate = DateTime.MinValue;      // Reset dates
             LibraryDatabase.SaveToFile();
 
+            Imp.Gap();
             Console.WriteLine("Thank you for returning the book: " + foundBook.Name);
         }
 
