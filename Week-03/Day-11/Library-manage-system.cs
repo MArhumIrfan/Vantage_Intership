@@ -761,14 +761,15 @@ namespace Lib
     {
         public static Dictionary<int, string> RegisteredUsers = new Dictionary<int, string>();
 
-        public static void ClearAndHeader(string title)
+       
+       public static void ClearAndHeader(string title)
         {
             Console.Clear(); 
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("==================================================");
-            if (title.Equals("Library Management System", StringComparer.OrdinalIgnoreCase))
+
+            // Fixed: Replaced .Equals() with standard string comparison
+            if (title == "Library Management System")
             {
-                
                 Console.WriteLine(@"  _      _ _                          ");
                 Console.WriteLine(@" | |    (_) |                         ");
                 Console.WriteLine(@" | |     _| |__  _ __ __ _ _ __ _   _ ");
@@ -779,16 +780,17 @@ namespace Lib
                 Console.WriteLine(@"                                |___/ ");
                 Console.WriteLine("==================================================");
             }
-            else{
-            
-            int spaces = (50 - title.Length) / 2;
-            string padding = new string(' ', spaces > 0 ? spaces : 0);
-            
-            Console.WriteLine(padding + title.ToUpper());
-            Console.WriteLine("==================================================\n");
+            else
+            {
+                // Standard window header for dashboards and submenus
+                Console.WriteLine("==================================================");
+                int spaces = (50 - title.Length) / 2;
+                string padding = new string(' ', spaces > 0 ? spaces : 0);
+                Console.WriteLine(padding + title.ToUpper());
+                Console.WriteLine("==================================================\n");
+            }
+
             Console.ResetColor();
-                
-                }
         }
 
         // --- NEW: Random Quote Generator ---
