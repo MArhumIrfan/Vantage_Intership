@@ -775,9 +775,9 @@ namespace Lib
         {
             // NEW USERS ADDED HERE
             RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
-            RegisteredUsers.Add(10552, "Guest Student");
-            RegisteredUsers.Add(11111, "Ali Khan");
-            RegisteredUsers.Add(22222, "Sara Ahmed");
+            RegisteredUsers.Add(39425, "Ghayyur Abbas");
+            RegisteredUsers.Add(40142, "Wazir Muzzamil Hussain");
+            RegisteredUsers.Add(39358, "Muhammad Whahaj");
             RegisteredUsers.Add(33333, "Zainab Tariq");
 
             LibraryDatabase.LoadFromFile();
