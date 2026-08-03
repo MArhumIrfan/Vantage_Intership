@@ -778,7 +778,7 @@ namespace Lib
             RegisteredUsers.Add(39425, "Ghayyur Abbas");
             RegisteredUsers.Add(40142, "Wazir Muzzamil Hussain");
             RegisteredUsers.Add(39358, "Muhammad Whahaj");
-            RegisteredUsers.Add(33333, "Zainab Tariq");
+            RegisteredUsers.Add(39859, "Insfalullah Khan");
 
             LibraryDatabase.LoadFromFile();
 
