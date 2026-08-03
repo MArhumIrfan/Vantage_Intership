@@ -1,0 +1,2 @@
+The Great Gatsby|Penguin|1990|Fantasy|1000|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+To Kill a Mockingbird|Lippincott|1960|Classic|1200|500|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
