@@ -856,6 +856,9 @@ namespace Lib
             while (true)
             {
                 ClearAndHeader("Library Management System");
+
+                DisplayRandomQuote();
+
                 Console.WriteLine("Identify your role (Admin/User/Guest) or type 'exit' to quit: ");
                 string inputRole = Console.ReadLine() ?? "";
 
