@@ -12,7 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq; // Added to easily find the highest Book ID
+using System.Linq;
+using System.Threading;
 
 namespace Lib
 {
@@ -26,7 +27,6 @@ namespace Lib
 
     public class Book
     {
-        // --- New: Unique Identifier ---
         public int BookID { get; set; }
         public string Name { get; set; }
         public string Publisher { get; set; }
@@ -41,7 +41,6 @@ namespace Lib
         public DateTime BorrowedDate { get; set; }
         public DateTime DueDate { get; set; }
 
-        // Parameterless constructor
         public Book()
         {
             IsBorrowed = false;
@@ -67,7 +66,6 @@ namespace Lib
 
     public static class LibraryDatabase
     {
-        // --- Transformed to a Dictionary (Key: BookID, Value: Book Object) ---
         public static Dictionary<int, Book> Catalog = new Dictionary<int, Book>();
 
         public static int TotalBooksCount
@@ -79,19 +77,18 @@ namespace Lib
 
         public static void Seed()
         {
-            // --- 3 Copies of The Great Gatsby ---
+            // 3 Copies of The Great Gatsby
             Catalog.Add(101, new Book(101, "The Great Gatsby", "Penguin", 1990, "Fantasy", 1000));
             Catalog.Add(102, new Book(102, "The Great Gatsby", "Penguin", 1990, "Fantasy", 1000));
             Catalog.Add(103, new Book(103, "The Great Gatsby", "Penguin", 1990, "Fantasy", 1000));
             
-            // --- 2 Copies of To Kill a Mockingbird ---
+            // 2 Copies of To Kill a Mockingbird
             Book mockingbird1 = new Book(104, "To Kill a Mockingbird", "Lippincott", 1960, "Classic", 1200);
-            mockingbird1.FineDue = 500; // Someone returned this copy late
+            mockingbird1.FineDue = 500;
             Catalog.Add(104, mockingbird1);
-            
             Catalog.Add(105, new Book(105, "To Kill a Mockingbird", "Lippincott", 1960, "Classic", 1200));
 
-            // --- Single Copies ---
+            // Single Copies
             Catalog.Add(106, new Book(106, "Data Communication and Networks", "Hafiz Mati ur Rahman", 2023, "Education", 2500));
             
             Book lr0Parser = new Book(107, "Mastering LR(0) Parsers", "Iqra Press", 2024, "Computer Science", 3000);
@@ -104,6 +101,9 @@ namespace Lib
             Book pythonGui = new Book(108, "Python GUI with Tkinter", "Vantage Tech", 2025, "Programming", 1800);
             pythonGui.FineDue = 150;
             Catalog.Add(108, pythonGui);
+
+            Catalog.Add(109, new Book(109, "The Art of UI Redesign", "Ghayyur Abbas", 2022, "Design", 2200));
+            Catalog.Add(110, new Book(110, "High-Speed Routing for PC Games", "Wazir Muzammil Hussain", 2021, "Technology", 1500));
         }
 
         public static void LoadFromFile()
@@ -119,7 +119,6 @@ namespace Lib
                     {
                         string[] parts = line.Split('|');
                         
-                        // Updated to 11 parts to include the new BookID at index 0
                         if (parts.Length == 11)
                         {
                             Book b = new Book();
@@ -138,17 +137,14 @@ namespace Lib
                             Catalog.Add(b.BookID, b);
                         }
                     }
-                    Console.WriteLine("Library data loaded from " + SaveFilePath);
                 }
                 else
                 {
                     Seed();
-                    Console.WriteLine("No saved data found, starting with default catalog.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Could not load saved data (" + ex.Message + "). Starting with default catalog.");
                 Seed();
             }
         }
@@ -159,7 +155,6 @@ namespace Lib
             {
                 List<string> lines = new List<string>();
                 
-                // Iterating through the Dictionary's Values
                 foreach (Book b in Catalog.Values)
                 {
                     string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}", 
@@ -172,13 +167,13 @@ namespace Lib
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Warning: could not save library data (" + ex.Message + ")");
+                UI.PrintError("Warning: could not save library data (" + ex.Message + ")");
             }
         }
 
         public static void DisplayAvailableTitles()
         {
-            Console.WriteLine("\n---Current Library Catalog Inventory---");
+            Console.WriteLine("--- Current Library Catalog Inventory ---");
             if (Catalog.Count == 0)
             {
                 Console.WriteLine("No Books stored in memory");
@@ -188,23 +183,20 @@ namespace Lib
             foreach (Book b in Catalog.Values)
             {
                 string status = b.IsBorrowed ? "BORROWED (Due: " + b.DueDate.ToString("yyyy-MM-dd") + ")" : "Available";
-                // Displaying the Book ID so the user knows what to type
                 Console.WriteLine(string.Format("[ID: {0}] {1} ({2}) - {3}", b.BookID, b.Name, b.Genre, status));
             }
-            Console.WriteLine("-------------------------------------");
+            Console.WriteLine("-----------------------------------------");
         }
 
         public static void AdvancedSearch()
         {
-            Imp.Gap();
-            Console.WriteLine("--- Advanced Search & Filtering ---");
             Console.WriteLine("1. Search by Title Keyword");
             Console.WriteLine("2. Search by Genre");
             Console.WriteLine("3. Search by Price Range");
-            Console.WriteLine("4.Search by Book ID");
-            Console.WriteLine("5. Return to Previous Menu");
+            Console.WriteLine("4. Search by Book ID");
+            Console.WriteLine("5. Return to Previous Menu\n");
             
-            int choice = Imp.ReadInt32("Enter your choice: ");
+            int choice = UI.ReadInt32("Enter your choice: ");
             
             List<Book> results = new List<Book>();
 
@@ -223,7 +215,7 @@ namespace Lib
             }
             else if (choice == 2)
             {
-                Console.Write("Enter genre to search for (e.g., Fantasy, Classic): ");
+                Console.Write("Enter genre to search for: ");
                 string genre = Console.ReadLine() ?? "";
                 
                 foreach (Book book in Catalog.Values)
@@ -236,8 +228,8 @@ namespace Lib
             }
             else if (choice == 3)
             {
-                int minPrice = Imp.ReadInt32("Enter minimum price (PKR): ");
-                int maxPrice = Imp.ReadInt32("Enter maximum price (PKR): ");
+                int minPrice = UI.ReadInt32("Enter minimum price (PKR): ");
+                int maxPrice = UI.ReadInt32("Enter maximum price (PKR): ");
                 
                 foreach (Book book in Catalog.Values)
                 {
@@ -249,15 +241,15 @@ namespace Lib
             }
             else if (choice == 4)
             {
-                int searchId = Imp.ReadInt32("Enter the exact Book ID : ");
-
+                int searchId = UI.ReadInt32("Enter the exact Book ID: ");
+                
                 if (Catalog.ContainsKey(searchId))
                 {
                     results.Add(Catalog[searchId]);
                 }
                 else
                 {
-                    Console.WriteLine("No Book found With that ID. ");
+                    UI.PrintError("No book found matching that ID.");
                 }
             }
             else
@@ -265,10 +257,9 @@ namespace Lib
                 return; 
             }
 
-            Imp.Gap();
-            Console.WriteLine("--- Search Results ---");
+            Console.WriteLine("\n--- Search Results ---");
             
-            if (results.Count == 0)
+            if (results.Count == 0 && choice != 4)
             {
                 Console.WriteLine("No books found matching your criteria.");
             }
@@ -303,8 +294,8 @@ namespace Lib
             get { return adminUserName; }
             set
             {
-                if (value != "Admin") { Console.WriteLine("Incorrect Username entered!"); Environment.Exit(0); }
-                else { Console.WriteLine(" Correct Admin Username input "); adminUserName = value; }
+                if (value != "Admin") { UI.PrintError("Incorrect Username entered!"); Environment.Exit(0); }
+                else { UI.PrintSuccess("Correct Admin Username input"); adminUserName = value; }
             }
         }
 
@@ -314,8 +305,8 @@ namespace Lib
             get { return adminPassword; }
             set
             {
-                if (value != "admin123") { Console.WriteLine("Incorrect password Entered"); Environment.Exit(0); }
-                else { Console.WriteLine(" Correct Admin Password Input "); adminPassword = value; }
+                if (value != "admin123") { UI.PrintError("Incorrect password Entered"); Environment.Exit(0); }
+                else { UI.PrintSuccess("Correct Admin Password Input"); adminPassword = value; }
             }
         }
 
@@ -323,33 +314,30 @@ namespace Lib
         {
             while (true)
             {
-                Imp.Gap();
-                Console.WriteLine("--ADMIN--: BOOK ENTRY PANEL:");
-                Console.WriteLine("1.Add a new book");
-                Console.WriteLine("2.View current Inventory");
-                Console.WriteLine("3.Logout / Mainmenu");
+                UI.ClearAndHeader("Admin Dashboard");
+                Console.WriteLine("1. Add a new book");
+                Console.WriteLine("2. View current Inventory");
+                Console.WriteLine("3. Logout / Main menu\n");
 
-                int selection = Imp.ReadInt32("Please chose a choice number : ");
+                int selection = UI.ReadInt32("Please choose an option: ");
 
                 if (selection == 1)
                 {
-                    Imp.Gap();
-                    Console.WriteLine(" Admin Book Entry Panel ");
+                    UI.ClearAndHeader("Admin Book Entry Panel");
 
-                    Console.WriteLine("Enter the book name : ");
+                    Console.Write("Enter the book name: ");
                     string bName = Console.ReadLine() ?? "";
 
-                    Console.WriteLine("Enter your book publisher : ");
+                    Console.Write("Enter your book publisher: ");
                     string bPub = Console.ReadLine() ?? "";
 
-                    int bYear = Imp.ReadInt32("Enter the Book Year: ");
+                    int bYear = UI.ReadInt32("Enter the Book Year: ");
 
-                    Console.WriteLine("Enter the book genre: ");
+                    Console.Write("Enter the book genre: ");
                     string bGenre = Console.ReadLine() ?? "";
 
-                    int bCost = Imp.ReadInt32("Enter the book price: ");
+                    int bCost = UI.ReadInt32("Enter the book price: ");
 
-                    // Automatically generate the next available ID
                     int newId = 101;
                     if (LibraryDatabase.Catalog.Count > 0)
                     {
@@ -360,25 +348,27 @@ namespace Lib
                     LibraryDatabase.Catalog.Add(newId, book);
                     LibraryDatabase.SaveToFile();
 
-                    Imp.Gap();
-                    Console.WriteLine("Successfully added " + book.Name + " with ID [" + newId + "]!");
+                    UI.PrintSuccess("Successfully added " + book.Name + " with ID [" + newId + "]!");
                     Console.WriteLine("Total books in live runtime memory: " + LibraryDatabase.TotalBooksCount);
+                    UI.Pause();
                 }
                 else if (selection == 2)
                 {
-                    Imp.Gap();
-                    Console.WriteLine("Live tracking Inventory count: " + LibraryDatabase.TotalBooksCount + " Books stored. ");
+                    UI.ClearAndHeader("Live Inventory Tracking");
+                    Console.WriteLine("Total Books Stored: " + LibraryDatabase.TotalBooksCount + "\n");
                     LibraryDatabase.DisplayAvailableTitles();
+                    UI.Pause();
                 }
                 else if (selection == 3)
                 {
-                    Imp.Gap();
-                    Console.WriteLine("Logging out of the System.......");
+                    UI.PrintWarning("Logging out of the System.......");
+                    Thread.Sleep(1000);
                     break;
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect input! try again");
+                    UI.PrintError("Incorrect input! Try again.");
+                    UI.Pause();
                 }
             }
         }
@@ -386,7 +376,6 @@ namespace Lib
 
     public class VerifyUser : Login, IBorrower
     {
-        // Now holds the actual user's name instead of just "User"
         public string Username { get; set; } 
 
         private string userPassword = "User123";
@@ -395,8 +384,8 @@ namespace Lib
             get { return userPassword; }
             set
             {
-                if (value != "User123") { Console.WriteLine("Incorrect password !"); Environment.Exit(0); }
-                else { Console.WriteLine(" Correct Password Input "); userPassword = value; }
+                if (value != "User123") { UI.PrintError("Incorrect password !"); Environment.Exit(0); }
+                else { UI.PrintSuccess("Correct Password Input"); userPassword = value; }
             }
         }
 
@@ -404,52 +393,57 @@ namespace Lib
         {
             while (true)
             {
-                Imp.Gap();
-                Console.WriteLine(Username + "'s Dashboard");
+                UI.ClearAndHeader(Username + "'s Dashboard");
                 Console.WriteLine("1. To Borrow a Book");
                 Console.WriteLine("2. Return a Book");
                 Console.WriteLine("3. Pay Outstanding Fine");
                 Console.WriteLine("4. Advanced Search & Filtering");
-                Console.WriteLine("5. Log out/Main menu");
+                Console.WriteLine("5. Log out / Main menu\n");
                 
-                int selection = Imp.ReadInt32("Enter your choice: ");
+                int selection = UI.ReadInt32("Enter your choice: ");
 
                 if (selection == 1)
                 {
+                    UI.ClearAndHeader("Borrow a Book");
                     BorrowBook();
+                    UI.Pause();
                 }
                 else if (selection == 2)
                 {
+                    UI.ClearAndHeader("Return a Book");
                     ReturnBook();
+                    UI.Pause();
                 }
                 else if (selection == 3)
                 {
+                    UI.ClearAndHeader("Fine Payment");
                     PayFineBook();
+                    UI.Pause();
                 }
                 else if (selection == 4)
                 {
+                    UI.ClearAndHeader("Advanced Search");
                     LibraryDatabase.AdvancedSearch(); 
+                    UI.Pause();
                 }
                 else if (selection == 5)
                 {
-                    Imp.Gap();
-                    Console.WriteLine("Logging out of the System.......");
+                    UI.PrintWarning("Logging out of the System.......");
+                    Thread.Sleep(1000);
                     break;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid Input! Please choose 1-5.");
+                    UI.PrintError("Invalid Input! Please choose 1-5.");
+                    UI.Pause();
                 }
             }
         }
 
         public void BorrowBook()
-        {   
-
-
+        {
             int borrowedCount = 0;
-
-            foreach(Book book in LibraryDatabase.Catalog.Values)
+            foreach (Book book in LibraryDatabase.Catalog.Values)
             {
                 if (book.IsBorrowed && book.BorrowedBy == Username)
                 {
@@ -457,23 +451,20 @@ namespace Lib
                 }
             }
 
-            if(borrowedCount >= 3)
+            if (borrowedCount >= 3)
             {
-                Imp.Gap();
-                Console.WriteLine("Limit Reached: You already have "+ borrowedCount+ " book checked out. ");
+                UI.PrintError("Limit Reached: You already have " + borrowedCount + " books checked out.");
                 Console.WriteLine("Please return a book before borrowing a new one.");
-                return;
+                return; 
             }
-
 
             LibraryDatabase.DisplayAvailableTitles();
 
-            // Simplified to an O(1) Dictionary Lookup
-            int targetID = Imp.ReadInt32("\nEnter the ID of the book to be borrowed: ");
+            int targetID = UI.ReadInt32("\nEnter the ID of the book to be borrowed: ");
 
             if (!LibraryDatabase.Catalog.ContainsKey(targetID))
             {
-                Console.WriteLine("Error: Book ID [" + targetID + "] not found in the catalog.");
+                UI.PrintError("Book ID [" + targetID + "] not found in the catalog.");
                 return;
             }
 
@@ -481,7 +472,7 @@ namespace Lib
 
             if (foundBook.IsBorrowed)
             {
-                Console.WriteLine(foundBook.Name + " is currently borrowed by " +
+                UI.PrintError(foundBook.Name + " is currently borrowed by " +
                     (foundBook.BorrowedBy == Username ? "you already" : "someone else") + "!");
                 return;
             }
@@ -493,20 +484,19 @@ namespace Lib
 
             LibraryDatabase.SaveToFile();
 
-            Imp.Gap();
-            Console.WriteLine(foundBook.Name + " borrowed successfully! Price = " + foundBook.Cost + " PKR");
-            Console.WriteLine("IMPORTANT: Your due date is " + foundBook.DueDate.ToString("yyyy-MM-dd") + ".");
+            UI.PrintSuccess(foundBook.Name + " borrowed successfully! Price = " + foundBook.Cost + " PKR");
+            UI.PrintWarning("IMPORTANT: Your due date is " + foundBook.DueDate.ToString("yyyy-MM-dd") + ".");
         }
 
         public void ReturnBook()
         {
             LibraryDatabase.DisplayAvailableTitles();
 
-            int targetID = Imp.ReadInt32("\nEnter the Book ID to return: ");
+            int targetID = UI.ReadInt32("\nEnter the Book ID to return: ");
 
             if (!LibraryDatabase.Catalog.ContainsKey(targetID))
             {
-                Console.WriteLine("Error: Book ID [" + targetID + "] not found in the catalog.");
+                UI.PrintError("Book ID [" + targetID + "] not found in the catalog.");
                 return;
             }
 
@@ -514,7 +504,7 @@ namespace Lib
 
             if (!foundBook.IsBorrowed)
             {
-                Console.WriteLine("This book wasn't marked as borrowed, so there's nothing to return.");
+                UI.PrintError("This book wasn't marked as borrowed, so there's nothing to return.");
                 return;
             }
 
@@ -526,8 +516,7 @@ namespace Lib
                 int fineAmount = daysLate * 50; 
                 foundBook.FineDue += fineAmount;
 
-                Imp.Gap();
-                Console.WriteLine("WARNING: This book is " + daysLate + " days late.");
+                UI.PrintWarning("WARNING: This book is " + daysLate + " days late.");
                 Console.WriteLine("An automatic late fee of " + fineAmount + " PKR has been added to the account.");
             }
 
@@ -537,16 +526,14 @@ namespace Lib
             foundBook.DueDate = DateTime.MinValue;      
             LibraryDatabase.SaveToFile();
 
-            Imp.Gap();
-            Console.WriteLine("Thank you for returning the book: " + foundBook.Name);
+            UI.PrintSuccess("Thank you for returning the book: " + foundBook.Name);
         }
 
         public void PayFineBook()
         {
-            Console.WriteLine("\n---Fine--Payment---");
             LibraryDatabase.DisplayAvailableTitles();
 
-            int targetID = Imp.ReadInt32("Enter the Book ID to settle fines: ");
+            int targetID = UI.ReadInt32("\nEnter the Book ID to settle fines: ");
             
             if (LibraryDatabase.Catalog.ContainsKey(targetID))
             {
@@ -554,21 +541,21 @@ namespace Lib
 
                 if (foundBook.FineDue <= 0)
                 {
-                    Console.WriteLine("Good News! There is no outstanding fine for this book.");
+                    UI.PrintSuccess("Good News! There is no outstanding fine for this book.");
                 }
                 else
                 {
-                    Console.WriteLine("Outstanding late fees for " + foundBook.Name + " is: " + foundBook.FineDue + " PKR ");
-                    int payment = Imp.ReadInt32("Enter the Amount to pay for the fine: ");
+                    Console.WriteLine("\nOutstanding late fees for " + foundBook.Name + " is: " + foundBook.FineDue + " PKR ");
+                    int payment = UI.ReadInt32("Enter the Amount to pay for the fine: ");
 
                     if (payment <= 0)
                     {
-                        Console.WriteLine("Invalid amount of payment value given, Transaction cancelled");
+                        UI.PrintError("Invalid amount of payment value given. Transaction cancelled.");
                     }
                     else if (payment > foundBook.FineDue)
                     {
                         int change = payment - foundBook.FineDue;
-                        Console.WriteLine("Transaction Completed! your change is : " + change + " PKR ");
+                        UI.PrintSuccess("Transaction Completed! Your change is: " + change + " PKR ");
                         foundBook.FineDue = 0;
                         LibraryDatabase.SaveToFile();
                     }
@@ -576,13 +563,13 @@ namespace Lib
                     {
                         foundBook.FineDue -= payment;
                         LibraryDatabase.SaveToFile();
-                        Console.WriteLine("Payment accepted! Your remaining payment is : " + foundBook.FineDue + " PKR ");
+                        UI.PrintSuccess("Payment accepted! Your remaining balance is: " + foundBook.FineDue + " PKR ");
                     }
                 }
             }
             else
             {
-                Console.WriteLine("Error: Book ID [" + targetID + "] not found.");
+                UI.PrintError("Book ID [" + targetID + "] not found.");
             }
         }
     }
@@ -595,20 +582,20 @@ namespace Lib
             get { return age; }
             set
             {
-                if (value < 18) { Console.WriteLine("You are Under 18!"); Environment.Exit(0); }
-                else if (value > 110) { Console.WriteLine("Too Old!"); Environment.Exit(0); }
-                else { Console.WriteLine("Access Allowed"); age = value; }
+                if (value < 18) { UI.PrintError("You are Under 18!"); Environment.Exit(0); }
+                else if (value > 110) { UI.PrintError("Too Old!"); Environment.Exit(0); }
+                else { UI.PrintSuccess("Access Allowed"); age = value; }
             }
         }
 
         public override void ExecuteRoleActions()
         {
-            Imp.Gap();
-            Console.WriteLine("\n --Guest Catalog--");
+            UI.ClearAndHeader("Guest Catalog");
 
             if (LibraryDatabase.Catalog.Count == 0)
             {
-                Console.WriteLine("\n No Books available");
+                Console.WriteLine("No Books available\n");
+                UI.Pause();
                 return;
             }
 
@@ -618,21 +605,22 @@ namespace Lib
                 Console.WriteLine(string.Format("[ID: {0}] {1}, {2} by {3}; Price = {4} PKR ; {5}", 
                     book.BookID, book.Name, book.Genre, book.Publisher, book.Cost, status));
             }
+            
+            Console.WriteLine();
+            UI.Pause();
         }
     }
 
-    class Imp
+    class UI
     {
-        // --- New: Registered Users Registry ---
         public static Dictionary<int, string> RegisteredUsers = new Dictionary<int, string>();
 
         public static void ClearAndHeader(string title)
         {
-            Console.Clear(); // Wipes the terminal clean
+            Console.Clear(); 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("==================================================");
             
-            // Centers the title roughly based on the 50-character border
             int spaces = (50 - title.Length) / 2;
             string padding = new string(' ', spaces > 0 ? spaces : 0);
             
@@ -649,7 +637,7 @@ namespace Lib
 
             if (int.TryParse(input, out result)) return result;
 
-            Console.WriteLine("Invalid entry! Defaulting to 0.");
+            PrintError("Invalid entry! Defaulting to 0.");
             return 0;
         }
 
@@ -674,35 +662,30 @@ namespace Lib
             Console.ResetColor();
         }
 
-        // Pauses the screen so the user can read messages before the screen clears again
         public static void Pause()
         {
             Console.WriteLine("\nPress ENTER to continue...");
             Console.ReadLine();
         }
-    }
 
         static void Main(string[] args)
         {
-            // Seed the users dictionary
             RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
-            RegisteredUsers.Add(39425, "Ghayyur Abbas");
-            RegisteredUsers.Add(40142,"Wazir Muzzammil Hussain");
-            RegisteredUsers.Add(39358,"Muhammad Whahaj");
-            RegisteredUsers.Add(39859,"Insafullah Khan");
+            RegisteredUsers.Add(10552, "Guest Student");
 
             LibraryDatabase.LoadFromFile();
 
             while (true)
             {
-                Gap();
-                Console.WriteLine("\n Identify your role (Admin/User/Guest) or type 'exit' to quit: ");
+                ClearAndHeader("Library Management System");
+                Console.WriteLine("Identify your role (Admin/User/Guest) or type 'exit' to quit: ");
                 string inputRole = Console.ReadLine() ?? "";
 
                 if (inputRole.Equals("exit", StringComparison.OrdinalIgnoreCase))
                 {
                     LibraryDatabase.SaveToFile();
-                    Console.WriteLine("Closing execution thread session. Goodbye!");
+                    PrintWarning("Closing execution thread session. Goodbye!");
+                    Thread.Sleep(1000);
                     break;
                 }
 
@@ -716,46 +699,50 @@ namespace Lib
                 if (chosenRole == SystemRole.Admin)
                 {
                     VerifyAdmin admin = new VerifyAdmin();
-                    Console.WriteLine("Enter the Admin Username : ");
+                    Console.Write("\nEnter the Admin Username: ");
                     admin.AdminUserName = Console.ReadLine() ?? "";
 
-                    Console.WriteLine("Enter the Admin Password : ");
+                    Console.Write("Enter the Admin Password: ");
                     admin.AdminPassword = Console.ReadLine() ?? "";
-
+                    
+                    Thread.Sleep(500);
                     userSession = admin;
                 }
                 else if (chosenRole == SystemRole.User)
                 {
-                    // Update: User login now requests a Member ID
-                    int memberId = ReadInt32("Enter your Member ID: ");
+                    int memberId = ReadInt32("\nEnter your Member ID: ");
 
                     if (RegisteredUsers.ContainsKey(memberId))
                     {
                         VerifyUser user = new VerifyUser();
-                        user.Username = RegisteredUsers[memberId]; // Assigns the real name
+                        user.Username = RegisteredUsers[memberId]; 
 
-                        Console.WriteLine("Welcome, " + user.Username + "!");
-                        Console.WriteLine("Enter the password : ");
+                        PrintSuccess("Welcome, " + user.Username + "!");
+                        Console.Write("Enter the password: ");
                         user.UserPassword = Console.ReadLine() ?? "";
 
+                        Thread.Sleep(500);
                         userSession = user;
                     }
                     else
                     {
-                        Console.WriteLine("Error: Member ID not recognized in the system.");
+                        PrintError("Member ID not recognized in the system.");
+                        Pause();
                         continue;
                     }
                 }
                 else if (chosenRole == SystemRole.Guest)
                 {
                     GuestUser guest = new GuestUser();
-                    guest.Age = ReadInt32("Enter your age to proceed: ");
-
+                    guest.Age = ReadInt32("\nEnter your age to proceed: ");
+                    
+                    Thread.Sleep(500);
                     userSession = guest;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid system chosen! Try again.");
+                    PrintError("Invalid system chosen! Try again.");
+                    Pause();
                     continue;
                 }
 
