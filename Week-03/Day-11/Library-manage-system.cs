@@ -766,6 +766,20 @@ namespace Lib
             Console.Clear(); 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("==================================================");
+            if (title.Equals("Library Management System", StringComparer.OrdinalIgnoreCase))
+            {
+                
+                Console.WriteLine(@"  _      _ _                          ");
+                Console.WriteLine(@" | |    (_) |                         ");
+                Console.WriteLine(@" | |     _| |__  _ __ __ _ _ __ _   _ ");
+                Console.WriteLine(@" | |    | | '_ \| '__/ _` | '__| | | |");
+                Console.WriteLine(@" | |____| | |_) | | | (_| | |  | |_| |");
+                Console.WriteLine(@" |______|_|_.__/|_|  \__,_|_|   \__, |");
+                Console.WriteLine(@"                                 __/ |");
+                Console.WriteLine(@"                                |___/ ");
+                Console.WriteLine("==================================================");
+            }
+            else{
             
             int spaces = (50 - title.Length) / 2;
             string padding = new string(' ', spaces > 0 ? spaces : 0);
@@ -773,6 +787,8 @@ namespace Lib
             Console.WriteLine(padding + title.ToUpper());
             Console.WriteLine("==================================================\n");
             Console.ResetColor();
+                
+                }
         }
 
         // --- NEW: Random Quote Generator ---
