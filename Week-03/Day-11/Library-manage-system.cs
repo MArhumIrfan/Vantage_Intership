@@ -317,9 +317,10 @@ namespace Lib
                 UI.ClearAndHeader("Admin Dashboard");
                 Console.WriteLine("1. Add a new book");
                 Console.WriteLine("2. View current Inventory (Basic)");
-                Console.WriteLine("3. Full Detailed Book Report");  // NEW
-                Console.WriteLine("4. User Details Report");       // NEW
-                Console.WriteLine("5. Logout / Main menu\n");      // Moved to 5
+                Console.WriteLine("3. Full Detailed Book Report");
+                Console.WriteLine("4. User Details Report");
+                Console.WriteLine("5. Register a New Member");
+                Console.WriteLine("6. Logout / Main menu\n");
 
                 int selection = UI.ReadInt32("Please choose an option: ");
 
@@ -361,7 +362,7 @@ namespace Lib
                     LibraryDatabase.DisplayAvailableTitles();
                     UI.Pause();
                 }
-                else if (selection == 3) // --- NEW: Full Book Report ---
+                else if (selection == 3)
                 {
                     UI.ClearAndHeader("Full Detailed Book Report");
                     
@@ -403,7 +404,7 @@ namespace Lib
                     }
                     UI.Pause();
                 }
-                else if (selection == 4) // --- NEW: User Details Report ---
+                else if (selection == 4) 
                 {
                     UI.ClearAndHeader("User Details Report");
                     
@@ -415,7 +416,6 @@ namespace Lib
                         int activeCheckouts = 0;
                         int totalFines = 0;
 
-                        // Cross-reference the user with the library catalog
                         foreach (Book b in LibraryDatabase.Catalog.Values)
                         {
                             if (b.IsBorrowed && b.BorrowedBy == memberName)
@@ -443,6 +443,26 @@ namespace Lib
                     UI.Pause();
                 }
                 else if (selection == 5)
+                {
+                    UI.ClearAndHeader("Register New Member");
+                    
+                    int newMemberId = UI.ReadInt32("Enter new 5-digit Member ID: ");
+                    
+                    if (UI.RegisteredUsers.ContainsKey(newMemberId))
+                    {
+                        UI.PrintError("That ID is already registered in the system.");
+                    }
+                    else
+                    {
+                        Console.Write("Enter the member's full name: ");
+                        string newName = Console.ReadLine() ?? "";
+                        
+                        UI.RegisteredUsers.Add(newMemberId, newName);
+                        UI.PrintSuccess("User " + newName + " successfully registered with ID [" + newMemberId + "]!");
+                    }
+                    UI.Pause();
+                }
+                else if (selection == 6)
                 {
                     UI.PrintWarning("Logging out of the System.......");
                     System.Threading.Thread.Sleep(1000);
@@ -753,8 +773,12 @@ namespace Lib
 
         static void Main(string[] args)
         {
+            // NEW USERS ADDED HERE
             RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
             RegisteredUsers.Add(10552, "Guest Student");
+            RegisteredUsers.Add(11111, "Ali Khan");
+            RegisteredUsers.Add(22222, "Sara Ahmed");
+            RegisteredUsers.Add(33333, "Zainab Tariq");
 
             LibraryDatabase.LoadFromFile();
 
