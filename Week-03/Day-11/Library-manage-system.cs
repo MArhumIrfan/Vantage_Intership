@@ -440,7 +440,28 @@ namespace Lib
         }
 
         public void BorrowBook()
-        {
+        {   
+
+
+            int borrowedCount = 0;
+
+            foreach(Book book in LibraryDatabase.Catalog.Values)
+            {
+                if (book.IsBorrowed && book.BorrowedBy == Username)
+                {
+                    borrowedCount++;
+                }
+            }
+
+            if(borrowedCount >= 3)
+            {
+                Imp.Gap();
+                Console.WriteLine("Limit Reached: You already have "+ borrowedCount+ " book checked out. ");
+                Console.WriteLine("Please return a book before borrowing a new one.");
+                return;
+            }
+
+
             LibraryDatabase.DisplayAvailableTitles();
 
             // Simplified to an O(1) Dictionary Lookup
