@@ -781,14 +781,14 @@ namespace Lib
             List <string>  qoutes = new List<string>
             {
 
-                "\"The more that you read, the more things you will know. The more that you learn, the more places you'll go.\" – Dr. Seuss",
-                "\"A room without books is like a body without a soul.\" – Marcus Tullius Cicero",
-                "\"Live as if you were to die tomorrow. Learn as if you were to live forever.\" – Mahatma Gandhi",
-                "\"An investment in knowledge pays the best interest.\" – Benjamin Franklin",
-                "\"Books are a uniquely portable magic.\" – Stephen King",
-                "\"Intellect without ambition is a bird without wings.\" – Salvador Dalí",
-                "\"Education is the passport to the future, for tomorrow belongs to those who prepare for it today.\" – Malcolm X",
-                "\"Reading is to the mind what exercise is to the body.\" – Joseph Addison"
+                "\"The more that you read, the more things you will know. The more that you learn, the more places you'll go.\" - Dr. Seuss",
+                "\"A room without books is like a body without a soul.\" - Marcus Tullius Cicero",
+                "\"Live as if you were to die tomorrow. Learn as if you were to live forever.\" - Mahatma Gandhi",
+                "\"An investment in knowledge pays the best interest.\" - Benjamin Franklin",
+                "\"Books are a uniquely portable magic.\" - Stephen King",
+                "\"Intellect without ambition is a bird without wings.\" - Salvador Dalí",
+                "\"Education is the passport to the future, for tomorrow belongs to those who prepare for it today.\" - Malcolm X",
+                "\"Reading is to the mind what exercise is to the body.\" - Joseph Addison"
 
             };
 
