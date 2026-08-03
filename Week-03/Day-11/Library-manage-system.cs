@@ -3,7 +3,7 @@
 --
 --Admin: UserName: "Admin", Password: "admin123".--
 --
---User: UserName: "User", Password: "User123".--
+--User: Member ID required (e.g., 39393), Password: "User123".--
 --
 --Guest: No UserName or Password Required, just have to be 18 and above.--
 --
@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq; // Added to easily find the highest Book ID
 
 namespace Lib
 {
@@ -25,6 +26,8 @@ namespace Lib
 
     public class Book
     {
+        // --- New: Unique Identifier ---
+        public int BookID { get; set; }
         public string Name { get; set; }
         public string Publisher { get; set; }
         public int DatePublish { get; set; }
@@ -35,7 +38,6 @@ namespace Lib
         public bool IsBorrowed { get; set; }
         public string BorrowedBy { get; set; }
 
-        // --- New: Due Date Tracking ---
         public DateTime BorrowedDate { get; set; }
         public DateTime DueDate { get; set; }
 
@@ -48,8 +50,9 @@ namespace Lib
             DueDate = DateTime.MinValue;
         }
 
-        public Book(string name, string publisher, int datePublish, string genre, int cost)
+        public Book(int id, string name, string publisher, int datePublish, string genre, int cost)
         {
+            BookID = id;
             Name = name;
             Publisher = publisher;
             DatePublish = datePublish;
@@ -64,23 +67,39 @@ namespace Lib
 
     public static class LibraryDatabase
     {
-        public static List<Book> Books = new List<Book>();
+        // --- Transformed to a Dictionary (Key: BookID, Value: Book Object) ---
+        public static Dictionary<int, Book> Catalog = new Dictionary<int, Book>();
 
         public static int TotalBooksCount
         {
-            get { return Books.Count; }
+            get { return Catalog.Count; }
         }
 
         private const string SaveFilePath = "library.txt";
 
         public static void Seed()
         {
-            Book book1 = new Book("The Great Gatsby", "Penguin", 1990, "Fantasy", 1000);
-            Books.Add(book1);
-
-            Book book2 = new Book("To Kill a Mockingbird", "Lippincott", 1960, "Classic", 1200);
+            Catalog.Add(101, new Book(101, "The Great Gatsby", "Penguin", 1990, "Fantasy", 1000));
+            
+            Book book2 = new Book(102, "To Kill a Mockingbird", "Lippincott", 1960, "Classic", 1200);
             book2.FineDue = 500;
-            Books.Add(book2);
+            Catalog.Add(102, book2);
+
+            Catalog.Add(103, new Book(103, "Data Communication and Networks", "Hafiz Mati ur Rahman", 2023, "Education", 2500));
+            
+            Book book4 = new Book(104, "Mastering LR(0) Parsers", "Iqra Press", 2024, "Computer Science", 3000);
+            book4.IsBorrowed = true;
+            book4.BorrowedBy = "Tayyab";
+            book4.BorrowedDate = DateTime.Now.AddDays(-10);
+            book4.DueDate = DateTime.Now.AddDays(4);
+            Catalog.Add(104, book4);
+
+            Book book5 = new Book(105, "Python GUI with Tkinter", "Vantage Tech", 2025, "Programming", 1800);
+            book5.FineDue = 150;
+            Catalog.Add(105, book5);
+
+            Catalog.Add(106, new Book(106, "The Art of UI Redesign", "Ghayyur Abbas", 2022, "Design", 2200));
+            Catalog.Add(107, new Book(107, "High-Speed Routing for PC Games", "Wazir Muzammil Hussain", 2021, "Technology", 1500));
         }
 
         public static void LoadFromFile()
@@ -89,29 +108,30 @@ namespace Lib
             {
                 if (File.Exists(SaveFilePath))
                 {
-                    Books.Clear();
+                    Catalog.Clear();
                     string[] lines = File.ReadAllLines(SaveFilePath);
                     
                     foreach (string line in lines)
                     {
                         string[] parts = line.Split('|');
                         
-                        // Updated to expect 10 properties instead of 8
-                        if (parts.Length == 10)
+                        // Updated to 11 parts to include the new BookID at index 0
+                        if (parts.Length == 11)
                         {
                             Book b = new Book();
-                            b.Name = parts[0];
-                            b.Publisher = parts[1];
-                            b.DatePublish = int.Parse(parts[2]);
-                            b.Genre = parts[3];
-                            b.Cost = int.Parse(parts[4]);
-                            b.FineDue = int.Parse(parts[5]);
-                            b.IsBorrowed = bool.Parse(parts[6]);
-                            b.BorrowedBy = parts[7];
-                            b.BorrowedDate = DateTime.Parse(parts[8]); // Parse saved date
-                            b.DueDate = DateTime.Parse(parts[9]);      // Parse saved date
+                            b.BookID = int.Parse(parts[0]);
+                            b.Name = parts[1];
+                            b.Publisher = parts[2];
+                            b.DatePublish = int.Parse(parts[3]);
+                            b.Genre = parts[4];
+                            b.Cost = int.Parse(parts[5]);
+                            b.FineDue = int.Parse(parts[6]);
+                            b.IsBorrowed = bool.Parse(parts[7]);
+                            b.BorrowedBy = parts[8];
+                            b.BorrowedDate = DateTime.Parse(parts[9]); 
+                            b.DueDate = DateTime.Parse(parts[10]);      
                             
-                            Books.Add(b);
+                            Catalog.Add(b.BookID, b);
                         }
                     }
                     Console.WriteLine("Library data loaded from " + SaveFilePath);
@@ -135,11 +155,11 @@ namespace Lib
             {
                 List<string> lines = new List<string>();
                 
-                foreach (Book b in Books)
+                // Iterating through the Dictionary's Values
+                foreach (Book b in Catalog.Values)
                 {
-                    // Added {8} and {9} to save the BorrowedDate and DueDate as strings
-                    string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}", 
-                        b.Name, b.Publisher, b.DatePublish, b.Genre, b.Cost, b.FineDue, 
+                    string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}", 
+                        b.BookID, b.Name, b.Publisher, b.DatePublish, b.Genre, b.Cost, b.FineDue, 
                         b.IsBorrowed, b.BorrowedBy, b.BorrowedDate.ToString(), b.DueDate.ToString());
                     lines.Add(line);
                 }
@@ -155,16 +175,17 @@ namespace Lib
         public static void DisplayAvailableTitles()
         {
             Console.WriteLine("\n---Current Library Catalog Inventory---");
-            if (Books.Count == 0)
+            if (Catalog.Count == 0)
             {
                 Console.WriteLine("No Books stored in memory");
                 return;
             }
 
-            for (int i = 0; i < Books.Count; i++)
+            foreach (Book b in Catalog.Values)
             {
-                string status = Books[i].IsBorrowed ? "BORROWED (Due: " + Books[i].DueDate.ToString("yyyy-MM-dd") + ")" : "Available";
-                Console.WriteLine((i + 1) + " . " + Books[i].Name + " (" + Books[i].Genre + ") - " + status);
+                string status = b.IsBorrowed ? "BORROWED (Due: " + b.DueDate.ToString("yyyy-MM-dd") + ")" : "Available";
+                // Displaying the Book ID so the user knows what to type
+                Console.WriteLine(string.Format("[ID: {0}] {1} ({2}) - {3}", b.BookID, b.Name, b.Genre, status));
             }
             Console.WriteLine("-------------------------------------");
         }
@@ -187,7 +208,7 @@ namespace Lib
                 Console.Write("Enter a keyword to search in the title: ");
                 string keyword = Console.ReadLine() ?? "";
                 
-                foreach (var book in Books)
+                foreach (Book book in Catalog.Values)
                 {
                     if (book.Name.ToLower().Contains(keyword.ToLower()))
                     {
@@ -200,7 +221,7 @@ namespace Lib
                 Console.Write("Enter genre to search for (e.g., Fantasy, Classic): ");
                 string genre = Console.ReadLine() ?? "";
                 
-                foreach (var book in Books)
+                foreach (Book book in Catalog.Values)
                 {
                     if (book.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
                     {
@@ -213,7 +234,7 @@ namespace Lib
                 int minPrice = Imp.ReadInt32("Enter minimum price (PKR): ");
                 int maxPrice = Imp.ReadInt32("Enter maximum price (PKR): ");
                 
-                foreach (var book in Books)
+                foreach (Book book in Catalog.Values)
                 {
                     if (book.Cost >= minPrice && book.Cost <= maxPrice)
                     {
@@ -235,10 +256,10 @@ namespace Lib
             }
             else
             {
-                for (int i = 0; i < results.Count; i++)
+                foreach (Book b in results)
                 {
-                    string status = results[i].IsBorrowed ? "BORROWED" : "Available";
-                    Console.WriteLine(string.Format("{0}. {1} ({2}) - {3} PKR - {4}", (i + 1), results[i].Name, results[i].Genre, results[i].Cost, status));
+                    string status = b.IsBorrowed ? "BORROWED" : "Available";
+                    Console.WriteLine(string.Format("[ID: {0}] {1} ({2}) - {3} PKR - {4}", b.BookID, b.Name, b.Genre, b.Cost, status));
                 }
             }
         }
@@ -310,12 +331,19 @@ namespace Lib
 
                     int bCost = Imp.ReadInt32("Enter the book price: ");
 
-                    Book book = new Book(bName, bPub, bYear, bGenre, bCost);
-                    LibraryDatabase.Books.Add(book);
+                    // Automatically generate the next available ID
+                    int newId = 101;
+                    if (LibraryDatabase.Catalog.Count > 0)
+                    {
+                        newId = LibraryDatabase.Catalog.Keys.Max() + 1;
+                    }
+
+                    Book book = new Book(newId, bName, bPub, bYear, bGenre, bCost);
+                    LibraryDatabase.Catalog.Add(newId, book);
                     LibraryDatabase.SaveToFile();
 
                     Imp.Gap();
-                    Console.WriteLine("Successfully added " + book.Name + " ! ");
+                    Console.WriteLine("Successfully added " + book.Name + " with ID [" + newId + "]!");
                     Console.WriteLine("Total books in live runtime memory: " + LibraryDatabase.TotalBooksCount);
                 }
                 else if (selection == 2)
@@ -340,16 +368,8 @@ namespace Lib
 
     public class VerifyUser : Login, IBorrower
     {
-        private string username = "User";
-        public string Username
-        {
-            get { return username; }
-            set
-            {
-                if (value != "User") { Console.WriteLine("Incorrect username !"); Environment.Exit(0); }
-                else { Console.WriteLine(" Correct Username Input "); username = value; }
-            }
-        }
+        // Now holds the actual user's name instead of just "User"
+        public string Username { get; set; } 
 
         private string userPassword = "User123";
         public string UserPassword
@@ -367,7 +387,7 @@ namespace Lib
             while (true)
             {
                 Imp.Gap();
-                Console.WriteLine("User-Dashboard");
+                Console.WriteLine(Username + "'s Dashboard");
                 Console.WriteLine("1. To Borrow a Book");
                 Console.WriteLine("2. Return a Book");
                 Console.WriteLine("3. Pay Outstanding Fine");
@@ -409,25 +429,16 @@ namespace Lib
         {
             LibraryDatabase.DisplayAvailableTitles();
 
-            Console.WriteLine("\nEnter the name of the book to be borrowed: ");
-            string target = Console.ReadLine() ?? "";
+            // Simplified to an O(1) Dictionary Lookup
+            int targetID = Imp.ReadInt32("\nEnter the ID of the book to be borrowed: ");
 
-            Book foundBook = null;
-
-            foreach (var book in LibraryDatabase.Books)
+            if (!LibraryDatabase.Catalog.ContainsKey(targetID))
             {
-                if (book.Name.Equals(target, StringComparison.OrdinalIgnoreCase))
-                {
-                    foundBook = book;
-                    break;
-                }
-            }
-
-            if (foundBook == null)
-            {
-                Console.WriteLine("Incorrect! No '" + target + "' book names matching!");
+                Console.WriteLine("Error: Book ID [" + targetID + "] not found in the catalog.");
                 return;
             }
+
+            Book foundBook = LibraryDatabase.Catalog[targetID];
 
             if (foundBook.IsBorrowed)
             {
@@ -436,11 +447,10 @@ namespace Lib
                 return;
             }
 
-            // --- New: Assigning the Dates ---
             foundBook.IsBorrowed = true;
             foundBook.BorrowedBy = Username;
-            foundBook.BorrowedDate = DateTime.Now; // Gets current exact date and time
-            foundBook.DueDate = DateTime.Now.AddDays(14); // Due exactly 14 days from now
+            foundBook.BorrowedDate = DateTime.Now; 
+            foundBook.DueDate = DateTime.Now.AddDays(14); 
 
             LibraryDatabase.SaveToFile();
 
@@ -453,24 +463,15 @@ namespace Lib
         {
             LibraryDatabase.DisplayAvailableTitles();
 
-            Console.WriteLine("\nEnter the book to return: ");
-            string target = Console.ReadLine() ?? "";
+            int targetID = Imp.ReadInt32("\nEnter the Book ID to return: ");
 
-            Book foundBook = null;
-            foreach (var book in LibraryDatabase.Books)
+            if (!LibraryDatabase.Catalog.ContainsKey(targetID))
             {
-                if (book.Name.Equals(target, StringComparison.OrdinalIgnoreCase))
-                {
-                    foundBook = book;
-                    break;
-                }
-            }
-
-            if (foundBook == null)
-            {
-                Console.WriteLine("That book does not belong to our catalog inventory registry.");
+                Console.WriteLine("Error: Book ID [" + targetID + "] not found in the catalog.");
                 return;
             }
+
+            Book foundBook = LibraryDatabase.Catalog[targetID];
 
             if (!foundBook.IsBorrowed)
             {
@@ -478,27 +479,23 @@ namespace Lib
                 return;
             }
 
-            // --- New: Calculating the Fine ---
             if (DateTime.Now > foundBook.DueDate)
             {
-                // Subtracting DueDate from Current Date gives us a TimeSpan. We pull the total .Days from it.
                 int daysLate = (DateTime.Now - foundBook.DueDate).Days; 
+                if (daysLate <= 0) daysLate = 1; 
                 
-                // If it's less than a full 24 hours late, it might register as 0 days. We ensure at least 1 day is charged.
-                if (daysLate == 0) daysLate = 1; 
-                
-                int fineAmount = daysLate * 50; // 50 PKR per day
+                int fineAmount = daysLate * 50; 
                 foundBook.FineDue += fineAmount;
 
                 Imp.Gap();
                 Console.WriteLine("WARNING: This book is " + daysLate + " days late.");
-                Console.WriteLine("An automatic late fee of " + fineAmount + " PKR has been added to the account for this book.");
+                Console.WriteLine("An automatic late fee of " + fineAmount + " PKR has been added to the account.");
             }
 
             foundBook.IsBorrowed = false;
             foundBook.BorrowedBy = "";
-            foundBook.BorrowedDate = DateTime.MinValue; // Reset dates
-            foundBook.DueDate = DateTime.MinValue;      // Reset dates
+            foundBook.BorrowedDate = DateTime.MinValue; 
+            foundBook.DueDate = DateTime.MinValue;      
             LibraryDatabase.SaveToFile();
 
             Imp.Gap();
@@ -508,27 +505,17 @@ namespace Lib
         public void PayFineBook()
         {
             Console.WriteLine("\n---Fine--Payment---");
-
             LibraryDatabase.DisplayAvailableTitles();
 
-            Console.WriteLine("Enter the exact name of book to settle fines");
-            string target = Console.ReadLine() ?? "";
-            Book foundBook = null;
-
-            foreach (var book in LibraryDatabase.Books)
+            int targetID = Imp.ReadInt32("Enter the Book ID to settle fines: ");
+            
+            if (LibraryDatabase.Catalog.ContainsKey(targetID))
             {
-                if (book.Name.Equals(target, StringComparison.OrdinalIgnoreCase))
-                {
-                    foundBook = book;
-                    break;
-                }
-            }
+                Book foundBook = LibraryDatabase.Catalog[targetID];
 
-            if (foundBook != null)
-            {
                 if (foundBook.FineDue <= 0)
                 {
-                    Console.WriteLine("Good News! There is no outstanding fine for the book!");
+                    Console.WriteLine("Good News! There is no outstanding fine for this book.");
                 }
                 else
                 {
@@ -556,7 +543,7 @@ namespace Lib
             }
             else
             {
-                Console.WriteLine("Error: '" + target + "' could not be found in our system records");
+                Console.WriteLine("Error: Book ID [" + targetID + "] not found.");
             }
         }
     }
@@ -580,22 +567,26 @@ namespace Lib
             Imp.Gap();
             Console.WriteLine("\n --Guest Catalog--");
 
-            if (LibraryDatabase.Books.Count == 0)
+            if (LibraryDatabase.Catalog.Count == 0)
             {
                 Console.WriteLine("\n No Books available");
                 return;
             }
 
-            foreach (var book in LibraryDatabase.Books)
+            foreach (Book book in LibraryDatabase.Catalog.Values)
             {
                 string status = book.IsBorrowed ? "Currently borrowed" : "Available";
-                Console.WriteLine(" " + book.Name + ", " + book.Genre + " by " + book.Publisher + "; Price = " + book.Cost + " PKR ; " + status);
+                Console.WriteLine(string.Format("[ID: {0}] {1}, {2} by {3}; Price = {4} PKR ; {5}", 
+                    book.BookID, book.Name, book.Genre, book.Publisher, book.Cost, status));
             }
         }
     }
 
     class Imp
     {
+        // --- New: Registered Users Registry ---
+        public static Dictionary<int, string> RegisteredUsers = new Dictionary<int, string>();
+
         public static void Gap()
         {
             Console.WriteLine("__--==++****++==--__");
@@ -615,6 +606,10 @@ namespace Lib
 
         static void Main(string[] args)
         {
+            // Seed the users dictionary
+            RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
+            RegisteredUsers.Add(10552, "Guest Student");
+
             LibraryDatabase.LoadFromFile();
 
             while (true)
@@ -650,14 +645,25 @@ namespace Lib
                 }
                 else if (chosenRole == SystemRole.User)
                 {
-                    VerifyUser user = new VerifyUser();
-                    Console.WriteLine("Enter the username : ");
-                    user.Username = Console.ReadLine() ?? "";
+                    // Update: User login now requests a Member ID
+                    int memberId = ReadInt32("Enter your Member ID: ");
 
-                    Console.WriteLine("Enter the password : ");
-                    user.UserPassword = Console.ReadLine() ?? "";
+                    if (RegisteredUsers.ContainsKey(memberId))
+                    {
+                        VerifyUser user = new VerifyUser();
+                        user.Username = RegisteredUsers[memberId]; // Assigns the real name
 
-                    userSession = user;
+                        Console.WriteLine("Welcome, " + user.Username + "!");
+                        Console.WriteLine("Enter the password : ");
+                        user.UserPassword = Console.ReadLine() ?? "";
+
+                        userSession = user;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: Member ID not recognized in the system.");
+                        continue;
+                    }
                 }
                 else if (chosenRole == SystemRole.Guest)
                 {
