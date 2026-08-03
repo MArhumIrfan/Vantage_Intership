@@ -279,11 +279,9 @@ namespace Lib
             try
             {
                 string filePath = "history.txt";
-                // Formats the timestamp: [2026-08-03 14:30:00] BORROW - 'The Great Gatsby' (ID: 101) by Tayyab
                 string logEntry = string.Format("[{0}] {1} - '{2}' (ID: {3}) by {4}", 
                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), action, bookTitle, bookId, memberName);
                 
-                // AppendAllText creates the file if it doesn't exist, and adds the new line to the bottom
                 File.AppendAllText(filePath, logEntry + Environment.NewLine);
             }
             catch (Exception ex)
@@ -291,7 +289,6 @@ namespace Lib
                 UI.PrintError("Warning: Could not write to transaction log (" + ex.Message + ")");
             }
         }
-
     }
 
     public interface IBorrower
@@ -340,7 +337,8 @@ namespace Lib
                 Console.WriteLine("3. Full Detailed Book Report");
                 Console.WriteLine("4. User Details Report");
                 Console.WriteLine("5. Register a New Member");
-                Console.WriteLine("6. Logout / Main menu\n");
+                Console.WriteLine("6. View Transaction History"); // NEW
+                Console.WriteLine("7. Logout / Main menu\n");     // Shifted to 7
 
                 int selection = UI.ReadInt32("Please choose an option: ");
 
@@ -482,7 +480,26 @@ namespace Lib
                     }
                     UI.Pause();
                 }
-                else if (selection == 6)
+                else if (selection == 6) // --- NEW: View Transaction History Logic ---
+                {
+                    UI.ClearAndHeader("Permanent Transaction History");
+                    
+                    if (File.Exists("history.txt"))
+                    {
+                        string[] historyLog = File.ReadAllLines("history.txt");
+                        foreach (string entry in historyLog)
+                        {
+                            Console.WriteLine(entry);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No transactions have been recorded yet.");
+                    }
+                    
+                    UI.Pause();
+                }
+                else if (selection == 7)
                 {
                     UI.PrintWarning("Logging out of the System.......");
                     System.Threading.Thread.Sleep(1000);
@@ -606,6 +623,9 @@ namespace Lib
             foundBook.DueDate = DateTime.Now.AddDays(14); 
 
             LibraryDatabase.SaveToFile();
+            
+            // --- NEW: Log the borrow transaction ---
+            LibraryDatabase.LogTransaction("BORROW", foundBook.BookID, foundBook.Name, Username);
 
             UI.PrintSuccess(foundBook.Name + " borrowed successfully! Price = " + foundBook.Cost + " PKR");
             UI.PrintWarning("IMPORTANT: Your due date is " + foundBook.DueDate.ToString("yyyy-MM-dd") + ".");
@@ -648,6 +668,9 @@ namespace Lib
             foundBook.BorrowedDate = DateTime.MinValue; 
             foundBook.DueDate = DateTime.MinValue;      
             LibraryDatabase.SaveToFile();
+
+            // --- NEW: Log the return transaction ---
+            LibraryDatabase.LogTransaction("RETURN", foundBook.BookID, foundBook.Name, Username);
 
             UI.PrintSuccess("Thank you for returning the book: " + foundBook.Name);
         }
@@ -793,7 +816,6 @@ namespace Lib
 
         static void Main(string[] args)
         {
-            // NEW USERS ADDED HERE
             RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
             RegisteredUsers.Add(39425, "Ghayyur Abbas");
             RegisteredUsers.Add(40142, "Wazir Muzzamil Hussain");
@@ -881,4 +903,3 @@ namespace Lib
         }
     }
 }
-
