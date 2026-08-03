@@ -528,7 +528,7 @@ namespace Lib
             {
                 if (foundBook.FineDue <= 0)
                 {
-                    Console.WriteLine("Good News! There is no outstanding fine for the book!");+++
+                    Console.WriteLine("Good News! There is no outstanding fine for the book!");
                 }
                 else
                 {
