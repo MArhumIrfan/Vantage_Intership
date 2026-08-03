@@ -245,7 +245,16 @@ namespace Lib
             }
             else if (choice == 4)
             {
-                
+                int searchId = Imp.ReadInt32("Enter the exact Book ID : ");
+
+                if (Catalog.ContainsKey(searchId))
+                {
+                    results.Add(Catalog[searchId]);
+                }
+                else
+                {
+                    Console.WriteLine("No Book found With that ID. ");
+                }
             }
             else
             {
