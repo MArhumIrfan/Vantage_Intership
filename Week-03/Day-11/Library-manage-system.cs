@@ -288,7 +288,40 @@ namespace Lib
             }
 
             Console.WriteLine("\n--- Search Results ---");
+            // --- NEW: Ask user if they want to sort by price ---
+            if (results.Count > 0 && choice != 4)
+            {
+                Console.WriteLine("\nWould you like to sort these results by price?");
+                Console.WriteLine("1. Low to High (Budget Friendly)");
+                Console.WriteLine("2. High to Low (Premium)");
+                Console.WriteLine("3. Don't sort (Default order)");
+                int sortChoice = UI.ReadInt32("Enter sort choice (1-3): ");
+
+                if (sortChoice == 1)
+                {
+                    results = results.OrderBy(b => b.Cost).ToList();
+                }
+                else if (sortChoice == 2)
+                {
+                    results = results.OrderByDescending(b => b.Cost).ToList();
+                }
+            }
+
+            Console.WriteLine("\n--- Search Results ---");
             
+            if (results.Count == 0 && choice != 4)
+            {
+                Console.WriteLine("No books found matching your criteria.");
+            }
+            else
+            {
+                foreach (Book b in results)
+                {
+                    string status = b.IsBorrowed ? "BORROWED" : "Available";
+                    Console.WriteLine(string.Format("[ID: {0}] {1} | Publisher: {2} ({3}) - {4} PKR - {5}", 
+                        b.BookID, b.Name, b.Publisher, b.Genre, b.Cost, status));
+                }
+            }
             if (results.Count == 0 && choice != 4)
             {
                 Console.WriteLine("No books found matching your criteria.");
