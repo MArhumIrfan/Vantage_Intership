@@ -197,7 +197,8 @@ namespace Lib
             Console.WriteLine("1. Search by Title Keyword");
             Console.WriteLine("2. Search by Genre");
             Console.WriteLine("3. Search by Price Range");
-            Console.WriteLine("4. Return to Previous Menu");
+            Console.WriteLine("4.Search by Book ID");
+            Console.WriteLine("5. Return to Previous Menu");
             
             int choice = Imp.ReadInt32("Enter your choice: ");
             
@@ -608,7 +609,10 @@ namespace Lib
         {
             // Seed the users dictionary
             RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
-            RegisteredUsers.Add(10552, "Guest Student");
+            RegisteredUsers.Add(39425, "Ghayyur Abbas");
+            RegisteredUsers.Add(40142,"Wazir Muzzammil Hussain");
+            RegisteredUsers.Add(39358,"Muhammad Whahaj");
+            RegisteredUsers.Add(39859,"Insafullah Khan");
 
             LibraryDatabase.LoadFromFile();
 
