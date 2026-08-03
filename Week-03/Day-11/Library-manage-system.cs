@@ -79,27 +79,31 @@ namespace Lib
 
         public static void Seed()
         {
+            // --- 3 Copies of The Great Gatsby ---
             Catalog.Add(101, new Book(101, "The Great Gatsby", "Penguin", 1990, "Fantasy", 1000));
+            Catalog.Add(102, new Book(102, "The Great Gatsby", "Penguin", 1990, "Fantasy", 1000));
+            Catalog.Add(103, new Book(103, "The Great Gatsby", "Penguin", 1990, "Fantasy", 1000));
             
-            Book book2 = new Book(102, "To Kill a Mockingbird", "Lippincott", 1960, "Classic", 1200);
-            book2.FineDue = 500;
-            Catalog.Add(102, book2);
-
-            Catalog.Add(103, new Book(103, "Data Communication and Networks", "Hafiz Mati ur Rahman", 2023, "Education", 2500));
+            // --- 2 Copies of To Kill a Mockingbird ---
+            Book mockingbird1 = new Book(104, "To Kill a Mockingbird", "Lippincott", 1960, "Classic", 1200);
+            mockingbird1.FineDue = 500; // Someone returned this copy late
+            Catalog.Add(104, mockingbird1);
             
-            Book book4 = new Book(104, "Mastering LR(0) Parsers", "Iqra Press", 2024, "Computer Science", 3000);
-            book4.IsBorrowed = true;
-            book4.BorrowedBy = "Tayyab";
-            book4.BorrowedDate = DateTime.Now.AddDays(-10);
-            book4.DueDate = DateTime.Now.AddDays(4);
-            Catalog.Add(104, book4);
+            Catalog.Add(105, new Book(105, "To Kill a Mockingbird", "Lippincott", 1960, "Classic", 1200));
 
-            Book book5 = new Book(105, "Python GUI with Tkinter", "Vantage Tech", 2025, "Programming", 1800);
-            book5.FineDue = 150;
-            Catalog.Add(105, book5);
+            // --- Single Copies ---
+            Catalog.Add(106, new Book(106, "Data Communication and Networks", "Hafiz Mati ur Rahman", 2023, "Education", 2500));
+            
+            Book lr0Parser = new Book(107, "Mastering LR(0) Parsers", "Iqra Press", 2024, "Computer Science", 3000);
+            lr0Parser.IsBorrowed = true;
+            lr0Parser.BorrowedBy = "Tayyab";
+            lr0Parser.BorrowedDate = DateTime.Now.AddDays(-10);
+            lr0Parser.DueDate = DateTime.Now.AddDays(4);
+            Catalog.Add(107, lr0Parser);
 
-            Catalog.Add(106, new Book(106, "The Art of UI Redesign", "Ghayyur Abbas", 2022, "Design", 2200));
-            Catalog.Add(107, new Book(107, "High-Speed Routing for PC Games", "Wazir Muzammil Hussain", 2021, "Technology", 1500));
+            Book pythonGui = new Book(108, "Python GUI with Tkinter", "Vantage Tech", 2025, "Programming", 1800);
+            pythonGui.FineDue = 150;
+            Catalog.Add(108, pythonGui);
         }
 
         public static void LoadFromFile()
@@ -622,9 +626,19 @@ namespace Lib
         // --- New: Registered Users Registry ---
         public static Dictionary<int, string> RegisteredUsers = new Dictionary<int, string>();
 
-        public static void Gap()
+        public static void ClearAndHeader(string title)
         {
-            Console.WriteLine("__--==++****++==--__");
+            Console.Clear(); // Wipes the terminal clean
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("==================================================");
+            
+            // Centers the title roughly based on the 50-character border
+            int spaces = (50 - title.Length) / 2;
+            string padding = new string(' ', spaces > 0 ? spaces : 0);
+            
+            Console.WriteLine(padding + title.ToUpper());
+            Console.WriteLine("==================================================\n");
+            Console.ResetColor();
         }
 
         public static int ReadInt32(string prompt)
@@ -638,6 +652,35 @@ namespace Lib
             Console.WriteLine("Invalid entry! Defaulting to 0.");
             return 0;
         }
+
+        public static void PrintSuccess(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n[SUCCESS] " + message);
+            Console.ResetColor();
+        }
+
+        public static void PrintError(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n[ERROR] " + message);
+            Console.ResetColor();
+        }
+
+        public static void PrintWarning(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n[WARNING] " + message);
+            Console.ResetColor();
+        }
+
+        // Pauses the screen so the user can read messages before the screen clears again
+        public static void Pause()
+        {
+            Console.WriteLine("\nPress ENTER to continue...");
+            Console.ReadLine();
+        }
+    }
 
         static void Main(string[] args)
         {
