@@ -272,6 +272,26 @@ namespace Lib
                 }
             }
         }
+
+        // --- NEW: Audit Trail Logger ---
+        public static void LogTransaction(string action, int bookId, string bookTitle, string memberName)
+        {
+            try
+            {
+                string filePath = "history.txt";
+                // Formats the timestamp: [2026-08-03 14:30:00] BORROW - 'The Great Gatsby' (ID: 101) by Tayyab
+                string logEntry = string.Format("[{0}] {1} - '{2}' (ID: {3}) by {4}", 
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), action, bookTitle, bookId, memberName);
+                
+                // AppendAllText creates the file if it doesn't exist, and adds the new line to the bottom
+                File.AppendAllText(filePath, logEntry + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                UI.PrintError("Warning: Could not write to transaction log (" + ex.Message + ")");
+            }
+        }
+
     }
 
     public interface IBorrower
