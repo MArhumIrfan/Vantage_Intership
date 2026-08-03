@@ -12,7 +12,7 @@ class Program
 
         // 2. Adding Elements
         fruits.Add("Apple");                                       // Adds to the end
-        fruits.Add("Banana");
+        fruits.Add("Bananas");
         fruits.AddRange(new[] { "Cherry", "Date" });               // Adds a collection
         fruits.Insert(1, "Blueberry");                             // Inserts at index 1
 
