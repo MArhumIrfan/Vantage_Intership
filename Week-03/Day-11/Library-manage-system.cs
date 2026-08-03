@@ -208,7 +208,8 @@ namespace Lib
             Console.WriteLine("2. Search by Genre");
             Console.WriteLine("3. Search by Price Range");
             Console.WriteLine("4. Search by Book ID");
-            Console.WriteLine("5. Return to Previous Menu\n");
+            Console.WriteLine("5. Search by Book Publisher");
+            Console.WriteLine("6. Return to Previous Menu\n");
             
             int choice = UI.ReadInt32("Enter your choice: ");
             
@@ -265,6 +266,14 @@ namespace Lib
                 {
                     UI.PrintError("No book found matching that ID.");
                 }
+            }
+            else if (choice == 5)
+            {
+                
+                Console.WriteLine(" Enter the Publiser Name : ");
+                string pubKeyword = Console.ReadLine() ?? "";
+                
+
             }
             else
             {
