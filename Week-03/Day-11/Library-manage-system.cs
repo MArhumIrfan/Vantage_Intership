@@ -316,8 +316,10 @@ namespace Lib
             {
                 UI.ClearAndHeader("Admin Dashboard");
                 Console.WriteLine("1. Add a new book");
-                Console.WriteLine("2. View current Inventory");
-                Console.WriteLine("3. Logout / Main menu\n");
+                Console.WriteLine("2. View current Inventory (Basic)");
+                Console.WriteLine("3. Full Detailed Book Report");  // NEW
+                Console.WriteLine("4. User Details Report");       // NEW
+                Console.WriteLine("5. Logout / Main menu\n");      // Moved to 5
 
                 int selection = UI.ReadInt32("Please choose an option: ");
 
@@ -359,10 +361,91 @@ namespace Lib
                     LibraryDatabase.DisplayAvailableTitles();
                     UI.Pause();
                 }
-                else if (selection == 3)
+                else if (selection == 3) // --- NEW: Full Book Report ---
+                {
+                    UI.ClearAndHeader("Full Detailed Book Report");
+                    
+                    if (LibraryDatabase.Catalog.Count == 0)
+                    {
+                        Console.WriteLine("No Books stored in memory.");
+                    }
+                    else
+                    {
+                        foreach (Book b in LibraryDatabase.Catalog.Values)
+                        {
+                            Console.WriteLine(string.Format("[ID: {0}] {1}", b.BookID, b.Name.ToUpper()));
+                            Console.WriteLine(string.Format("   Publisher: {0} | Year: {1} | Genre: {2}", b.Publisher, b.DatePublish, b.Genre));
+                            Console.WriteLine(string.Format("   Value: {0} PKR", b.Cost));
+                            
+                            if (b.IsBorrowed)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(string.Format("   Status: BORROWED by {0}", b.BorrowedBy));
+                                Console.WriteLine(string.Format("   Borrowed On: {0} | Due Date: {1}", b.BorrowedDate.ToString("yyyy-MM-dd"), b.DueDate.ToString("yyyy-MM-dd")));
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("   Status: AVAILABLE");
+                                Console.ResetColor();
+                            }
+
+                            if (b.FineDue > 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine(string.Format("   Outstanding Fine: {0} PKR", b.FineDue));
+                                Console.ResetColor();
+                            }
+                            
+                            Console.WriteLine("--------------------------------------------------");
+                        }
+                    }
+                    UI.Pause();
+                }
+                else if (selection == 4) // --- NEW: User Details Report ---
+                {
+                    UI.ClearAndHeader("User Details Report");
+                    
+                    foreach (var userKvp in UI.RegisteredUsers)
+                    {
+                        int memberId = userKvp.Key;
+                        string memberName = userKvp.Value;
+                        
+                        int activeCheckouts = 0;
+                        int totalFines = 0;
+
+                        // Cross-reference the user with the library catalog
+                        foreach (Book b in LibraryDatabase.Catalog.Values)
+                        {
+                            if (b.IsBorrowed && b.BorrowedBy == memberName)
+                            {
+                                activeCheckouts++;
+                                totalFines += b.FineDue;
+                            }
+                        }
+
+                        Console.WriteLine(string.Format("[Member ID: {0}] {1}", memberId, memberName.ToUpper()));
+                        Console.WriteLine(string.Format("   Active Checkouts: {0} / 3", activeCheckouts));
+                        
+                        if (totalFines > 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(string.Format("   Total Accumulated Fines: {0} PKR", totalFines));
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.WriteLine("   Total Accumulated Fines: 0 PKR");
+                        }
+                        Console.WriteLine("--------------------------------------------------");
+                    }
+                    UI.Pause();
+                }
+                else if (selection == 5)
                 {
                     UI.PrintWarning("Logging out of the System.......");
-                    Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(1000);
                     break;
                 }
                 else
