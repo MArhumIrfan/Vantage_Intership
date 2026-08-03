@@ -835,7 +835,12 @@ namespace Lib
                 "\"Books are a uniquely portable magic.\" – Stephen King",
                 "\"Intellect without ambition is a bird without wings.\" – Salvador Dalí",
                 "\"Education is the passport to the future, for tomorrow belongs to those who prepare for it today.\" – Malcolm X",
-                "\"Reading is to the mind what exercise is to the body.\" – Joseph Addison"
+                "\"Reading is to the mind what exercise is to the body.\" – Joseph Addison",
+                "\"Whoever takes a path in search of knowledge, Allah will make easy for him a path to Paradise.\"-Prophet Muhammad (S.A.W)",
+                "\"Ask Allah for knowledge that benefits and take refuge from knowledge that does not benefit.\"-Prophet Muhammad (S.A.W)",
+                "\"Knowledge is better than wealth. Knowledge guards you, while you have to guard wealth.\"-Hazrat Ali (R.A)",
+                "\"The mind of a wise man is his fortress, and the tongue of a fool is his key.\"-Hazarat Ali (R.A)",
+                "\"Knowledge is the life of the mind.\"-Hazart Abu Bakr"
             };
 
             Random rand = new Random();
