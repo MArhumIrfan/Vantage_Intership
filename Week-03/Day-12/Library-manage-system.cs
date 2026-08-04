@@ -105,6 +105,7 @@ namespace Lib
 
             Catalog.Add(109, new Book(109, "The Art of UI Redesign", "Ghayyur Abbas", 2022, "Design", 2200));
             Catalog.Add(110, new Book(110, "High-Speed Routing for PC Games", "Wazir Muzammil Hussain", 2021, "Technology", 1500));
+            Catalog.Add(111, new Book(111,"Fashion Design made easy!","Syed Tayyab Moassud Alam Shah Buhkari Pher Shahab",2023,"Education",3500));
         }
 
         public static void LoadFromFile()
