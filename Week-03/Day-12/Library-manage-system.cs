@@ -597,6 +597,28 @@ namespace Lib
                         }
                         Console.WriteLine("--------------------------------------------------");
                     }
+                    
+                    // 4. LINQ: Active Borrowers Leaderboard
+                        Console.WriteLine("--- Active Borrowers Leaderboard ---");
+                        var topBorrowers = LibraryDatabase.Catalog.Values
+                            .Where(b => b.IsBorrowed)
+                            .GroupBy(b => b.BorrowedBy)
+                            .Select(g => new { Username = g.Key, ActiveCount = g.Count() })
+                            .OrderByDescending(g => g.ActiveCount)
+                            .ToList();
+
+                        if (topBorrowers.Count == 0)
+                        {
+                            Console.WriteLine(" No members currently have books checked out.");
+                        }
+                        else
+                        {
+                            foreach (var borrower in topBorrowers)
+                            {
+                                Console.WriteLine(" User: " + borrower.Username + " | Active Books: " + borrower.ActiveCount);
+                            }
+                        }
+                        Console.WriteLine("--------------------------------------------------");
 
                     UI.Pause();
                 }
