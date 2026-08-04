@@ -202,13 +202,13 @@ namespace Lib
             Console.WriteLine("-----------------------------------------");
         }
 
-        public static void AdvancedSearch()
+      public static void AdvancedSearch()
         {
             Console.WriteLine("1. Search by Title Keyword");
             Console.WriteLine("2. Search by Genre");
             Console.WriteLine("3. Search by Price Range");
             Console.WriteLine("4. Search by Book ID");
-            Console.WriteLine("5. Search by Book Publisher");
+            Console.WriteLine("5. Search by Publisher");
             Console.WriteLine("6. Return to Previous Menu\n");
             
             int choice = UI.ReadInt32("Enter your choice: ");
@@ -219,7 +219,7 @@ namespace Lib
             {
                 Console.Write("Enter a keyword to search in the title: ");
                 string keyword = Console.ReadLine() ?? "";
-               
+                
                 results = Catalog.Values
                     .Where(b => b.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
                     .ToList();
@@ -228,8 +228,8 @@ namespace Lib
             {
                 Console.Write("Enter genre to search for: ");
                 string genre = Console.ReadLine() ?? "";
-
-                result = Catalog.Values
+                
+                results = Catalog.Values
                     .Where(b => b.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
@@ -239,7 +239,7 @@ namespace Lib
                 int maxPrice = UI.ReadInt32("Enter maximum price (PKR): ");
                 
                 results = Catalog.Values
-                    .Where((b => b.Cost >= minPrice && b.Cost <= maxPrice))
+                    .Where(b => b.Cost >= minPrice && b.Cost <= maxPrice)
                     .ToList();
             }
             else if (choice == 4)
@@ -257,22 +257,19 @@ namespace Lib
             }
             else if (choice == 5)
             {
-                
-                Console.WriteLine(" Enter the Publiser Name : ");
+                Console.Write("Enter publisher name keyword: ");
                 string pubKeyword = Console.ReadLine() ?? "";
-
+                
                 results = Catalog.Values
                     .Where(b => b.Publisher.IndexOf(pubKeyword, StringComparison.OrdinalIgnoreCase) >= 0)
                     .ToList();
-
             }
             else
             {
                 return; 
             }
 
-            Console.WriteLine("\n--- Search Results ---");
-            // --- NEW: Ask user if they want to sort by price ---
+            // Optional price sorting we added earlier
             if (results.Count > 0 && choice != 4)
             {
                 Console.WriteLine("\nWould you like to sort these results by price?");
@@ -306,20 +303,8 @@ namespace Lib
                         b.BookID, b.Name, b.Publisher, b.Genre, b.Cost, status));
                 }
             }
-            if (results.Count == 0 && choice != 4)
-            {
-                Console.WriteLine("No books found matching your criteria.");
-            }
-            else
-            {
-                foreach (Book b in results)
-                {
-                    string status = b.IsBorrowed ? "BORROWED" : "Available";
-                    Console.WriteLine(string.Format("[ID: {0}] {1} ({2}) - {3} PKR - {4}", b.BookID, b.Name, b.Genre, b.Cost, status));
-                }
-            }
         }
-
+       
         // --- NEW: Audit Trail Logger ---
         public static void LogTransaction(string action, int bookId, string bookTitle, string memberName)
         {
@@ -547,7 +532,7 @@ namespace Lib
                     
                     UI.Pause();
                 }
-                else if (selevtion == 7)
+                else if (selection == 7)
                 {
                     UI.ClearAndHeader("Advance Library Analytics");
 
@@ -560,7 +545,7 @@ namespace Lib
                     {
                         int TotalValues = LibraryDatabase.Catalog.Values.Sum(b => b.Cost);
                         double avgCost = LibraryDatabase.Catalog.Values.Average( b => b.Cost);
-                        Book expensiveBook = LibraryDatabase.Catalog.Values.OrderByDescending(b => b.Cost);
+                        Book expensiveBook = LibraryDatabase.Catalog.Values.OrderByDescending(b => b.Cost).FirstOrDefault();
 
                         Console.WriteLine("---Financial Overview---");
                         Console.WriteLine(string.Format("Total Inventory {0} PKR",TotalValues));
@@ -595,7 +580,7 @@ namespace Lib
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine(" Status : All checked out are on time !");
-                            Console.ResetColor;
+                            Console.ResetColor();
                         }
                         else
                         {
@@ -692,8 +677,9 @@ namespace Lib
 
         public void BorrowBook()
         {
-            int borrowCount = LibarayDatabase.Catalog.Values
-                .Count(Book => book.IsBorrowed && book.BorrowedBy == Username);
+           
+            int borrowedCount = LibraryDatabase.Catalog.Values
+                .Count(book => book.IsBorrowed && book.BorrowedBy == Username);
 
             if (borrowedCount >= 3)
             {
