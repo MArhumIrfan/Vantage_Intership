@@ -571,26 +571,31 @@ namespace Lib
 
                         Console.WriteLine("--------------------------------------------------");
 
-                        Console.WriteLine("--- OverDue Books Radar---");
+                       // 3. LINQ: Overdue Books Radar
+                        Console.WriteLine("--- OverDue Books Radar ---");
+                        
+                        // Declaration must come FIRST
                         var overdueBooks = LibraryDatabase.Catalog.Values
-                            .Where (b => b.IsBorrowed && DateTime.Now > b.DueDate )
+                            .Where(b => b.IsBorrowed && DateTime.Now > b.DueDate)
                             .ToList();
 
                         if (overdueBooks.Count == 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine(" Status : All checked out are on time !");
+                            Console.WriteLine(" Status: All checked-out books are currently on time!");
                             Console.ResetColor();
                         }
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(string.Format(" Alert {0} books are currently over due!"));
-                            foreach(var b in overdueBooks)
+                            Console.WriteLine(" Alert: " + overdueBooks.Count + " book(s) are currently overdue!");
+                            foreach (var b in overdueBooks)
                             {
-                                Console.WriteLine(string.Format(" * '{0}' (Borrowed by : {1}) - Due {2} ",b.Name, b.BorrowedBy, b.DueDate.ToString("yyyy-MM-dd")));
+                                Console.WriteLine("   * '" + b.Name + "' (Borrowed by: " + b.BorrowedBy + ") - Due: " + b.DueDate.ToString("yyyy-MM-dd"));
                             }
+                            Console.ResetColor();
                         }
+                        Console.WriteLine("--------------------------------------------------");
 
                     }
                 }
