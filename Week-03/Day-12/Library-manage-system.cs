@@ -566,7 +566,7 @@ namespace Lib
 
                         foreach (var b in overdueBooks)
                             {
-                                Console.WriteLine(string.Format("   * '{0}' (Borrowed by: {1}) - Due: {2}", b.Name, b.BorrowedBy, b.DueDate.ToString("yyyy-MM-dd")));
+                                Console.WriteLine("   * '" + b.Name + "' (Borrowed by: " + b.BorrowedBy + ") - Due: " + b.DueDate.ToString("yyyy-MM-dd"));
                             }
 
                         Console.WriteLine("--------------------------------------------------");
