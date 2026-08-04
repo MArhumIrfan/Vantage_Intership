@@ -384,8 +384,9 @@ namespace Lib
                 Console.WriteLine("3. Full Detailed Book Report");
                 Console.WriteLine("4. User Details Report");
                 Console.WriteLine("5. Register a New Member");
-                Console.WriteLine("6. View Transaction History"); // NEW
-                Console.WriteLine("7. Logout / Main menu\n");     // Shifted to 7
+                Console.WriteLine("6. View Transaction History"); 
+                Console.WriteLine("7. Advance Library Analytics");
+                Console.WriteLine("8. Logout / Main menu\n");     
 
                 int selection = UI.ReadInt32("Please choose an option: ");
 
