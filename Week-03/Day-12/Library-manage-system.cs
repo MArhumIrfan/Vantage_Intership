@@ -641,14 +641,8 @@ namespace Lib
 
         public void BorrowBook()
         {
-            int borrowedCount = 0;
-            foreach (Book book in LibraryDatabase.Catalog.Values)
-            {
-                if (book.IsBorrowed && book.BorrowedBy == Username)
-                {
-                    borrowedCount++;
-                }
-            }
+            int borrowCount = LibarayDatabase.Catalog.Values
+                .Count(Book => book.IsBorrowed && book.BorrowedBy == Username);
 
             if (borrowedCount >= 3)
             {
