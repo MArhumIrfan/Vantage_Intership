@@ -547,6 +547,68 @@ namespace Lib
                     
                     UI.Pause();
                 }
+                else if (selevtion == 7)
+                {
+                    UI.ClearAndHeader("Advance Library Analytics");
+
+                    if (LibraryDatabase.Catalog.Count == 0 )
+                    {
+                        Console.WriteLine("No Book available for analysis");
+                    }
+
+                    else
+                    {
+                        int TotalValues = LibraryDatabase.Catalog.Values.Sum(b => b.Cost);
+                        double avgCost = LibraryDatabase.Catalog.Values.Average( b => b.Cost);
+                        Book expensiveBook = LibraryDatabase.Catalog.Values.OrderByDescending(b => b.Cost);
+
+                        Console.WriteLine("---Financial Overview---");
+                        Console.WriteLine(string.Format("Total Inventory {0} PKR",TotalValues));
+                        Console.WriteLine(string.Format("Average Book {0:F2} PKR",avgCost));
+
+                        if(expensiveBook != null)
+                        {
+                            Console.WriteLine(string.Format("Most Expensive Book : {0}({1} PKR )",expensiveBook.Name, expensiveBook.Cost));
+                        }
+
+                        Console.WriteLine("--------------------------------------------------");
+
+                        Console.WriteLine("---Genre Distribution---");
+
+                        var genreGroups = LibraryDatabase.Catalog.Values
+                            .GroupBy( b => b.genre)
+                            .Select(g => new { Genre = g.Key, Count = g.Count()});
+
+                        foreach (var group in genreGroups)
+                        {
+                            Console.WriteLine(string.Format(" Genre : {0-15} | Books Count : {1}",group.Genre, group.Count));
+                        }  
+
+                        Console.WriteLine("--------------------------------------------------");
+
+                        Console.WriteLine("--- OverDue Books Radar---");
+                        var overdueBooks = LibraryDatabase.Catalog.Values
+                            .Where (b => b.IsBorrowed && DateTime.Now > b.DueDate )
+                            .ToList();
+
+                        if (overdueBooks.Count == 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine(" Status : All checked out are on time !");
+                            Console.ResetColor;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(string.Format(" Alert {0} books are currently over due!"));
+                            foreach(var b in overdueBooks)
+                            {
+                                Console.WriteLine(string.Format(" * '{0}' (Borrowed by : {1}) - Due {2} ",b.Name, b.BorrowedBy, b.DueDate.ToString("yyyy-MM-dd");
+                            }
+                        }
+
+                    }
+                }
                 else if (selection == 8)
                 {
                     UI.PrintWarning("Logging out of the System.......");
