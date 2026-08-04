@@ -832,7 +832,8 @@ namespace Lib
 
             // Fixed: Replaced .Equals() with standard string comparison
             if (title == "Library Management System")
-            {
+            {   
+                Console.WriteLine(@"=================================================");
                 Console.WriteLine(@"  _      _ _                          ");
                 Console.WriteLine(@" | |    (_) |                         ");
                 Console.WriteLine(@" | |     _| |__  _ __ __ _ _ __ _   _ ");
