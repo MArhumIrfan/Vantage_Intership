@@ -547,7 +547,7 @@ namespace Lib
                     
                     UI.Pause();
                 }
-                else if (selection == 7)
+                else if (selection == 8)
                 {
                     UI.PrintWarning("Logging out of the System.......");
                     System.Threading.Thread.Sleep(1000);
