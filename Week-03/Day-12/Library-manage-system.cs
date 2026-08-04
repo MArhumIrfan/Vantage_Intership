@@ -566,8 +566,8 @@ namespace Lib
 
                         foreach (var group in genreGroups)
                         {
-                            Console.WriteLine(string.Format(" Genre : {0-15} | Books Count : {1}",group.Genre, group.Count));
-                        }  
+                            Console.WriteLine(string.Format(" Genre: {0,-15} | Books Count: {1}", group.Genre, group.Count));
+                        }
 
                         Console.WriteLine("--------------------------------------------------");
 
