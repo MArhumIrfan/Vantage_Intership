@@ -238,13 +238,9 @@ namespace Lib
                 int minPrice = UI.ReadInt32("Enter minimum price (PKR): ");
                 int maxPrice = UI.ReadInt32("Enter maximum price (PKR): ");
                 
-                foreach (Book book in Catalog.Values)
-                {
-                    if (book.Cost >= minPrice && book.Cost <= maxPrice)
-                    {
-                        results.Add(book);
-                    }
-                }
+                results = Catalog.Values
+                    .Where((b => b.Cost >= minPrice && b.Cost <= maxPrice))
+                    .ToList();
             }
             else if (choice == 4)
             {
