@@ -228,14 +228,10 @@ namespace Lib
             {
                 Console.Write("Enter genre to search for: ");
                 string genre = Console.ReadLine() ?? "";
-                
-                foreach (Book book in Catalog.Values)
-                {
-                    if (book.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
-                    {
-                        results.Add(book);
-                    }
-                }
+
+                result = Catalog.Values
+                    .Where(b => b.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
             else if (choice == 3)
             {
