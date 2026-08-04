@@ -603,7 +603,7 @@ namespace Lib
                             Console.WriteLine(string.Format(" Alert {0} books are currently over due!"));
                             foreach(var b in overdueBooks)
                             {
-                                Console.WriteLine(string.Format(" * '{0}' (Borrowed by : {1}) - Due {2} ",b.Name, b.BorrowedBy, b.DueDate.ToString("yyyy-MM-dd");
+                                Console.WriteLine(string.Format(" * '{0}' (Borrowed by : {1}) - Due {2} ",b.Name, b.BorrowedBy, b.DueDate.ToString("yyyy-MM-dd")));
                             }
                         }
 
