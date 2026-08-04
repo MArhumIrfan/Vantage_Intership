@@ -185,6 +185,32 @@ namespace Lib
                 return;
             }
 
+            int totalCount = Catalog.Count;
+            int availableCount = Catalog.Values.Count(b => !b.IsBorrowed);
+            int borrowedCount = Catalog.Values.Count(b => b.IsBorrowed);
+
+            Console.WriteLine("Summary: [Total: " + totalCount + "] | [Available: " + availableCount + "] | [Checked Out: " + borrowedCount + "]");
+            Console.WriteLine("--------------------------------------------------");
+
+            // --- NEW: Quick Category Filter Prompt (from earlier) ---
+            Console.WriteLine("\nFilter catalog by genre?");
+            Console.WriteLine("1. Show All Books");
+            Console.WriteLine("2. Computer Science / Education");
+            Console.WriteLine("3. Fantasy / Classic / Design / Technology");
+            int filterChoice = UI.ReadInt32("Select filter option (1-3): ");
+            Console.WriteLine();
+
+            foreach (Book b in Catalog.Values)
+            {
+                // Apply filter logic
+                if (filterChoice == 2 && b.Genre != "Education" && b.Genre != "Computer Science") continue;
+                if (filterChoice == 3 && b.Genre != "Fantasy" && b.Genre != "Classic" && b.Genre != "Design" && b.Genre != "Technology") continue;
+
+                string status = b.IsBorrowed ? "BORROWED (Due: " + b.DueDate.ToString("yyyy-MM-dd") + ")" : "Available";
+                Console.WriteLine(string.Format("[ID: {0}] {1} ({2}) - {3}", b.BookID, b.Name, b.Genre, status));
+            }
+            Console.WriteLine("-----------------------------------------");
+
             Console.WriteLine("\n Filter by Genre?");
             Console.WriteLine("1.Show all Books");
             Console.WriteLine("2.Computer Science / Education");
