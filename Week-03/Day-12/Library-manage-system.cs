@@ -564,10 +564,10 @@ namespace Lib
                             .GroupBy( b => b.Genre)
                             .Select(g => new { Genre = g.Key, Count = g.Count()});
 
-                        foreach (var group in genreGroups)
-                        {
-                            Console.WriteLine(string.Format(" Genre: {0,-15} | Books Count: {1}", group.Genre, group.Count));
-                        }
+                        foreach (var b in overdueBooks)
+                            {
+                                Console.WriteLine(string.Format("   * '{0}' (Borrowed by: {1}) - Due: {2}", b.Name, b.BorrowedBy, b.DueDate.ToString("yyyy-MM-dd")));
+                            }
 
                         Console.WriteLine("--------------------------------------------------");
 
