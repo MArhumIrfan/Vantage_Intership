@@ -209,14 +209,14 @@ namespace Lib
                 string status = b.IsBorrowed ? "BORROWED (Due: " + b.DueDate.ToString("yyyy-MM-dd") + ")" : "Available";
                 Console.WriteLine(string.Format("[ID: {0}] {1} ({2}) - {3}", b.BookID, b.Name, b.Genre, status));
             }
-            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine("-----------------------------------------"); 
 
             Console.WriteLine("\n Filter by Genre?");
             Console.WriteLine("1.Show all Books");
             Console.WriteLine("2.Computer Science / Education");
             Console.WriteLine("3.Fantasy/ Classic/ Design/ Technology ");
 
-            int filterChoice = UI.ReadInt32("Enter your choice : ");
+             filterChoice = UI.ReadInt32("Enter your choice : ");
 
             Console.WriteLine();
 
