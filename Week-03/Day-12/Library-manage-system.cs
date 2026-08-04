@@ -262,7 +262,7 @@ namespace Lib
                 string pubKeyword = Console.ReadLine() ?? "";
 
                 results = Catalog.Values
-                    .Where(b => b.Publisher.Index(pubKeyword, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .Where(b => b.Publisher.IndexOf(pubKeyword, StringComparison.OrdinalIgnoreCase) >= 0)
                     .ToList();
 
             }
@@ -576,7 +576,7 @@ namespace Lib
                         Console.WriteLine("---Genre Distribution---");
 
                         var genreGroups = LibraryDatabase.Catalog.Values
-                            .GroupBy( b => b.genre)
+                            .GroupBy( b => b.Genre)
                             .Select(g => new { Genre = g.Key, Count = g.Count()});
 
                         foreach (var group in genreGroups)
