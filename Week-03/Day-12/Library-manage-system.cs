@@ -219,14 +219,10 @@ namespace Lib
             {
                 Console.Write("Enter a keyword to search in the title: ");
                 string keyword = Console.ReadLine() ?? "";
-                
-                foreach (Book book in Catalog.Values)
-                {
-                    if (book.Name.ToLower().Contains(keyword.ToLower()))
-                    {
-                        results.Add(book);
-                    }
-                }
+               
+                results = Catalog.Values
+                    .Where(b => b.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToList();
             }
             else if (choice == 2)
             {
