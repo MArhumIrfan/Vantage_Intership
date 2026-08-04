@@ -216,7 +216,7 @@ namespace Lib
             Console.WriteLine("2.Computer Science / Education");
             Console.WriteLine("3.Fantasy/ Classic/ Design/ Technology ");
 
-             filterChoice = UI.ReadInt32("Enter your choice : ");
+            filterChoice = UI.ReadInt32("Enter your choice : ");
 
             Console.WriteLine();
 
