@@ -261,13 +261,9 @@ namespace Lib
                 Console.WriteLine(" Enter the Publiser Name : ");
                 string pubKeyword = Console.ReadLine() ?? "";
 
-                foreach(Book book in Catalog.Values)
-                {
-                    if (book.Publisher.ToLower().Contains(pubKeyword.ToLower()))
-                    {
-                        results.Add(book);
-                    }
-                }
+                results = Catalog.Values
+                    .Where(b => b.Publisher.Index(pubKeyword, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToList();
 
             }
             else
