@@ -564,90 +564,90 @@ namespace Lib
                     UI.Pause();
                 }
                else if (selection == 7) // --- Advanced Analytics Report ---
-                {
-                    UI.ClearAndHeader("Advanced Library Analytics");
+            {
+                UI.ClearAndHeader("Advanced Library Analytics");
 
-                    if (LibraryDatabase.Catalog.Count == 0)
+                if (LibraryDatabase.Catalog.Count == 0)
+                {
+                    Console.WriteLine("No books available for analysis.");
+                }
+                else
+                {
+                    // 1. LINQ: Total Valuation & Average Cost
+                    int totalValue = LibraryDatabase.Catalog.Values.Sum(b => b.Cost);
+                    double avgCost = LibraryDatabase.Catalog.Values.Average(b => b.Cost);
+                    Book expensiveBook = LibraryDatabase.Catalog.Values.OrderByDescending(b => b.Cost).FirstOrDefault();
+
+                    Console.WriteLine("--- Financial Overview ---");
+                    Console.WriteLine("Total Inventory: " + totalValue + " PKR");
+                    Console.WriteLine("Average Book: " + avgCost.ToString("F2") + " PKR");
+                    if (expensiveBook != null)
                     {
-                        Console.WriteLine("No books available for analysis.");
+                        Console.WriteLine("Most Expensive Book: " + expensiveBook.Name + " (" + expensiveBook.Cost + " PKR)");
+                    }
+                    Console.WriteLine("--------------------------------------------------");
+
+                    // 2. LINQ: Genre Distribution Breakdown
+                    Console.WriteLine("--- Genre Distribution ---");
+                    var genreGroups = LibraryDatabase.Catalog.Values
+                        .GroupBy(b => b.Genre)
+                        .Select(g => new { Genre = g.Key, Count = g.Count() });
+
+                    foreach (var group in genreGroups)
+                    {
+                        Console.WriteLine(" Genre: " + group.Genre + " | Books Count: " + group.Count);
+                    }
+                    Console.WriteLine("--------------------------------------------------");
+
+                    // 3. LINQ: Overdue Books Radar
+                    Console.WriteLine("--- OverDue Books Radar ---");
+                    var overdueBooks = LibraryDatabase.Catalog.Values
+                        .Where(b => b.IsBorrowed && DateTime.Now > b.DueDate)
+                        .ToList();
+
+                    if (overdueBooks.Count == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(" Status: All checked-out books are currently on time!");
+                        Console.ResetColor();
                     }
                     else
                     {
-                        // 1. LINQ: Total Valuation & Average Cost
-                        int totalValue = LibraryDatabase.Catalog.Values.Sum(b => b.Cost);
-                        double avgCost = LibraryDatabase.Catalog.Values.Average(b => b.Cost);
-                        Book expensiveBook = LibraryDatabase.Catalog.Values.OrderByDescending(b => b.Cost).FirstOrDefault();
-
-                        Console.WriteLine("--- Financial Overview ---");
-                        Console.WriteLine("Total Inventory: " + totalValue + " PKR");
-                        Console.WriteLine("Average Book: " + avgCost.ToString("F2") + " PKR");
-                        if (expensiveBook != null)
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(" Alert: " + overdueBooks.Count + " book(s) are currently overdue!");
+                        foreach (var b in overdueBooks)
                         {
-                            Console.WriteLine("Most Expensive Book: " + expensiveBook.Name + " (" + expensiveBook.Cost + " PKR)");
+                            Console.WriteLine("   * '" + b.Name + "' (Borrowed by: " + b.BorrowedBy + ") - Due: " + b.DueDate.ToString("yyyy-MM-dd"));
                         }
-                        Console.WriteLine("--------------------------------------------------");
-
-                        // 2. LINQ: Genre Distribution Breakdown
-                        Console.WriteLine("--- Genre Distribution ---");
-                        var genreGroups = LibraryDatabase.Catalog.Values
-                            .GroupBy(b => b.Genre)
-                            .Select(g => new { Genre = g.Key, Count = g.Count() });
-
-                        foreach (var group in genreGroups)
-                        {
-                            Console.WriteLine(" Genre: " + group.Genre + " | Books Count: " + group.Count);
-                        }
-                        Console.WriteLine("--------------------------------------------------");
-
-                        // 3. LINQ: Overdue Books Radar
-                        Console.WriteLine("--- OverDue Books Radar ---");
-                        var overdueBooks = LibraryDatabase.Catalog.Values
-                            .Where(b => b.IsBorrowed && DateTime.Now > b.DueDate)
-                            .ToList();
-
-                        if (overdueBooks.Count == 0)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine(" Status: All checked-out books are currently on time!");
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(" Alert: " + overdueBooks.Count + " book(s) are currently overdue!");
-                            foreach (var b in overdueBooks)
-                            {
-                                Console.WriteLine("   * '" + b.Name + "' (Borrowed by: " + b.BorrowedBy + ") - Due: " + b.DueDate.ToString("yyyy-MM-dd"));
-                            }
-                            Console.ResetColor();
-                        }
-                        Console.WriteLine("--------------------------------------------------");
+                        Console.ResetColor();
                     }
-                    
-                    // 4. LINQ: Active Borrowers Leaderboard
-                        Console.WriteLine("--- Active Borrowers Leaderboard ---");
-                        var topBorrowers = LibraryDatabase.Catalog.Values
-                            .Where(b => b.IsBorrowed)
-                            .GroupBy(b => b.BorrowedBy)
-                            .Select(g => new { Username = g.Key, ActiveCount = g.Count() })
-                            .OrderByDescending(g => g.ActiveCount)
-                            .ToList();
+                    Console.WriteLine("--------------------------------------------------");
 
-                        if (topBorrowers.Count == 0)
+                    // 4. LINQ: Active Borrowers Leaderboard (Moved INSIDE the else block)
+                    Console.WriteLine("--- Active Borrowers Leaderboard ---");
+                    var topBorrowers = LibraryDatabase.Catalog.Values
+                        .Where(b => b.IsBorrowed)
+                        .GroupBy(b => b.BorrowedBy)
+                        .Select(g => new { Username = g.Key, ActiveCount = g.Count() })
+                        .OrderByDescending(g => g.ActiveCount)
+                        .ToList();
+
+                    if (topBorrowers.Count == 0)
+                    {
+                        Console.WriteLine(" No members currently have books checked out.");
+                    }
+                    else
+                    {
+                        foreach (var borrower in topBorrowers)
                         {
-                            Console.WriteLine(" No members currently have books checked out.");
+                            Console.WriteLine(" User: " + borrower.Username + " | Active Books: " + borrower.ActiveCount);
                         }
-                        else
-                        {
-                            foreach (var borrower in topBorrowers)
-                            {
-                                Console.WriteLine(" User: " + borrower.Username + " | Active Books: " + borrower.ActiveCount);
-                            }
-                        }
-                        Console.WriteLine("--------------------------------------------------");
+                    }
+                    Console.WriteLine("--------------------------------------------------");
 
                     UI.Pause();
-                }
+                } 
+            }
                 else if (selection == 8)
                 {
                     UI.PrintWarning("Logging out of the System.......");
