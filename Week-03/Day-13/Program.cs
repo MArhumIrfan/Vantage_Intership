@@ -111,6 +111,18 @@ namespace Lib
 
         }
 
+
+        public static List<Book> SearchBooks(string keyword, string genreFilter, int maxPrice)
+            {
+            return Catalog.Values
+             .Where(b => 
+            (string.IsNullOrEmpty(keyword) || b.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase) || b.Author.Contains(keyword, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(genreFilter) || b.Genre.Equals(genreFilter, StringComparison.OrdinalIgnoreCase)) &&
+            (b.Cost <= maxPrice)
+            )
+            .ToList();
+            } 
+
         public static void LoadFromFile()
         {
             try
