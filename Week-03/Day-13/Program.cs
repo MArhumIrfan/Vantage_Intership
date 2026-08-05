@@ -414,7 +414,8 @@ namespace Lib
                 Console.WriteLine("5. Register a New Member");
                 Console.WriteLine("6. View Transaction History"); 
                 Console.WriteLine("7. Advance Library Analytics");
-                Console.WriteLine("8. Logout / Main menu\n");     
+                Console.WriteLine("8. Interactive Book search");
+                Console.WriteLine("9. Logout / Main menu\n");     
 
                 int selection = UI.ReadInt32("Please choose an option: ");
 
@@ -660,7 +661,49 @@ namespace Lib
                     UI.Pause();
                 } 
             }
+
                 else if (selection == 8)
+                {
+
+                    UI.ClearAndHeader("Interactive Book Serach Engine");
+
+                    Console.WriteLine("Enter Keyword(Title or author, or press Enter to skip): ");
+                    string keyword = Console.Readline()??"";
+
+                    Console.WriteLine("Enter Genre filter (or press Enter to skip): ");
+                    string genre = Console.ReadLine()??"";
+
+                    Console.WriteLine("Enter Maximum Budget / Cost in PKR (e.g., 1000): ");
+                    string priceInput = Console.ReadLine()??"";
+                    int maxPrice = int.TryParse(priceInput, out int p) ? p: int.MaxValue;
+                    
+                    List<Book> results = LibraryDatabase.SearchBooks(keyword,genre,maxPrice);
+
+                    Console.WriteLine("\n--- Search Results ("+results.Count+"found)---");
+                    if  (results.Count == 0)
+                    {
+
+                     UI.PrintError("No Books match your specific critera");
+
+                    }
+
+                    else
+                    {
+                        
+                        foreach (var b in results)
+                        {
+                            string status = b.IsBorrowed ? "(Borrowed)":"(Available)";
+                            Console.WriteLine($"*[{b.ID}]{b.Name} by {b.Author} | Genre: {b.Genre} | Cost: {b.Cost} PKR {status}"); 
+                        }
+
+
+                    }
+
+                    Console.WriteLine("----------------------------------------------------------");
+                    UI.Pause;
+
+                }
+                else if (selection == 9)
                 {
                     UI.PrintWarning("Logging out of the System.......");
                     System.Threading.Thread.Sleep(1000);
