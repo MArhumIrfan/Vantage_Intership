@@ -1,4 +1,4 @@
-/*
+﻿/*
 --
 --UserNames & Password for all types of users--
 --
@@ -10,7 +10,6 @@
 --
 */
 
-/*
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1101,4 +1100,3 @@ namespace Lib
     }
 }
 
-*/
