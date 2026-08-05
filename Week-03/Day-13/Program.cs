@@ -707,7 +707,7 @@ namespace Lib
                     }
 
                     Console.WriteLine("----------------------------------------------------------");
-                    UI.Pause;
+                    UI.Pause();
 
                 }
                 else if (selection == 9)
