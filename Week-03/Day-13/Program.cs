@@ -700,7 +700,7 @@ namespace Lib
                         foreach (var b in results)
                         {
                             string status = b.IsBorrowed ? "(Borrowed)":"(Available)";
-                            Console.WriteLine("*-> " + b.ID + " | " + b.Name + " by " + b.Author + " | Genre: " + b.Genre + " | Cost: " + b.Cost + " PKR " + status);
+                            Console.WriteLine("*-> " + b.BookId + " | " + b.Name + " by " + b.Writer + " | Genre: " + b.Genre + " | Cost: " + b.Cost + " PKR " + status);
                         }
 
 
