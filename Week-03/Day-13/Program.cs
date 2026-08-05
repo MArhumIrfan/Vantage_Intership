@@ -670,14 +670,19 @@ namespace Lib
                     UI.ClearAndHeader("Interactive Book Serach Engine");
 
                     Console.WriteLine("Enter Keyword(Title or author, or press Enter to skip): ");
-                    string keyword = Console.Readline()??"";
+                    string keyword = Console.ReadLine()??"";
 
                     Console.WriteLine("Enter Genre filter (or press Enter to skip): ");
                     string genre = Console.ReadLine()??"";
 
-                    Console.Write("Enter Maximum Budget / Cost in PKR: ");
-                    string priceInput = Console.ReadLine() ?? "";
-                    int maxPrice = int.TryParse(priceInput, out int p) ? p : int.MaxValue;
+                   Console.Write("Enter Maximum Budget / Cost in PKR (e.g., 5000): ");
+                   string priceInput = Console.ReadLine() ?? "";
+
+                   int maxPrice;
+                   if (!int.TryParse(priceInput, out maxPrice))
+                   {
+                        maxPrice = int.MaxValue; // Defaults to maximum if they leave it blank or type invalid text
+                   }
                     
                     List<Book> results = LibraryDatabase.SearchBooks(keyword,genre,maxPrice);
 
