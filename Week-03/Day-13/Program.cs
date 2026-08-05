@@ -111,17 +111,19 @@ namespace Lib
 
         }
 
-
         public static List<Book> SearchBooks(string keyword, string genreFilter, int maxPrice)
-            {
+        {
             return Catalog.Values
-             .Where(b => 
-            (string.IsNullOrEmpty(keyword) || b.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase) || b.Author.Contains(keyword, StringComparison.OrdinalIgnoreCase)) &&
+            .Where(b => 
+            (string.IsNullOrEmpty(keyword) || 
+             b.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 || 
+             b.Genre.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0) &&
             (string.IsNullOrEmpty(genreFilter) || b.Genre.Equals(genreFilter, StringComparison.OrdinalIgnoreCase)) &&
             (b.Cost <= maxPrice)
-            )
+             )
             .ToList();
-            } 
+        }
+        
 
         public static void LoadFromFile()
         {
@@ -673,9 +675,9 @@ namespace Lib
                     Console.WriteLine("Enter Genre filter (or press Enter to skip): ");
                     string genre = Console.ReadLine()??"";
 
-                    Console.WriteLine("Enter Maximum Budget / Cost in PKR (e.g., 1000): ");
-                    string priceInput = Console.ReadLine()??"";
-                    int maxPrice = int.TryParse(priceInput, out int p) ? p: int.MaxValue;
+                    Console.Write("Enter Maximum Budget / Cost in PKR: ");
+                    string priceInput = Console.ReadLine() ?? "";
+                    int maxPrice = int.TryParse(priceInput, out int p) ? p : int.MaxValue;
                     
                     List<Book> results = LibraryDatabase.SearchBooks(keyword,genre,maxPrice);
 
