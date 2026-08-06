@@ -1153,8 +1153,40 @@ namespace Lib
                 {
                     try
                     {
-                        
-                    }   
+                        int  memberId = ReadInt32("\nEnter your Member ID ");
+
+                        if (RegisteredUsers.ContainsKey(memberId))
+                        {
+                            VerifyUser  user = new VerifyUser();
+                            user.Username = RegisteredUsers[memberId];
+
+                            PrintSuccess("Welcome!, "+ user.Username+" ! ");
+                            Console.WriteLine("Enter the passowrd ");
+                            string userPass = Console.ReadLine()??"";
+                            if(string.IsNullOrWhiteSpace(userPass)) throw new ArgumentException("Password cannot be empty! ");
+                            user.UserPassword = userPass;
+
+                            Thread(500);
+                            userSession = user;
+
+                        }
+                        else
+                        {
+
+                            throw new KeyNotFoundException("Member ID ["+memberId+"] not recoginzed in the system.");
+
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+
+                        PrintError("User login error " + ex.Message);
+                        Pause();
+                        continue;
+
+
+                    }
                 }
                 else if (chosenRole == SystemRole.Guest)
                 {
