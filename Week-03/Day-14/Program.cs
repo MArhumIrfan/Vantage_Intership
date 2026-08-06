@@ -978,7 +978,7 @@ namespace Lib
 
             else
             {
-                UI.PrintError("Book ID ["+TargetID+"] not found.");
+                UI.PrintError("Book ID ["+targetID+"] not found.");
             }
         }
 
