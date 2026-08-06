@@ -1088,6 +1088,7 @@ namespace Lib
                 Console.WriteLine("Identify your role (Admin/User/Guest) or type -'exit'- to quit: ");
                 string inputRole = Console.ReadLine() ?? "";
 
+
                 if (inputRole.Equals("exit", StringComparison.OrdinalIgnoreCase))
                 {
                     LibraryDatabase.SaveToFile();
@@ -1097,8 +1098,21 @@ namespace Lib
                 }
 
                 SystemRole chosenRole = SystemRole.Unknown;
-                if (Enum.TryParse(inputRole, true, out chosenRole))
+                try
                 {
+                    if(string.IsNullOrEmpty|| !Enum.TryParse(inputRole, true, out chosenRole) || chosenRole == SystemRole.Unknown)
+                    {
+                        throw new ArgumentException("Invalid Role selection format. Please try Admin, User, or Guest");
+
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    
+                    PrintError("[Security Exception Caught]" + ex.Message);
+                    Pause();
+                    continue;
+
                 }
 
                 Login userSession = null;
