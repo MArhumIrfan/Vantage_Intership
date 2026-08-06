@@ -1151,7 +1151,10 @@ namespace Lib
                 }
                 else if (chosenRole == SystemRole.User)
                 {
-                    
+                    try
+                    {
+                        
+                    }   
                 }
                 else if (chosenRole == SystemRole.Guest)
                 {
