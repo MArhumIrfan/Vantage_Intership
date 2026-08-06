@@ -1159,6 +1159,20 @@ namespace Lib
                 }
             }
         }
+    
+        public static int GetSafeIntegerInput(string prompt)
+        {
+            
+            while (true)
+            {
+                
+                Console.WriteLine(prompt);
+                string input 
+
+            }
+
+        }
+
     }
 }
 
