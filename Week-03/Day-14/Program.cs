@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 
 namespace Lib
@@ -194,20 +195,30 @@ namespace Lib
             try
             {
                 List<string> lines = new List<string>();
-                
+
                 foreach (Book b in Catalog.Values)
                 {
-                    string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}", 
-                        b.BookID, b.Name, b.Publisher, b.DatePublish, b.Genre, b.Cost, b.FineDue, 
-                        b.IsBorrowed, b.BorrowedBy, b.BorrowedDate.ToString(), b.DueDate.ToString());
+                    
+                    string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
+                    b.BookID, b.Name, b.Publisher, b.DatePublish, b.Genre, b.Cost, b.FineDue,
+                    b.IsBorrowed, b.BorrowedBy, b.BorrowedDate.ToString(), b.DueDate());
                     lines.Add(line);
+
                 }
-                
+
                 File.WriteAllLines(SaveFilePath, lines);
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException ex)
             {
-                UI.PrintError("Warning: could not save library data (" + ex.Message + ")");
+                UI.PrintError("Permission Error ! Cannot save to file ("+ex.Message+")");
+            }
+            catch(IOException ex)
+            {
+                UI.PrintError("I/O Error: Disk Write Failed ("+ex.Message+")");
+            }
+            catch(Exception ex)
+            {
+                UI.PrintError("Warning ! Could not save to Library Disk("+ex.Message+")");
             }
         }
 
