@@ -150,11 +150,11 @@ namespace Lib
 
                     }
 
-                    Book b  = new Nook();
+                    Book b  = new Book();
                     b.BookID = int.Parse(parts[0]);
                     b.Name = parts[1];
                     b.Publisher = parts[2];
-                    b.DatePublish = parts[3];
+                    b.DatePublish = int.Parse(parts[3]);
                     b.Genre = parts[4];
                     b.Cost = int.Parse(parts[5]);
                     b.FineDue = int.Parse(parts[6]);
@@ -201,7 +201,7 @@ namespace Lib
                     
                     string line = string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}",
                     b.BookID, b.Name, b.Publisher, b.DatePublish, b.Genre, b.Cost, b.FineDue,
-                    b.IsBorrowed, b.BorrowedBy, b.BorrowedDate.ToString(), b.DueDate());
+                    b.IsBorrowed, b.BorrowedBy, b.BorrowedDate.ToString(), b.DueDate.ToString());
                     lines.Add(line);
 
                 }
