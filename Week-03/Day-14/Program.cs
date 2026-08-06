@@ -917,45 +917,72 @@ namespace Lib
         {
             LibraryDatabase.DisplayAvailableTitles();
 
-            int targetID = UI.ReadInt32("\nEnter the Book ID to settle fines: ");
-            
+            int targetID = UI.ReadInt32("\nEnter the book id to to settle fines");
+
             if (LibraryDatabase.Catalog.ContainsKey(targetID))
             {
                 Book foundBook = LibraryDatabase.Catalog[targetID];
 
                 if (foundBook.FineDue <= 0)
                 {
-                    UI.PrintSuccess("Good News! There is no outstanding fine for this book.");
+                    UI.PrintSuccess("Good news! no Fines to pay for this book!");
                 }
                 else
                 {
-                    Console.WriteLine("\nOutstanding late fees for " + foundBook.Name + " is: " + foundBook.FineDue + " PKR ");
-                    int payment = UI.ReadInt32("Enter the Amount to pay for the fine: ");
+                    Console.WriteLine("\nOutstanding fees for " + foundBook.Name + " is :" + foundBook.FineDue + " PKR ");
 
-                    if (payment <= 0)
+                    try
                     {
-                        UI.PrintError("Invalid amount of payment value given. Transaction cancelled.");
+                        Console.WriteLine("Enter the amount for the fine payment :");
+                        string paymentInput = Console.ReadLine();
+
+                        int payment = int.Parse(paymentInput);
+
+                        if (payment < 0)
+                        {
+                            throw new ArgumentOutOfRangeException("Payment amount cannot be negative!");
+                        }
+
+                        if (payment == 0)
+                        {
+                            UI.PrintError("Invalid amount of payment value given, Transaction cancelled!");
+                        }
+                        else if (payment > foundBook.FineDue)
+                        {
+                            int change = payment - foundBook.FineDue;
+                            UI.PrintSuccess("Transaction completed! your change is " + change + " PKR ");
+                            foundBook.FineDue = 0;
+                            LibraryDatabase.SaveToFile();
+                        }
+                        else
+                        {
+                            foundBook.FineDue -= payment;
+                            LibraryDatabase.SaveToFile();
+                            UI.PrintSuccess("Payment successfull! your remaining balance is " + foundBook.FineDue + " PKR ");
+                        }
                     }
-                    else if (payment > foundBook.FineDue)
+                    catch (FormatException)
                     {
-                        int change = payment - foundBook.FineDue;
-                        UI.PrintSuccess("Transaction Completed! Your change is: " + change + " PKR ");
-                        foundBook.FineDue = 0;
-                        LibraryDatabase.SaveToFile();
+                        UI.PrintError("Invalid Format! Enter a valid numerical payment value.");
                     }
-                    else
+                    catch (ArgumentOutOfRangeException ex)
                     {
-                        foundBook.FineDue -= payment;
-                        LibraryDatabase.SaveToFile();
-                        UI.PrintSuccess("Payment accepted! Your remaining balance is: " + foundBook.FineDue + " PKR ");
+                        UI.PrintError("Validation Error! " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        UI.PrintError("An unexpected error has occurred!: " + ex.Message);
                     }
                 }
             }
+
             else
             {
-                UI.PrintError("Book ID [" + targetID + "] not found.");
+                UI.PrintError("Book ID ["+TargetID+"] not found.");
             }
         }
+
+
     }
 
     public class GuestUser : Login
