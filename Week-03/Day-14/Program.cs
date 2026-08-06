@@ -1100,7 +1100,7 @@ namespace Lib
                 SystemRole chosenRole = SystemRole.Unknown;
                 try
                 {
-                    if(string.IsNullOrEmpty|| !Enum.TryParse(inputRole, true, out chosenRole) || chosenRole == SystemRole.Unknown)
+                    if (string.IsNullOrWhiteSpace(inputRole) || !Enum.TryParse<SystemRole>(inputRole, true, out chosenRole) || chosenRole == SystemRole.Unknown)
                     {
                         throw new ArgumentException("Invalid Role selection format. Please try Admin, User, or Guest");
 
@@ -1129,9 +1129,9 @@ namespace Lib
                         if (string.IsNullOrWhiteSpace(adminUser)) throw new ArgumentException("Admin Username cannot be empty!");
                         admin.AdminUserName = adminUser;
 
-                        Console.Write("Enter the Admin Pasword ");
-                        string adminPassword = Console.ReadLine()??"";
-                        if(string.IsNullOrWhiteSpace(adminPassword)) throw new ArgumentException("Admin Passowrd cannot be empty!");
+                        Console.Write("Enter the Admin Password: ");
+                        string adminPass = Console.ReadLine() ?? "";
+                        if (string.IsNullOrWhiteSpace(adminPass)) throw new ArgumentException("Admin password cannot be empty.");
                         admin.AdminPassword = adminPass;
 
                         Thread.Sleep(500);
@@ -1166,7 +1166,7 @@ namespace Lib
                             if(string.IsNullOrWhiteSpace(userPass)) throw new ArgumentException("Password cannot be empty! ");
                             user.UserPassword = userPass;
 
-                            Thread(500);
+                            System.Threading.Thread.Sleep(500);
                             userSession = user;
 
                         }
