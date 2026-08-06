@@ -1119,15 +1119,35 @@ namespace Lib
 
                 if (chosenRole == SystemRole.Admin)
                 {
-                    VerifyAdmin admin = new VerifyAdmin();
-                    Console.Write("\nEnter the Admin Username: ");
-                    admin.AdminUserName = Console.ReadLine() ?? "";
 
-                    Console.Write("Enter the Admin Password: ");
-                    admin.AdminPassword = Console.ReadLine() ?? "";
-                    
-                    Thread.Sleep(500);
-                    userSession = admin;
+                    try
+                    {
+                        VerifyAdmin admin = new VerifyAdmin();
+                        Console.WriteLine("\n Enter the Admin Username ");
+                        string adminUser = Console.ReadLine()??"";
+                        
+                        if (string.IsNullOrWhiteSpace(adminUser)) throw new ArgumentException("Admin Username cannot be empty!");
+                        admin.AdminUserName = adminUser;
+
+                        Console.Write("Enter the Admin Pasword ");
+                        string adminPassword = Console.ReadLine()??"";
+                        if(string.IsNullOrWhiteSpace(adminPassword)) throw new ArgumentException("Admin Passowrd cannot be empty!");
+                        admin.AdminPassword = adminPass;
+
+                        Thread.Sleep(500);
+                        userSession = admin;
+
+                    }
+
+                    catch (Exception ex)
+                    {
+                        
+                        PrintError("Admin Authentication halted" +ex.Message);
+                        Pause();
+                        continue;
+
+                    }
+
                 }
                 else if (chosenRole == SystemRole.User)
                 {
