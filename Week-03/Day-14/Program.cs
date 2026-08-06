@@ -1167,7 +1167,8 @@ namespace Lib
             {
                 
                 Console.WriteLine(prompt);
-                string input 
+                string input = Console.ReadLine()??"";
+                
 
             }
 
