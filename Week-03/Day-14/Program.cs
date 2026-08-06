@@ -1151,26 +1151,7 @@ namespace Lib
                 }
                 else if (chosenRole == SystemRole.User)
                 {
-                    int memberId = ReadInt32("\nEnter your Member ID: ");
-
-                    if (RegisteredUsers.ContainsKey(memberId))
-                    {
-                        VerifyUser user = new VerifyUser();
-                        user.Username = RegisteredUsers[memberId]; 
-
-                        PrintSuccess("Welcome, " + user.Username + "!");
-                        Console.Write("Enter the password: ");
-                        user.UserPassword = Console.ReadLine() ?? "";
-
-                        Thread.Sleep(500);
-                        userSession = user;
-                    }
-                    else
-                    {
-                        PrintError("Member ID not recognized in the system.");
-                        Pause();
-                        continue;
-                    }
+                    
                 }
                 else if (chosenRole == SystemRole.Guest)
                 {
