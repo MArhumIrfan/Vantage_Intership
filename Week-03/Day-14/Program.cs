@@ -1168,7 +1168,16 @@ namespace Lib
                 
                 Console.WriteLine(prompt);
                 string input = Console.ReadLine()??"";
-                
+                try
+                {
+                    return int.Parse(input);
+                }
+                catch
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Error : Invalid Input. Please enter a valid numerical menu option ");
+                    Console.ResetColor();
+                }
 
             }
 
