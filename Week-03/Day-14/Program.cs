@@ -127,45 +127,66 @@ namespace Lib
 
         public static void LoadFromFile()
         {
+            
+
             try
             {
-                if (File.Exists(SaveFilePath))
+                if (!File.Exists(SaveFilePath))
                 {
-                    Catalog.Clear();
-                    string[] lines = File.ReadAllLines(SaveFilePath);
-                    
-                    foreach (string line in lines)
-                    {
-                        string[] parts = line.Split('|');
-                        
-                        if (parts.Length == 11)
-                        {
-                            Book b = new Book();
-                            b.BookID = int.Parse(parts[0]);
-                            b.Name = parts[1];
-                            b.Publisher = parts[2];
-                            b.DatePublish = int.Parse(parts[3]);
-                            b.Genre = parts[4];
-                            b.Cost = int.Parse(parts[5]);
-                            b.FineDue = int.Parse(parts[6]);
-                            b.IsBorrowed = bool.Parse(parts[7]);
-                            b.BorrowedBy = parts[8];
-                            b.BorrowedDate = DateTime.Parse(parts[9]); 
-                            b.DueDate = DateTime.Parse(parts[10]);      
-                            
-                            Catalog.Add(b.BookID, b);
-                        }
-                    }
+                    throw new FileNotFoundException("SAve file does not exist , starting defualt seed catalog.");
+
                 }
-                else
+                Catalog.Clear();
+                string[] lines = File.ReadAllLines(SaveFilePath);
+
+                foreach(string line in lines)
                 {
-                    Seed();
+                    string [] parts = line.Split('|');
+                    if (parts.Length != 11)
+                    {
+                        throw new FormatException("A corrupted or malformed data lines was detected in the save file");
+
+
+                    }
+
+                    Book b  = new Nook();
+                    b.BookID = int.Parse(parts[0]);
+                    b.Name = parts[1];
+                    b.Publisher = parts[2];
+                    b.DatePublish = parts[3];
+                    b.Genre = parts[4];
+                    b.Cost = int.Parse(parts[5]);
+                    b.FineDue = int.Parse(parts[6]);
+                    b.IsBorrowed = bool.Parse(parts[7]);
+                    b.BorrowedBy = parts[8];
+                    b.BorrowedDate = DateTime.Parse(parts[9]); 
+                    b.DueDate = DateTime.Parse(parts[10]);      
+                    
+                    Catalog.Add(b.BookID, b);
+
+
+
                 }
             }
-            catch (Exception)
+
+            catch(FileNotFoundException ex)
             {
+                UI.PrintWarning(ex.Message);
                 Seed();
             }
+
+            catch(FormatException ex)
+            {
+                UI.PrintError("Data corruption Error :"+ ex.Message +"Resorting to defualt catalog.");
+                Seed();
+            }
+
+            catch(Exception ex)
+            {
+                UI.PrintError("Un expected Error occured while loading files !"+ ex.Message );
+                Seed();
+            }
+           
         }
 
         public static void SaveToFile()
