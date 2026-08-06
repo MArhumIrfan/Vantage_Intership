@@ -1,0 +1,14 @@
+101|The Great Gatsby|Penguin|1990|Fantasy|1000|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+102|The Great Gatsby|Penguin|1990|Fantasy|1000|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+103|The Great Gatsby|Penguin|1990|Fantasy|1000|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+104|To Kill a Mockingbird|Lippincott|1960|Classic|1200|500|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+105|To Kill a Mockingbird|Lippincott|1960|Classic|1200|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+106|Data Communication and Networks|Hafiz Mati ur Rahman|2023|Education|2500|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+107|Mastering LR(0) Parsers|Iqra Press|2024|Computer Science|3000|0|True|Tayyab|7/20/2026 10:00:00 AM|8/3/2026 10:00:00 AM
+108|Python GUI with Tkinter|Vantage Tech|2025|Programming|1800|150|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+109|The Art of UI Redesign|Ghayyur Abbas|2022|Design|2200|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+110|High-Speed Routing for PC Games|Wazir Muzammil Hussain|2021|Technology|1500|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+111|Fashion Design made easy!|Syed Tayyab Moassud Alam Shah Buhkari Pher Shahab|2023|Design|3500|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+112|Design Alogrithims|Muhammad Whahahj|2024|Computer Science|1500|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+113|Aritifical Intelligence|Insafullah Khan|2023|Computer Science|1500|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
+114|5G Mobile Network|Asim Abrar|2023|Technology|1500|0|False||1/1/0001 12:00:00 AM|1/1/0001 12:00:00 AM
