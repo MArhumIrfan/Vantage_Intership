@@ -132,6 +132,7 @@ namespace Lib
 
             try
             {
+
                 if (!File.Exists(SaveFilePath))
                 {
                     throw new FileNotFoundException("SAve file does not exist , starting defualt seed catalog.");
@@ -224,6 +225,7 @@ namespace Lib
 
         public static void DisplayAvailableTitles()
         {
+            
             Console.WriteLine("--- Current Library Catalog Inventory ---");
             if (Catalog.Count == 0)
             {
