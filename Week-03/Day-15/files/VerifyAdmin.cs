@@ -28,6 +28,14 @@ namespace Lib
             }
         }
 
+        public static string GetBookValueTier(Book book) => book switch
+        {
+            { Cost: < 1500 } => "Budget Tier",
+            { Cost: >= 1500 and <= 2500 } => "Standard Tier",
+            { Cost: > 2500 } => "Premium / Collector Tier",
+            _ => "Unknown Tier"
+        };
+
         public override void ExecuteRoleActions()
         {
             while (true)
@@ -145,7 +153,7 @@ namespace Lib
                 {
                     Console.WriteLine(string.Format("[ID: {0}] {1}", b.BookID, b.Name.ToUpper()));
                     Console.WriteLine(string.Format("   Publisher: {0} | Year: {1} | Genre: {2}", b.Publisher, b.DatePublish, b.Genre));
-                    Console.WriteLine(string.Format("   Value: {0} PKR", b.Cost));
+                    Console.WriteLine(string.Format("   Value: {0} PKR | Tier: {1}", b.Cost, LibraryDatabase.GetBookValueTier(b)));
 
                     if (b.IsBorrowed)
                     {
