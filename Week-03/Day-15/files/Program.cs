@@ -67,7 +67,7 @@ namespace Lib
                     try
                     {
                         VerifyAdmin admin = new VerifyAdmin();
-                        Console.WriteLine("\n Enter the Admin Username ");
+                        Console.WriteLine("\nEnter the Admin Username ");
                         string adminUser = Console.ReadLine() ?? "";
 
                         if (string.IsNullOrWhiteSpace(adminUser)) throw new ArgumentException("Admin Username cannot be empty!");
@@ -135,10 +135,27 @@ namespace Lib
                     continue;
                 }
 
-                if (userSession != null)
+
+                switch (userSession)
                 {
-                    userSession.ExecuteRoleActions();
+                    
+                    case VerifyAdmin adminSession:
+                    adminSession.ExecuteRoleActions();
+                    break;
+
+                    case VerifyUser userSessionObj when !string.IsNullOrEmpty(userSessionObj.Username):
+                    userSessionObj.ExecuteRoleActions();
+                    break;
+
+                    case GuestUser guestSession:
+                    guestSession.ExecuteRoleActions();
+                    break;
+
+                    default:
+                    break;
+
                 }
+
             }
         }
     }
