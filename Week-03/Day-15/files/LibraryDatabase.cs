@@ -46,7 +46,7 @@ namespace Lib
             Catalog.Add(109, new Book(109, "The Art of UI Redesign", "Ghayyur Abbas", 2022, "Design", 2200));
             Catalog.Add(110, new Book(110, "High-Speed Routing for PC Games", "Wazir Muzammil Hussain", 2021, "Technology", 1500));
             Catalog.Add(111, new Book(111, "Fashion Design made easy!", "Syed Tayyab Moassud Alam Shah Buhkari Pher Shahab", 2023, "Design", 3500));
-            Catalog.Add(112, new Book(112, "Design Alogrithims", "Muhammad Whahahj", 2024, "Computer Science", 1500));
+            Catalog.Add(112, new Book(112, "Beaten, But never broken", "Muhammad Whahahj", 2024, "Education", 1500));
             Catalog.Add(113, new Book(113, "Aritifical Intelligence", "Insafullah Khan", 2023, "Computer Science", 1500));
         }
 
