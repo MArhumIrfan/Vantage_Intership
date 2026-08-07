@@ -118,43 +118,59 @@ namespace Lib
         {
             LibraryDatabase.DisplayAvailableTitles();
 
-            int targetID = UI.ReadInt32("\nEnter the Book ID to return: ");
+            int targetID = UI.ReadInt32("Enter the Book ID to return");
 
             if (!LibraryDatabase.Catalog.ContainsKey(targetID))
             {
-                UI.PrintError("Book ID [" + targetID + "] not found in the catalog.");
+                
+                UI.PrintError("Error!, The book ID : ["+targetID+"] not found in the catalog");
                 return;
+
             }
 
             Book foundBook = LibraryDatabase.Catalog[targetID];
 
-            if (!foundBook.IsBorrowed)
+            if(!foundBook.IsBorrowed)
             {
-                UI.PrintError("This book wasn't marked as borrowed, so there's nothing to return.");
+                UI.PrintError("Error ! the book is not marked as borrowed!");
                 return;
             }
 
             if (DateTime.Now > foundBook.DueDate)
             {
-                int daysLate = (DateTime.Now - foundBook.DueDate).Days;
-                if (daysLate <= 0) daysLate = 1;
 
-                int fineAmount = daysLate * 50;
+                int DaysLate = (DateTime.Now - foundBook.DueDate).Days;
+                if(DaysLate<=0) DaysLate =1;
+
+                int fineMultiplier = DaysLate switch
+                {
+                    
+                    >= 1 and <= 5 => 50,
+                    >5 and <=15 => 75,
+                    _=>100
+
+                };
+
+                int fineAmount = DaysLate * fineMultiplier;
                 foundBook.FineDue += fineAmount;
 
-                UI.PrintWarning("WARNING: This book is " + daysLate + " days late.");
-                Console.WriteLine("An automatic late fee of " + fineAmount + " PKR has been added to the account.");
+                UI.PrintWarning("Warning !: The book is "+DaysLate+" days late.");
+                Console.WriteLine("The total amount of fine is "+fineAmount+" PKR ");
+
             }
 
             foundBook.IsBorrowed = false;
-            foundBook.BorrowedBy = "";
-            foundBook.BorrowedDate = DateTime.MinValue;
-            foundBook.DueDate = DateTime.MinValue;
+            foundBook.BorrowedBy = " ";
+            foundBook.BorrowedDate = DateTime.MinValue; 
+            foundBook.DueDate = DateTime.MinValue;      
             LibraryDatabase.SaveToFile();
 
             LibraryDatabase.LogTransaction("RETURN", foundBook.BookID, foundBook.Name, Username);
 
             UI.PrintSuccess("Thank you for returning the book: " + foundBook.Name);
+
+
+
         }
 
         public void PayFineBook()
