@@ -63,6 +63,15 @@ namespace Lib
             .ToList();
         }
 
+
+        public static string GetBookValueTier(Book book) => book switch
+        {
+            { Cost: < 1500 } => "Budget Tier",
+            { Cost: >= 1500 and <= 2500 } => "Standard Tier",
+            { Cost: > 2500 } => "Premium / Collector Tier",
+            _ => "Unknown Tier"
+        };
+
         public static void LoadFromFile()
         {
             try
