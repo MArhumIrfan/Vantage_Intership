@@ -36,31 +36,36 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-// Example custom GET endpoint
+
 app.MapGet("/api/welcome", () =>
 {
     return Results.Ok(new { Message = "Welcome to the integrated Library Web API!", Timestamp = DateTime.Now });
 });
 
 
-app.MapGet("/api/calc/{operation}/{num1:double}/{num2:double}", (string operation, double num1, double num2) =>
+
+
+// Endpoint using query parameters: /api/calc?op=add&num1=10&num2=5
+app.MapGet("/api/calc", (string op, double num1, double num2) =>
 {
-    double result = operation.ToLower() switch
+    double result = op.ToLower() switch
     {
-        "add" => num1 + num2,
-        "subtract" => num1 - num2,
-        "multiply" => num1 * num2,
-        "divide" => num2 != 0 ? num1 / num2 : double.NaN,
-        _ => 0
+        "add" or "+" => num1 + num2,
+        "subtract" or "-" => num1 - num2,
+        "multiply" or "*" => num1 * num2,
+        "divide" or "/" => num2 != 0 ? num1 / num2 : double.NaN,
+        _ => double.NaN
     };
 
     if (double.IsNaN(result))
     {
-        return Results.BadRequest(new { Error = "Cannot divide by zero." });
+        return Results.BadRequest(new { Error = "Invalid operation or division by zero." });
     }
 
-    return Results.Ok(new { Calculation = $"{num1} {operation} {num2}", Result = result });
+    return Results.Ok(new { Operation = op, Num1 = num1, Num2 = num2, Result = result });
 });
+
+app.Run();
 
 app.Run();
 
