@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,27 @@ app.MapGet("/api/welcome", () =>
 {
     return Results.Ok(new { Message = "Welcome to the integrated Library Web API!", Timestamp = DateTime.Now });
 });
+
+
+app.MapGet("/api/calc/{operation}/{num1:double}/{num2:double}", (string operation, double num1, double num2) =>
+{
+    double result = operation.ToLower() switch
+    {
+        "add" => num1 + num2,
+        "subtract" => num1 - num2,
+        "multiply" => num1 * num2,
+        "divide" => num2 != 0 ? num1 / num2 : double.NaN,
+        _ => 0
+    };
+
+    if (double.IsNaN(result))
+    {
+        return Results.BadRequest(new { Error = "Cannot divide by zero." });
+    }
+
+    return Results.Ok(new { Calculation = $"{num1} {operation} {num2}", Result = result });
+});
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
