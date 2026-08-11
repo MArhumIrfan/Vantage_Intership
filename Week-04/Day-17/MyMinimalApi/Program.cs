@@ -41,14 +41,20 @@ app.MapGet("/api/welcome", () =>
     return Results.Ok(new { Message = "Welcome to the integrated Library Web API!", Timestamp = DateTime.Now });
 });
 
-app.MapGet("/api/calc", (string op, double num1, double num2) =>
+app.MapGet("/api/calc", (string? op, double? num1, double? num2) =>
 {
+    // Check if any required parameter is missing
+    if (string.IsNullOrEmpty(op) || !num1.HasValue || !num2.HasValue)
+    {
+        return Results.BadRequest(new { Error = "Missing parameters. Please provide 'op', 'num1', and 'num2' via query string. Example: /api/calc?op=add&num1=10&num2=5" });
+    }
+
     double result = op.ToLower() switch
     {
-        "add" or "+" => num1 + num2,
-        "subtract" or "-" => num1 - num2,
-        "multiply" or "*" => num1 * num2,
-        "divide" or "/" => num2 != 0 ? num1 / num2 : double.NaN,
+        "add" or "+" => num1.Value + num2.Value,
+        "subtract" or "-" => num1.Value - num2.Value,
+        "multiply" or "*" => num1.Value * num2.Value,
+        "divide" or "/" => num2.Value != 0 ? num1.Value / num2.Value : double.NaN,
         _ => double.NaN
     };
 
@@ -57,7 +63,7 @@ app.MapGet("/api/calc", (string op, double num1, double num2) =>
         return Results.BadRequest(new { Error = "Invalid operation or division by zero." });
     }
 
-    return Results.Ok(new { Operation = op, Num1 = num1, Num2 = num2, Result = result });
+    return Results.Ok(new { Operation = op, Num1 = num1.Value, Num2 = num2.Value, Result = result });
 });
 
 // ==========================================
