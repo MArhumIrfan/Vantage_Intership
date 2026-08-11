@@ -61,6 +61,7 @@ app.MapGet("/api/calc", (strong op, double num1, double num2) =>
         return Results.BadRequest(new {Error = "Invalid operations or diviosn by zero. "});
 
     }
-    
 
-)
+    return Results.Ok(new {Operation = op, Num1 = num1 ,Num2 = num2, Results = result});
+
+);
