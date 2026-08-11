@@ -42,6 +42,25 @@ app.MapGet("/api/welcome", () =>
 
 });
 
-app.MapGet("/api/calc", () =>
+app.MapGet("/api/calc", (strong op, double num1, double num2) =>
+
+    double result = op.ToLower() switch (switch_on)
+    {
+
+            "add" or "+" => num1 + num2,
+            "sub" or "-" => num1 - num2,
+            "mul" or '*' => num1 * num2,
+            "div" or "/" => num2 !=0 ? num1 / num2 :double.NaN;
+            _ => double.NaN;
+
+    };
+
+    if(double.IsNaN(result))
+    {
+        
+        return Results.BadRequest(new {Error = "Invalid operations or diviosn by zero. "});
+
+    }
+    
 
 )
