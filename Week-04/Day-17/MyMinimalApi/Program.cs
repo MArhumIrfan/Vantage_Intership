@@ -23,7 +23,7 @@ var summeries = new []
 app.MapGet("/weather", ()=>
 {
     var forecast = Enumerable.Range(1,5).Select(index =>
-    new WeatherForcast
+    new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
             Random.Shared.Next(-20,55),
@@ -32,7 +32,16 @@ app.MapGet("/weather", ()=>
     )
     .toArray;
     return forecast;    
-}
+})
+.WithName("GetWeatherForecast");
+
+
+app.MapGet("/api/welcome", () =>
+{
+    return Results.Ok(new{Message ="Welcome to intgrated Wb API ",TimestampAttribute=DateTime.Now});
+
+});
+
+app.MapGet("/api/calc", () =>
 
 )
-.WithName("GetWeatherForecast");
