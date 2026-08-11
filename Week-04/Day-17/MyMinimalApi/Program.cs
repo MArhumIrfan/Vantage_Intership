@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -43,7 +43,7 @@ app.MapGet("/api/welcome", () =>
 
 app.MapGet("/api/calc", (string? op, double? num1, double? num2) =>
 {
-    // Check if any required parameter is missing
+   
     if (string.IsNullOrEmpty(op) || !num1.HasValue || !num2.HasValue)
     {
         return Results.BadRequest(new { Error = "Missing parameters. Please provide 'op', 'num1', and 'num2' via query string. Example: /api/calc?op=add&num1=10&num2=5" });
@@ -66,15 +66,10 @@ app.MapGet("/api/calc", (string? op, double? num1, double? num2) =>
     return Results.Ok(new { Operation = op, Num1 = num1.Value, Num2 = num2.Value, Result = result });
 });
 
-// ==========================================
-// NEW: POST Endpoint Using Request/Response Models
-// ==========================================
+
 app.MapPost("/api/books", (CreateBookRequest request) =>
 {
-    // Minimal APIs automatically validate data annotations on the request model.
-    // If validation fails, ASP.NET Core returns a 400 Bad Request automatically.
 
-    // Simulate saving the book and creating a response model
     var newBook = new BookResponse(
         Id: Random.Shared.Next(100, 999),
         Title: request.Title,
