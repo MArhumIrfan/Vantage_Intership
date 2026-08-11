@@ -67,7 +67,6 @@ app.MapGet("/api/calc", (string op, double num1, double num2) =>
 
 app.Run();
 
-app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
