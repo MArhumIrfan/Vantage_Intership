@@ -3,11 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -16,12 +14,23 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// ==========================================
+// In-Memory Database Simulation
+// ==========================================
+var books = new List<BookResponse>
+{
+    new BookResponse(1, "C# in Depth", "Jon Skeet", 2019, DateTime.Now),
+    new BookResponse(2, "Clean Code", "Robert C. Martin", 2008, DateTime.Now)
+};
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-// Existing GET Endpoints
+// ==========================================
+// GET Endpoints
+// ==========================================
 app.MapGet("/weatherforecast", () =>
 {
     var forecast = Enumerable.Range(1, 5).Select(index =>
@@ -33,8 +42,7 @@ app.MapGet("/weatherforecast", () =>
         ))
         .ToArray();
     return forecast;
-})
-.WithName("GetWeatherForecast");
+}).WithName("GetWeatherForecast");
 
 app.MapGet("/api/welcome", () =>
 {
@@ -43,10 +51,9 @@ app.MapGet("/api/welcome", () =>
 
 app.MapGet("/api/calc", (string? op, double? num1, double? num2) =>
 {
-   
     if (string.IsNullOrEmpty(op) || !num1.HasValue || !num2.HasValue)
     {
-        return Results.BadRequest(new { Error = "Missing parameters. Please provide 'op', 'num1', and 'num2' via query string. Example: /api/calc?op=add&num1=10&num2=5" });
+        return Results.BadRequest(new { Error = "Missing parameters. Please provide 'op', 'num1', and 'num2'." });
     }
 
     double result = op.ToLower() switch
@@ -66,32 +73,89 @@ app.MapGet("/api/calc", (string? op, double? num1, double? num2) =>
     return Results.Ok(new { Operation = op, Num1 = num1.Value, Num2 = num2.Value, Result = result });
 });
 
+// ==========================================
+// BOOKS: GET All & GET by ID
+// ==========================================
+app.MapGet("/api/books", () => Results.Ok(books));
 
+app.MapGet("/api/books/{id:int}", (int id) =>
+{
+    var book = books.FirstOrDefault(b => b.Id == id);
+    return book is not null ? Results.Ok(book) : Results.NotFound(new { Error = $"Book with ID {id} not found." });
+});
+
+// ==========================================
+// BOOKS: POST (Create)
+// ==========================================
 app.MapPost("/api/books", (CreateBookRequest request) =>
 {
-
+    // Model validation happens automatically via data annotations.
     var newBook = new BookResponse(
-        Id: Random.Shared.Next(100, 999),
+        Id: books.Count > 0 ? books.Max(b => b.Id) + 1 : 1,
         Title: request.Title,
         Author: request.Author,
         PublishedYear: request.PublishedYear,
         CreatedAt: DateTime.Now
     );
 
-    // Return a 201 Created status with the structured response model
+    books.Add(newBook);
+    
+    // Status Code: 201 Created
     return Results.Created($"/api/books/{newBook.Id}", newBook);
-})
-.WithName("CreateBook");
+});
+
+// ==========================================
+// BOOKS: PUT (Update) with Validation & Status Codes
+// ==========================================
+app.MapPut("/api/books/{id:int}", (int id, UpdateBookRequest request) =>
+{
+    var existingBookIndex = books.FindIndex(b => b.Id == id);
+
+    // Status Code: 404 Not Found
+    if (existingBookIndex == -1)
+    {
+        return Results.NotFound(new { Error = $"Book with ID {id} not found for updating." });
+    }
+
+    // Update the record
+    var updatedBook = new BookResponse(
+        Id: id,
+        Title: request.Title,
+        Author: request.Author,
+        PublishedYear: request.PublishedYear,
+        CreatedAt: books[existingBookIndex].CreatedAt // Keep original creation date
+    );
+
+    books[existingBookIndex] = updatedBook;
+
+    // Status Code: 200 OK (or 204 No Content)
+    return Results.Ok(updatedBook);
+});
+
+// ==========================================
+// BOOKS: DELETE (Remove)
+// ==========================================
+app.MapDelete("/api/books/{id:int}", (int id) =>
+{
+    var book = books.FirstOrDefault(b => b.Id == id);
+
+    // Status Code: 404 Not Found
+    if (book is null)
+    {
+        return Results.NotFound(new { Error = $"Book with ID {id} not found for deletion." });
+    }
+
+    books.Remove(book);
+
+    // Status Code: 204 No Content (Standard for successful deletion with no body returned)
+    return Results.NoContent();
+});
 
 app.Run();
 
 // ==========================================
-// Models (DTOs) and Records
+// Models and DTOs
 // ==========================================
-
-/// <summary>
-/// Request model for creating a book, complete with data validation attributes.
-/// </summary>
 public record CreateBookRequest(
     [Required(ErrorMessage = "Title is required.")]
     [StringLength(100, MinimumLength = 1, ErrorMessage = "Title must be between 1 and 100 characters.")]
@@ -100,13 +164,22 @@ public record CreateBookRequest(
     [Required(ErrorMessage = "Author is required.")]
     string Author,
 
-    [Range(1000, 2100, ErrorMessage = "Published year must be a valid year.")]
+    [Range(1000, 2100, ErrorMessage = "Published year must be between 1000 and 2100.")]
     int PublishedYear
 );
 
-/// <summary>
-/// Response model representing the saved book returned to the client.
-/// </summary>
+public record UpdateBookRequest(
+    [Required(ErrorMessage = "Title is required.")]
+    [StringLength(100, MinimumLength = 1)]
+    string Title,
+
+    [Required(ErrorMessage = "Author is required.")]
+    string Author,
+
+    [Range(1000, 2100)]
+    int PublishedYear
+);
+
 public record BookResponse(
     int Id,
     string Title,
@@ -115,9 +188,6 @@ public record BookResponse(
     DateTime CreatedAt
 );
 
-/// <summary>
-/// Weather forecast model.
-/// </summary>
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
