@@ -1,0 +1,124 @@
+using System.Buffers;
+using System.ComponentModel.DataAnnotations;
+
+var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddOpenApi();
+
+var app = builder.Build();
+
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseHttpsRedirection();
+
+var summaries = new[]
+{
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
+
+// Existing GET Endpoints
+app.MapGet("/weatherforecast", () =>
+{
+    var forecast = Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast
+        (
+            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        ))
+        .ToArray();
+    return forecast;
+})
+.WithName("GetWeatherForecast");
+
+app.MapGet("/api/welcome", () =>
+{
+    return Results.Ok(new { Message = "Welcome to the integrated Library Web API!", Timestamp = DateTime.Now });
+});
+
+app.MapGet("/api/calc", (string? op, double? num1, double? num2) =>
+{
+   
+    if (string.IsNullOrEmpty(op) || !num1.HasValue || !num2.HasValue)
+    {
+        return Results.BadRequest(new { Error = "Missing parameters. Please provide 'op', 'num1', and 'num2' via query string. Example: /api/calc?op=add&num1=10&num2=5" });
+    }
+
+    double result = op.ToLower() switch
+    {
+        "add" or "+" => num1.Value + num2.Value,
+        "subtract" or "-" => num1.Value - num2.Value,
+        "multiply" or "*" => num1.Value * num2.Value,
+        "divide" or "/" => num2.Value != 0 ? num1.Value / num2.Value : double.NaN,
+        _ => double.NaN
+    };
+
+    if (double.IsNaN(result))
+    {
+        return Results.BadRequest(new { Error = "Invalid operation or division by zero." });
+    }
+
+    return Results.Ok(new { Operation = op, Num1 = num1.Value, Num2 = num2.Value, Result = result });
+});
+
+
+app.MapPost("/api/books", (CreateBookRequest request) =>
+{
+
+    var newBook = new BookResponse(
+        Id: Random.Shared.Next(100, 999),
+        Title: request.Title,
+        Author: request.Author,
+        PublishedYear: request.PublishedYear,
+        CreatedAt: DateTime.Now
+    );
+
+    // Return a 201 Created status with the structured response model
+    return Results.Created($"/api/books/{newBook.Id}", newBook);
+})
+.WithName("CreateBook");
+
+app.Run();
+
+// ==========================================
+// Models (DTOs) and Records
+// ==========================================
+
+/// <summary>
+/// Request model for creating a book, complete with data validation attributes.
+/// </summary>
+public record CreateBookRequest(
+    [Required(ErrorMessage = "Title is required.")]
+    [StringLength(100, MinimumLength = 1, ErrorMessage = "Title must be between 1 and 100 characters.")]
+    string Title,
+
+    [Required(ErrorMessage = "Author is required.")]
+    string Author,
+
+    [Range(1000, 2100, ErrorMessage = "Published year must be a valid year.")]
+    int PublishedYear
+);
+
+/// <summary>
+/// Response model representing the saved book returned to the client.
+/// </summary>
+public record BookResponse(
+    int Id,
+    string Title,
+    string Author,
+    int PublishedYear,
+    DateTime CreatedAt
+);
+
+/// <summary>
+/// Weather forecast model.
+/// </summary>
+public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
