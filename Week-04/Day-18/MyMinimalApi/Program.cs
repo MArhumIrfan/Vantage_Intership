@@ -14,9 +14,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ==========================================
 // In-Memory Database Simulation
-// ==========================================
+
 var books = new List<BookResponse>
 {
     new BookResponse(1, "C# in Depth", "Jon Skeet", 2019, DateTime.Now),
@@ -28,9 +27,9 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-// ==========================================
+
 // GET Endpoints
-// ==========================================
+
 app.MapGet("/weatherforecast", () =>
 {
     var forecast = Enumerable.Range(1, 5).Select(index =>
@@ -73,9 +72,9 @@ app.MapGet("/api/calc", (string? op, double? num1, double? num2) =>
     return Results.Ok(new { Operation = op, Num1 = num1.Value, Num2 = num2.Value, Result = result });
 });
 
-// ==========================================
+
 // BOOKS: GET All & GET by ID
-// ==========================================
+
 app.MapGet("/api/books", () => Results.Ok(books));
 
 app.MapGet("/api/books/{id:int}", (int id) =>
@@ -84,12 +83,12 @@ app.MapGet("/api/books/{id:int}", (int id) =>
     return book is not null ? Results.Ok(book) : Results.NotFound(new { Error = $"Book with ID {id} not found." });
 });
 
-// ==========================================
+
 // BOOKS: POST (Create)
-// ==========================================
+
 app.MapPost("/api/books", (CreateBookRequest request) =>
 {
-    // Model validation happens automatically via data annotations.
+
     var newBook = new BookResponse(
         Id: books.Count > 0 ? books.Max(b => b.Id) + 1 : 1,
         Title: request.Title,
@@ -100,24 +99,24 @@ app.MapPost("/api/books", (CreateBookRequest request) =>
 
     books.Add(newBook);
     
-    // Status Code: 201 Created
+  
     return Results.Created($"/api/books/{newBook.Id}", newBook);
 });
 
-// ==========================================
+
 // BOOKS: PUT (Update) with Validation & Status Codes
-// ==========================================
+
 app.MapPut("/api/books/{id:int}", (int id, UpdateBookRequest request) =>
 {
     var existingBookIndex = books.FindIndex(b => b.Id == id);
 
-    // Status Code: 404 Not Found
+    
     if (existingBookIndex == -1)
     {
         return Results.NotFound(new { Error = $"Book with ID {id} not found for updating." });
     }
 
-    // Update the record
+  
     var updatedBook = new BookResponse(
         Id: id,
         Title: request.Title,
@@ -128,18 +127,18 @@ app.MapPut("/api/books/{id:int}", (int id, UpdateBookRequest request) =>
 
     books[existingBookIndex] = updatedBook;
 
-    // Status Code: 200 OK (or 204 No Content)
+  
     return Results.Ok(updatedBook);
 });
 
-// ==========================================
-// BOOKS: DELETE (Remove)
-// ==========================================
+
+
+
 app.MapDelete("/api/books/{id:int}", (int id) =>
 {
     var book = books.FirstOrDefault(b => b.Id == id);
 
-    // Status Code: 404 Not Found
+   
     if (book is null)
     {
         return Results.NotFound(new { Error = $"Book with ID {id} not found for deletion." });
@@ -147,15 +146,14 @@ app.MapDelete("/api/books/{id:int}", (int id) =>
 
     books.Remove(book);
 
-    // Status Code: 204 No Content (Standard for successful deletion with no body returned)
     return Results.NoContent();
 });
 
 app.Run();
 
-// ==========================================
+
 // Models and DTOs
-// ==========================================
+
 public record CreateBookRequest(
     [Required(ErrorMessage = "Title is required.")]
     [StringLength(100, MinimumLength = 1, ErrorMessage = "Title must be between 1 and 100 characters.")]
