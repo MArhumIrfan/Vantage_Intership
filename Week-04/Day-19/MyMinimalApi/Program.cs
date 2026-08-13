@@ -14,8 +14,58 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(); // Opens Swagger UI at /swagger
 }
 
-// --- Load the catalog once at startup so the API isn't empty ---
+// --- INITIALIZE PRE-REGISTERED MEMBERS & LOAD CATALOG ---
+// Populates the exact registered users from your old CLI console app
+if (!UI.RegisteredUsers.ContainsKey(39393))
+{
+    UI.RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
+    UI.RegisteredUsers.Add(39425, "Ghayyur Abbas");
+    UI.RegisteredUsers.Add(40142, "Wazir Muzzamil Hussain");
+    UI.RegisteredUsers.Add(39358, "Muhammad Whahaj");
+    UI.RegisteredUsers.Add(39859, "Insfalullah Khan");
+}
+
 LibraryDatabase.LoadFromFile();
+
+// ==================== AUTHENTICATION ENDPOINT ====================
+
+// Match your old CLI login/verification logic
+app.MapPost("/api/auth/login", (ApiLoginRequest request) =>
+{
+    string roleLower = request.Role?.Trim().ToLower() ?? "";
+
+    if (roleLower == "admin")
+    {
+        if (request.Username == "Admin" && request.Password == "admin123")
+        {
+            return Results.Ok(new { Role = "Admin", Message = "Admin login successful!" });
+        }
+        return Results.BadRequest(new { Error = "Invalid Admin credentials. Username: Admin, Password: admin123" });
+    }
+    else if (roleLower == "user")
+    {
+        if (request.MemberId.HasValue && UI.RegisteredUsers.ContainsKey(request.MemberId.Value))
+        {
+            string userName = UI.RegisteredUsers[request.MemberId.Value];
+            if (request.Password == "User123")
+            {
+                return Results.Ok(new { Role = "User", MemberId = request.MemberId, Name = userName, Message = $"Welcome, {userName}!" });
+            }
+            return Results.BadRequest(new { Error = "Invalid password. Default user password is User123" });
+        }
+        return Results.NotFound(new { Error = "Member ID not recognized in the system." });
+    }
+    else if (roleLower == "guest")
+    {
+        if (request.Age.HasValue && request.Age.Value >= 18)
+        {
+            return Results.Ok(new { Role = "Guest", Message = "Guest access granted (Age 18+)." });
+        }
+        return Results.BadRequest(new { Error = "Guests must be 18 and above to proceed." });
+    }
+
+    return Results.BadRequest(new { Error = "Invalid role specified. Use Admin, User, or Guest." });
+});
 
 // ==================== BOOK CRUD ENDPOINTS ====================
 
@@ -90,9 +140,6 @@ app.MapDelete("/api/books/{id}", (int id) =>
 });
 
 // ==================== BORROW / RETURN / FINES ====================
-// These mirror VerifyUser.BorrowBook / ReturnBook / PayFineBook so the
-// business rules (3-book limit, late fee tiers, etc.) stay identical
-// between the console app and the API.
 
 // 7. POST: Borrow a book
 app.MapPost("/api/books/{id}/borrow", (int id, BorrowRequest request) =>
@@ -134,7 +181,7 @@ app.MapPost("/api/books/{id}/borrow", (int id, BorrowRequest request) =>
     return Results.Ok(book);
 });
 
-// 8. POST: Return a book (applies the same late-fee tiers as the console app)
+// 8. POST: Return a book
 app.MapPost("/api/books/{id}/return", (int id, BorrowRequest request) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
@@ -182,7 +229,7 @@ app.MapPost("/api/books/{id}/return", (int id, BorrowRequest request) =>
     return Results.Ok(new { Message = message, FineAdded = fineAmount, Book = book });
 });
 
-// 9. POST: Pay an outstanding fine on a book
+// 9. POST: Pay fine
 app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
@@ -217,8 +264,6 @@ app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
 });
 
 // ==================== MEMBERS ====================
-// Reuses UI.RegisteredUsers so members registered via the console app's
-// Admin Dashboard show up here too, and vice versa (within the same run).
 
 // 10. GET: List all registered members
 app.MapGet("/api/members", () => Results.Ok(UI.RegisteredUsers));
@@ -240,7 +285,7 @@ app.MapPost("/api/members", (RegisterMemberRequest request) =>
     return Results.Created($"/api/members/{request.MemberId}", new { request.MemberId, request.Name });
 });
 
-// 12. GET: Report for a single member (active checkouts + outstanding fines)
+// 12. GET: Report for a single member
 app.MapGet("/api/members/{id}", (int id) =>
 {
     if (!UI.RegisteredUsers.TryGetValue(id, out var name))
@@ -266,7 +311,7 @@ app.MapGet("/api/members/{id}", (int id) =>
 
 // ==================== HISTORY & ANALYTICS ====================
 
-// 13. GET: Transaction history log (same file the console app writes to)
+// 13. GET: Transaction history log
 app.MapGet("/api/history", () =>
 {
     const string path = "history.txt";
@@ -277,7 +322,7 @@ app.MapGet("/api/history", () =>
     return Results.Ok(File.ReadAllLines(path));
 });
 
-// 14. GET: Library-wide analytics (mirrors VerifyAdmin.AdvancedAnalytics)
+// 14. GET: Library-wide analytics
 app.MapGet("/api/analytics", () =>
 {
     if (LibraryDatabase.Catalog.Count == 0)
@@ -321,8 +366,8 @@ app.MapGet("/api/analytics", () =>
 app.Run();
 
 // ==================== REQUEST DTOs ====================
-// Small records for endpoints that need input other than a full Book.
 
+public record ApiLoginRequest(string Role, string? Username, string? Password, int? MemberId, int? Age);
 public record BorrowRequest(string Username);
 public record PayFineRequest(int Amount);
 public record RegisterMemberRequest(int MemberId, string Name);
