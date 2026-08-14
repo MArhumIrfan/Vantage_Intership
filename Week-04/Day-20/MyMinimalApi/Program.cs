@@ -15,7 +15,6 @@ if (app.Environment.IsDevelopment())
 }
 
 // --- INITIALIZE PRE-REGISTERED MEMBERS & LOAD CATALOG ---
-// Populates the exact registered users from your old CLI console app
 if (!UI.RegisteredUsers.ContainsKey(39393))
 {
     UI.RegisteredUsers.Add(39393, "Muhammad Arhum Irfan");
@@ -29,7 +28,6 @@ LibraryDatabase.LoadFromFile();
 
 // ==================== AUTHENTICATION ENDPOINT ====================
 
-// Match your old CLI login/verification logic
 app.MapPost("/api/auth/login", (ApiLoginRequest request) =>
 {
     string roleLower = request.Role?.Trim().ToLower() ?? "";
@@ -69,14 +67,12 @@ app.MapPost("/api/auth/login", (ApiLoginRequest request) =>
 
 // ==================== BOOK CRUD ENDPOINTS ====================
 
-// 1. GET: Retrieve all books
 app.MapGet("/api/books", () =>
 {
     var books = LibraryDatabase.Catalog.Values.ToList();
     return Results.Ok(books);
 });
 
-// 2. GET by ID: Retrieve a specific book
 app.MapGet("/api/books/{id}", (int id) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
@@ -86,14 +82,12 @@ app.MapGet("/api/books/{id}", (int id) =>
     return Results.Ok(LibraryDatabase.Catalog[id]);
 });
 
-// 3. GET: Advanced search (mirrors LibraryDatabase.SearchBooks used by the console app)
 app.MapGet("/api/books/search", (string? keyword, string? genre, int? maxPrice) =>
 {
     var results = LibraryDatabase.SearchBooks(keyword ?? "", genre ?? "", maxPrice ?? int.MaxValue);
     return Results.Ok(results);
 });
 
-// 4. POST: Add a new book
 app.MapPost("/api/books", (Book newBook) =>
 {
     int newId = LibraryDatabase.Catalog.Keys.Any() ? LibraryDatabase.Catalog.Keys.Max() + 1 : 101;
@@ -105,7 +99,6 @@ app.MapPost("/api/books", (Book newBook) =>
     return Results.Created($"/api/books/{newId}", newBook);
 });
 
-// 5. PUT: Update an existing book
 app.MapPut("/api/books/{id}", (int id, Book updatedBook) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
@@ -114,10 +107,10 @@ app.MapPut("/api/books/{id}", (int id, Book updatedBook) =>
     }
 
     var book = LibraryDatabase.Catalog[id];
-    book.Name = updatedBook.Name;
-    book.Publisher = updatedBook.Publisher;
+    book.Name = updatedBook.Name ?? "";
+    book.Publisher = updatedBook.Publisher ?? "";
     book.DatePublish = updatedBook.DatePublish;
-    book.Genre = updatedBook.Genre;
+    book.Genre = updatedBook.Genre ?? "";
     book.Cost = updatedBook.Cost;
 
     LibraryDatabase.SaveToFile();
@@ -125,7 +118,6 @@ app.MapPut("/api/books/{id}", (int id, Book updatedBook) =>
     return Results.Ok(book);
 });
 
-// 6. DELETE: Remove a book
 app.MapDelete("/api/books/{id}", (int id) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
@@ -141,7 +133,6 @@ app.MapDelete("/api/books/{id}", (int id) =>
 
 // ==================== BORROW / RETURN / FINES ====================
 
-// 7. POST: Borrow a book
 app.MapPost("/api/books/{id}/borrow", (int id, BorrowRequest request) =>
 {
     if (string.IsNullOrWhiteSpace(request.Username))
@@ -181,7 +172,6 @@ app.MapPost("/api/books/{id}/borrow", (int id, BorrowRequest request) =>
     return Results.Ok(book);
 });
 
-// 8. POST: Return a book
 app.MapPost("/api/books/{id}/return", (int id, BorrowRequest request) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
@@ -229,7 +219,6 @@ app.MapPost("/api/books/{id}/return", (int id, BorrowRequest request) =>
     return Results.Ok(new { Message = message, FineAdded = fineAmount, Book = book });
 });
 
-// 9. POST: Pay fine
 app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
@@ -265,10 +254,8 @@ app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
 
 // ==================== MEMBERS ====================
 
-// 10. GET: List all registered members
 app.MapGet("/api/members", () => Results.Ok(UI.RegisteredUsers));
 
-// 11. POST: Register a new member
 app.MapPost("/api/members", (RegisterMemberRequest request) =>
 {
     if (string.IsNullOrWhiteSpace(request.Name))
@@ -285,7 +272,6 @@ app.MapPost("/api/members", (RegisterMemberRequest request) =>
     return Results.Created($"/api/members/{request.MemberId}", new { request.MemberId, request.Name });
 });
 
-// 12. GET: Report for a single member
 app.MapGet("/api/members/{id}", (int id) =>
 {
     if (!UI.RegisteredUsers.TryGetValue(id, out var name))
@@ -311,7 +297,6 @@ app.MapGet("/api/members/{id}", (int id) =>
 
 // ==================== HISTORY & ANALYTICS ====================
 
-// 13. GET: Transaction history log
 app.MapGet("/api/history", () =>
 {
     const string path = "history.txt";
@@ -322,7 +307,6 @@ app.MapGet("/api/history", () =>
     return Results.Ok(File.ReadAllLines(path));
 });
 
-// 14. GET: Library-wide analytics
 app.MapGet("/api/analytics", () =>
 {
     if (LibraryDatabase.Catalog.Count == 0)
