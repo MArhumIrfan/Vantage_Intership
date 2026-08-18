@@ -9,6 +9,10 @@ namespace Lib
         public string Publisher { get; set; }
         public int DatePublish { get; set; }
         public string Genre { get; set; }
+
+        public int CategoryId { get; set; }
+        public Category? Category { get; set; }
+
         public int Cost { get; set; }
         public int FineDue { get; set; }
 
