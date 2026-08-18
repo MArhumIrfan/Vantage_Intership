@@ -131,6 +131,15 @@ app.MapGet("/api/books/{id}", async (int id, LibraryDbContext db) =>
     return Results.Ok(book);
 });
 
+app.MapGet("/api/categories/{categoryId}/books", async (int categoryId, LibraryDbContext db) =>
+{
+    var books = await db.Books
+        .Where(b => b.CategoryId == categoryId)
+        .ToListAsync();
+
+    return Results.Ok(books);
+});
+
 // 3. GET: Advanced search using database records
 app.MapGet("/api/books/search", async (string? keyword, string? genre, int? maxPrice, LibraryDbContext db) =>
 {
