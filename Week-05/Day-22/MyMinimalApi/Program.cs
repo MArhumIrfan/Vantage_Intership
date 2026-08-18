@@ -12,6 +12,47 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
 
 var app = builder.Build();
 
+// ==================== SEED TEXT FILE BOOKS TO SQL SERVER ====================
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+    
+    // Check if the database table is currently empty
+    if (!db.Books.Any())
+    {
+        // Load books from your old file/dictionary method
+        LibraryDatabase.LoadFromFile();
+
+        if (LibraryDatabase.Catalog.Count > 0)
+        {
+            // Loop through each book from the old system and add it to SQL Server
+            foreach (var kvp in LibraryDatabase.Catalog)
+            {
+                var oldBook = kvp.Value;
+                
+                // Add to EF Core context
+                db.Books.Add(new Book
+                {
+                    Name = oldBook.Name,
+                    Publisher = oldBook.Publisher,
+                    DatePublish = oldBook.DatePublish,
+                    Genre = oldBook.Genre,
+                    Cost = oldBook.Cost,
+                    IsBorrowed = oldBook.IsBorrowed,
+                    BorrowedBy = oldBook.BorrowedBy,
+                    BorrowedDate = oldBook.BorrowedDate,
+                    DueDate = oldBook.DueDate,
+                    FineDue = oldBook.FineDue
+                });
+            }
+            
+            // Save all changes permanently to SQL Server
+            db.SaveChanges();
+        }
+    }
+}
+// ============================================================================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
