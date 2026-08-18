@@ -6,7 +6,7 @@ namespace Lib
 {
     public class VerifyUser : Login, IBorrower
     {
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         private string userPassword = "User123";
         public string UserPassword
