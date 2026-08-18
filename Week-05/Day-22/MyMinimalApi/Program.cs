@@ -69,72 +69,92 @@ app.MapPost("/api/auth/login", (ApiLoginRequest request) =>
     return Results.BadRequest(new { Error = "Invalid role specified. Use Admin, User, or Guest." });
 });
 
-// ==================== BOOK CRUD ENDPOINTS ====================
 
-app.MapGet("/api/books", () =>
+// ==================== BOOK CRUD ENDPOINTS (EF Core SQL Server) ====================
+
+// 1. GET: Retrieve all books from the database
+app.MapGet("/api/books", async (LibraryDbContext db) =>
 {
-    var books = LibraryDatabase.Catalog.Values.ToList();
+    var books = await db.Books.ToListAsync();
     return Results.Ok(books);
 });
 
-app.MapGet("/api/books/{id}", (int id) =>
+// 2. GET by ID: Retrieve a specific book from the database
+app.MapGet("/api/books/{id}", async (int id, LibraryDbContext db) =>
 {
-    if (!LibraryDatabase.Catalog.ContainsKey(id))
+    var book = await db.Books.FindAsync(id);
+    if (book == null)
     {
         return Results.NotFound(new { Error = $"Book ID {id} not found." });
     }
-    return Results.Ok(LibraryDatabase.Catalog[id]);
+    return Results.Ok(book);
 });
 
-app.MapGet("/api/books/search", (string? keyword, string? genre, int? maxPrice) =>
+// 3. GET: Advanced search using database records
+app.MapGet("/api/books/search", async (string? keyword, string? genre, int? maxPrice, LibraryDbContext db) =>
 {
-    var results = LibraryDatabase.SearchBooks(keyword ?? "", genre ?? "", maxPrice ?? int.MaxValue);
+    var query = db.Books.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(keyword))
+    {
+        query = query.Where(b => b.Name.Contains(keyword) || b.Publisher.Contains(keyword));
+    }
+    if (!string.IsNullOrWhiteSpace(genre))
+    {
+        query = query.Where(b => b.Genre.ToLower() == genre.ToLower());
+    }
+    if (maxPrice.HasValue)
+    {
+        query = query.Where(b => b.Cost <= maxPrice.Value);
+    }
+
+    var results = await query.ToListAsync();
     return Results.Ok(results);
 });
 
-app.MapPost("/api/books", (Book newBook) =>
+// 4. POST: Add a new book to the database
+app.MapPost("/api/books", async (Book newBook, LibraryDbContext db) =>
 {
-    int newId = LibraryDatabase.Catalog.Keys.Any() ? LibraryDatabase.Catalog.Keys.Max() + 1 : 101;
-    newBook.BookID = newId;
+    db.Books.Add(newBook);
+    await db.SaveChangesAsync();
 
-    LibraryDatabase.Catalog.Add(newId, newBook);
-    LibraryDatabase.SaveToFile();
-
-    return Results.Created($"/api/books/{newId}", newBook);
+    return Results.Created($"/api/books/{newBook.BookID}", newBook);
 });
 
-app.MapPut("/api/books/{id}", (int id, Book updatedBook) =>
+// 5. PUT: Update an existing book in the database
+app.MapPut("/api/books/{id}", async (int id, Book updatedBook, LibraryDbContext db) =>
 {
-    if (!LibraryDatabase.Catalog.ContainsKey(id))
+    var book = await db.Books.FindAsync(id);
+    if (book == null)
     {
         return Results.NotFound(new { Error = $"Book ID {id} not found." });
     }
 
-    var book = LibraryDatabase.Catalog[id];
     book.Name = updatedBook.Name ?? "";
     book.Publisher = updatedBook.Publisher ?? "";
     book.DatePublish = updatedBook.DatePublish;
     book.Genre = updatedBook.Genre ?? "";
     book.Cost = updatedBook.Cost;
 
-    LibraryDatabase.SaveToFile();
+    await db.SaveChangesAsync();
 
     return Results.Ok(book);
 });
 
-app.MapDelete("/api/books/{id}", (int id) =>
+// 6. DELETE: Remove a book from the database
+app.MapDelete("/api/books/{id}", async (int id, LibraryDbContext db) =>
 {
-    if (!LibraryDatabase.Catalog.ContainsKey(id))
+    var book = await db.Books.FindAsync(id);
+    if (book == null)
     {
         return Results.NotFound(new { Error = $"Book ID {id} not found." });
     }
 
-    LibraryDatabase.Catalog.Remove(id);
-    LibraryDatabase.SaveToFile();
+    db.Books.Remove(book);
+    await db.SaveChangesAsync();
 
     return Results.NoContent();
 });
-
 // ==================== BORROW / RETURN / FINES ====================
 
 app.MapPost("/api/books/{id}/borrow", (int id, BorrowRequest request) =>
