@@ -20,11 +20,14 @@ namespace Lib
 
         public Book()
         {
+            Name = "";
+            Publisher = "";
+            Genre = "";
             IsBorrowed = false;
             BorrowedBy = "";
             BorrowedDate = DateTime.MinValue;
             DueDate = DateTime.MinValue;
-        }
+        }   
 
         public Book(int id, string name, string publisher, int datePublish, string genre, int cost)
         {
