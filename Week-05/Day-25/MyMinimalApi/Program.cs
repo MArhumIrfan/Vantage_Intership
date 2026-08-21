@@ -13,40 +13,44 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
 var app = builder.Build();
 
 // ==================== SEED TEXT FILE BOOKS TO SQL SERVER ====================
-using (var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateAsyncScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
-    
-    // Check if the database table is currently empty
     if (!db.Books.Any())
     {
-        // Load books from your old file/dictionary method
-        LibraryDatabase.LoadFromFile();
-
-        if (LibraryDatabase.Catalog.Count > 0)
+        var defualtCatagory = db.Categories.FirstOrDefault( c => c.Name == "General" );
+        if( defualtCatagory == null)
         {
-            // Loop through each book from the old system and add it to SQL Server
+            defualtCatagory = new Category {Name = "General"};
+            db.Categories.Add(defualtCatagory);
+            db.SaveChanges();
+
+        }
+
+        LibraryDatabase.LoadFromFile();
+        if(LibraryDatabase.Catalog.Count > 0)
+        {
             foreach (var kvp in LibraryDatabase.Catalog)
             {
                 var oldBook = kvp.Value;
-                
-                // Add to EF Core context
+
                 db.Books.Add(new Book
                 {
-                    Name = oldBook.Name,
-                    Publisher = oldBook.Publisher,
-                    DatePublish = oldBook.DatePublish,
-                    Genre = oldBook.Genre,
-                    Cost = oldBook.Cost,
-                    IsBorrowed = oldBook.IsBorrowed,
-                    BorrowedBy = oldBook.BorrowedBy,
-                    BorrowedDate = oldBook.BorrowedDate,
-                    DueDate = oldBook.DueDate,
-                    FineDue = oldBook.FineDue
+
+                 Name = oldBook.Name,
+                 Publisher = oldBook.Publisher,
+                 DatePublish = oldBook.DatePublish,
+                 Genre = oldBook.Genre,
+                 IsBorrowed = oldBook.IsBorrowed,
+                 BorrowedBy = oldBook.BorrowedBy,
+                 BorrowedDate = oldBook.BorrowedDate,
+                 DueDate = oldBook.DueDate,
+                 FineDue = oldBook.FineDue,
+                 CategoryId = defualtCatagory.CategoryId
+
                 });
             }
-            
-            // Save all changes permanently to SQL Server
+
             db.SaveChanges();
         }
     }
