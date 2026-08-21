@@ -53,6 +53,32 @@ using (var scope = app.Services.CreateScope())
 }
 // ============================================================================
 
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var db = scope .ServiceProvider.GetRequiredService<LibraryDbContext>();
+
+    if (!db.Users.Any())
+    {
+        
+        var defualtUsers = new List<User>
+        {
+
+          new User {UserId = 39393 , Name = "Muhammad Arhum Irfan" , Role = "User" },
+          new User {UserId = 39425 , Name = "Ghayyur Abbas" , Role = "User"},
+          new User {UserId = 40142 , Name = "Wazir Muzzamil Hussain" , Role = "User"},
+          new User {UserId = 39358 , Name = "Muhammad Whahaj" , Role = "User"},
+          new User {UserId = 39859 , Name = "Insafullah Khan" , Role = "User"}
+
+        };
+
+        db.Users.AddRange(defualtUsers);
+        db.SaveChanges();
+
+    }
+}
+
+//=============================================================================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
