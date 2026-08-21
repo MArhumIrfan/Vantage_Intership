@@ -326,48 +326,42 @@ app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
     return Results.Ok(new { Message = "Payment accepted.", RemainingBalance = book.FineDue, Book = book });
 });
 
-// ==================== MEMBERS ====================
+// ==================== MEMBERS (EF CORE SQL Server)  ====================
 
-app.MapGet("/api/members", () => Results.Ok(UI.RegisteredUsers));
-
-app.MapPost("/api/members", (RegisterMemberRequest request) =>
+app.MapGet("/api/members", async (LibraryDbContext db) =>
 {
-    if (string.IsNullOrWhiteSpace(request.Name))
-    {
-        return Results.BadRequest(new { Error = "Member name is required." });
-    }
 
-    if (UI.RegisteredUsers.ContainsKey(request.MemberId))
-    {
-        return Results.Conflict(new { Error = "That Member ID is already registered." });
-    }
+    var users = await db.Users.ToListAsync();
+    return Results.Ok(users);
 
-    UI.RegisteredUsers.Add(request.MemberId, request.Name);
-    return Results.Created($"/api/members/{request.MemberId}", new { request.MemberId, request.Name });
 });
 
-app.MapGet("/api/members/{id}", (int id) =>
+app.MapPost("/api/members", async (User newUser, LibraryDbContext db)=>
 {
-    if (!UI.RegisteredUsers.TryGetValue(id, out var name))
+    if (string.IsNullOrWhiteSpace(newUser.Name))
     {
-        return Results.NotFound(new { Error = $"Member ID {id} not found." });
+        return Results.BadRequest(new {Error = "Member name required ."});
     }
 
-    var borrowedBooks = LibraryDatabase.Catalog.Values
-        .Where(b => b.IsBorrowed && b.BorrowedBy == name)
-        .ToList();
+    db.Users.Add(newUser);
+    await db.SaveChangesAsync();
 
-    int totalFines = borrowedBooks.Sum(b => b.FineDue);
+    return Results.Created($"/api/members/{newUser.UserId}", newUser);
 
-    return Results.Ok(new
-    {
-        MemberId = id,
-        Name = name,
-        ActiveCheckouts = borrowedBooks.Count,
-        TotalFines = totalFines,
-        Books = borrowedBooks
-    });
 });
+
+app.MapGet("/api/members/{id}", async (int id, LibraryDbContext db) =>
+{
+
+ var user = await db.Users.FindAsync(id);
+ if(user ==  null)
+    {
+        return Results.NotFound(new{Error = $"Member Id {id} not found ."});
+    }
+
+    return Results.Ok(user);
+});
+
 
 // ==================== HISTORY & ANALYTICS ====================
 
