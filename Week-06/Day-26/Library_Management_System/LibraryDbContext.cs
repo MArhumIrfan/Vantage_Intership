@@ -4,7 +4,9 @@ namespace Lib
 {
     public class LibraryDbContext : DbContext
     {
-        public LibraryDbContext(DbContextOptions<LibraryDbContext> options) : base(options) { }
+        public LibraryDbContext(DbContextOptions<LibraryDbContext> options) : base(options)
+        {
+        }
 
         // This tells EF Core to create a "Books" table in your SQL Server database
         public DbSet<Book> Books { get; set; }
