@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add Swagger services for testing
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddDbContext<LibraryDbContext>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
