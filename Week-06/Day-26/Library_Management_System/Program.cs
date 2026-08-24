@@ -1,5 +1,5 @@
 using Lib;
-
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Swagger services for testing
@@ -14,6 +14,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(); // Opens Swagger UI at /swagger
 }
 
+/*
 // --- INITIALIZE PRE-REGISTERED MEMBERS & LOAD CATALOG ---
 if (!UI.RegisteredUsers.ContainsKey(39393))
 {
@@ -23,12 +24,15 @@ if (!UI.RegisteredUsers.ContainsKey(39393))
     UI.RegisteredUsers.Add(39358, "Muhammad Whahaj");
     UI.RegisteredUsers.Add(39859, "Insfalullah Khan");
 }
-
+*/
 LibraryDatabase.LoadFromFile();
 
 // ==================== AUTHENTICATION ENDPOINT ====================
 
-app.MapPost("/api/auth/login", (ApiLoginRequest request) =>
+
+// ==================== AUTHENTICATION ENDPOINT ====================
+
+app.MapPost("/api/auth/login", async (ApiLoginRequest request, LibraryDbContext db) =>
 {
     string roleLower = request.Role?.Trim().ToLower() ?? "";
 
@@ -42,14 +46,19 @@ app.MapPost("/api/auth/login", (ApiLoginRequest request) =>
     }
     else if (roleLower == "user")
     {
-        if (request.MemberId.HasValue && UI.RegisteredUsers.ContainsKey(request.MemberId.Value))
+        if (request.MemberId.HasValue)
         {
-            string userName = UI.RegisteredUsers[request.MemberId.Value];
-            if (request.Password == "User123")
+            // Query the database instead of the old UI dictionary
+            var user = await db.Users.FindAsync(request.MemberId.Value);
+            
+            if (user != null)
             {
-                return Results.Ok(new { Role = "User", MemberId = request.MemberId, Name = userName, Message = $"Welcome, {userName}!" });
+                if (request.Password == "User123")
+                {
+                    return Results.Ok(new { Role = "User", MemberId = request.MemberId, Name = user.Name, Message = $"Welcome, {user.Name}!" });
+                }
+                return Results.BadRequest(new { Error = "Invalid password. Default user password is User123" });
             }
-            return Results.BadRequest(new { Error = "Invalid password. Default user password is User123" });
         }
         return Results.NotFound(new { Error = "Member ID not recognized in the system." });
     }
@@ -64,7 +73,6 @@ app.MapPost("/api/auth/login", (ApiLoginRequest request) =>
 
     return Results.BadRequest(new { Error = "Invalid role specified. Use Admin, User, or Guest." });
 });
-
 // ==================== BOOK CRUD ENDPOINTS ====================
 
 app.MapGet("/api/books", () =>
