@@ -262,45 +262,30 @@ app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
 
 // ==================== MEMBERS ====================
 
-app.MapGet("/api/members", () => Results.Ok(UI.RegisteredUsers));
-
-app.MapPost("/api/members", (RegisterMemberRequest request) =>
+app.MapGet("/api/members", async (LibraryDbContext db) =>
 {
-    if (string.IsNullOrWhiteSpace(request.Name))
+    // Fetches all users straight from the SQL Server Users table
+    var members = await db.Users.ToListAsync(); 
+    
+    if (members.Any())
     {
-        return Results.BadRequest(new { Error = "Member name is required." });
+        return Results.Ok(members);
     }
-
-    if (UI.RegisteredUsers.ContainsKey(request.MemberId))
-    {
-        return Results.Conflict(new { Error = "That Member ID is already registered." });
-    }
-
-    UI.RegisteredUsers.Add(request.MemberId, request.Name);
-    return Results.Created($"/api/members/{request.MemberId}", new { request.MemberId, request.Name });
+    
+    return Results.Ok(new { Message = "No members found in the database." });
 });
 
-app.MapGet("/api/members/{id}", (int id) =>
+app.MapGet("/api/members/{id}", async (int id, LibraryDbContext db) =>
 {
-    if (!UI.RegisteredUsers.TryGetValue(id, out var name))
+    // Searches the SQL database for a user matching the provided ID
+    var member = await db.Users.FindAsync(id);
+    
+    if (member != null)
     {
-        return Results.NotFound(new { Error = $"Member ID {id} not found." });
+        return Results.Ok(member);
     }
-
-    var borrowedBooks = LibraryDatabase.Catalog.Values
-        .Where(b => b.IsBorrowed && b.BorrowedBy == name)
-        .ToList();
-
-    int totalFines = borrowedBooks.Sum(b => b.FineDue);
-
-    return Results.Ok(new
-    {
-        MemberId = id,
-        Name = name,
-        ActiveCheckouts = borrowedBooks.Count,
-        TotalFines = totalFines,
-        Books = borrowedBooks
-    });
+    
+    return Results.NotFound(new { Error = $"Member with ID {id} not found." });
 });
 
 // ==================== HISTORY & ANALYTICS ====================
