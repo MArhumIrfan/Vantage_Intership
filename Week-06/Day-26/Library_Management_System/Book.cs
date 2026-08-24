@@ -20,6 +20,9 @@ namespace Lib
 
         public Book()
         {
+            Name = "";
+            Publisher = "";
+            Genre = "";
             IsBorrowed = false;
             BorrowedBy = "";
             BorrowedDate = DateTime.MinValue;

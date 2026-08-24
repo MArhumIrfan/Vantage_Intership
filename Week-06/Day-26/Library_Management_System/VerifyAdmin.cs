@@ -275,7 +275,7 @@ namespace Lib
             // 1. Total Valuation & Average Cost
             int totalValue = LibraryDatabase.Catalog.Values.Sum(b => b.Cost);
             double avgCost = LibraryDatabase.Catalog.Values.Average(b => b.Cost);
-            Book expensiveBook = LibraryDatabase.Catalog.Values.OrderByDescending(b => b.Cost).FirstOrDefault();
+            Book? expensiveBook = LibraryDatabase.Catalog.Values.OrderByDescending(b => b.Cost).FirstOrDefault();
 
             Console.WriteLine("--- Financial Overview ---");
             Console.WriteLine("Total Inventory: " + totalValue + " PKR");

@@ -6,7 +6,7 @@ namespace Lib
 {
     public class VerifyUser : Login, IBorrower
     {
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         private string userPassword = "User123";
         public string UserPassword
@@ -102,13 +102,13 @@ namespace Lib
             }
 
             foundBook.IsBorrowed = true;
-            foundBook.BorrowedBy = Username;
+            foundBook.BorrowedBy = Username ?? string.Empty;
             foundBook.BorrowedDate = DateTime.Now;
             foundBook.DueDate = DateTime.Now.AddDays(14);
 
             LibraryDatabase.SaveToFile();
 
-            LibraryDatabase.LogTransaction("BORROW", foundBook.BookID, foundBook.Name, Username);
+            LibraryDatabase.LogTransaction("BORROW", foundBook.BookID, foundBook.Name, Username ?? string.Empty);
 
             UI.PrintSuccess(foundBook.Name + " borrowed successfully! Price = " + foundBook.Cost + " PKR");
             UI.PrintWarning("IMPORTANT: Your due date is " + foundBook.DueDate.ToString("yyyy-MM-dd") + ".");
@@ -165,7 +165,7 @@ namespace Lib
             foundBook.DueDate = DateTime.MinValue;      
             LibraryDatabase.SaveToFile();
 
-            LibraryDatabase.LogTransaction("RETURN", foundBook.BookID, foundBook.Name, Username);
+            LibraryDatabase.LogTransaction("RETURN", foundBook.BookID, foundBook.Name, Username ?? string.Empty);
 
             UI.PrintSuccess("Thank you for returning the book: " + foundBook.Name);
 
