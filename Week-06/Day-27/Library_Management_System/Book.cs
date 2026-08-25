@@ -11,7 +11,8 @@ namespace Lib
         public string Genre { get; set; }
         public int Cost { get; set; }
         public int FineDue { get; set; }
-
+        public int CategoryId{get;set;}
+        public Category? Category{get;set;}
         public bool IsBorrowed { get; set; }
         public string BorrowedBy { get; set; }
 

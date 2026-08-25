@@ -120,17 +120,28 @@ app.MapGet("/api/books/search", async (string? keyword, string? genre, int? maxP
 });
 
 //================================================================================
-app.MapPost("/api/books", (Book newBook) =>
+
+app.MapPost("/api/books", async (Book newBook, LibraryDbContext db) =>
 {
-    int newId = LibraryDatabase.Catalog.Keys.Any() ? LibraryDatabase.Catalog.Keys.Max() + 1 : 101;
-    newBook.BookID = newId;
+    // Ensure default category if none specified
+    if (newBook.CategoryId == 0)
+    {
+        var defaultCategory = await db.Categories.FirstOrDefaultAsync(c => c.Name == "General");
+        if (defaultCategory == null)
+        {
+            defaultCategory = new Category { Name = "General" };
+            db.Categories.Add(defaultCategory);
+            await db.SaveChangesAsync();
+        }
+        newBook.CategoryId = defaultCategory.CategoryId;
+    }
 
-    LibraryDatabase.Catalog.Add(newId, newBook);
-    LibraryDatabase.SaveToFile();
+    db.Books.Add(newBook);
+    await db.SaveChangesAsync();
 
-    return Results.Created($"/api/books/{newId}", newBook);
+    return Results.Created($"/api/books/{newBook.BookID}", newBook);
 });
-
+//================================================================================
 app.MapPut("/api/books/{id}", (int id, Book updatedBook) =>
 {
     if (!LibraryDatabase.Catalog.ContainsKey(id))
