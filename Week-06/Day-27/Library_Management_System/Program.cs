@@ -377,6 +377,69 @@ app.MapPost("/api/books/borrow", async (BorrowRequest request, LibraryDbContext 
         DueDate = book.DueDate.ToString("yyyy-MM-dd") 
     });
 });
+
+app.MapGet("/api/books/paginated", async (int? pageNumber, int? pageSize, LibraryDbContext db) =>
+{
+    
+    int page = pageNumber ?? 1;
+    int size = pageSize ?? 10;
+
+    var books = await db.Books
+        .Skip((page-1)*size)
+        .Take(size)
+        .ToListAsync();
+
+    int totalBooks = await db.Books.CountAsync();
+
+    return Results.Ok(new
+    {
+        CurrentPage = page,
+        pageSize = size,
+        totalItems = totalBooks,
+        totalPages = (int)Math.Ceiling(totalBooks/(double)size),
+        Books = books
+    });        
+
+});
+//=======================================================
+
+app.MapGet("/api/books/categories/{categoryId}/books", async (int categoryId, LibraryDbContext db ) =>
+{
+    
+    var category = await db.Categories
+        .Include(c => c.Books)
+        .FirstOrDefaultAsync(c => c.CategoryId == categoryId);
+    if(category == null)
+    {
+        return Results.NotFound(new{ Error = $"Category ID{categoryId} not found." });
+    }
+
+    return Results.Ok(category);
+
+});
+//=======================================================
+
+app.MapGet("/api/members/{id}/history", async (int id, LibraryDbContext db) =>
+{
+    var member = await db.Users.FindAsync(id);
+    if(member == null)
+    {
+        return Results.NotFound(new{Error =$"Member Id {id} not found."});
+    }
+    var memberBooks = await db.Books
+        .Where(b => b.BorrowedBy == member.Name)
+        .ToListAsync();
+
+    return Results.Ok(new
+    {
+       MemberId = member.UserId,
+       MemberName = member.Name,
+       CheckedOutBooks = memberBooks
+
+    });        
+});
+
+//=======================================================
 app.Run();
 
 // ==================== REQUEST DTOs ====================
