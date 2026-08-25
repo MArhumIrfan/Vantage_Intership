@@ -14,7 +14,11 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 
 // Add Swagger services for testing
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    // Sort endpoints alphabetically within each tag/category (by path, since we group via .WithTags)
+    options.OrderActionsBy(apiDesc => $"{apiDesc.RelativePath}");
+});
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=LibraryDb;Trusted_Connection=True;MultipleActiveResultSets=true"));
 var app = builder.Build();
@@ -83,14 +87,21 @@ app.MapPost("/api/auth/login", async (ApiLoginRequest request, LibraryDbContext 
     }
 
     return Results.BadRequest(new { Error = "Invalid role specified. Use Admin, User, or Guest." });
-});
+})
+.WithTags("Authentication")
+.WithName("Login")
+.WithSummary("Log in as Admin, User, or Guest");
+
 // ==================== BOOK CRUD ENDPOINTS ====================
 
 app.MapGet("/api/books", () =>
 {
     var books = LibraryDatabase.Catalog.Values.ToList();
     return Results.Ok(books);
-});
+})
+.WithTags("Books")
+.WithName("GetAllBooks")
+.WithSummary("Get all books in the catalog");
 
 app.MapGet("/api/books/{id}", (int id) =>
 {
@@ -99,7 +110,10 @@ app.MapGet("/api/books/{id}", (int id) =>
         return Results.NotFound(new { Error = $"Book ID {id} not found." });
     }
     return Results.Ok(LibraryDatabase.Catalog[id]);
-});
+})
+.WithTags("Books")
+.WithName("GetBookById")
+.WithSummary("Get a single book by ID");
 //================================================================================
 
 app.MapGet("/api/books/search", async (string? keyword, string? genre, int? maxPrice, LibraryDbContext db) =>
@@ -123,7 +137,10 @@ app.MapGet("/api/books/search", async (string? keyword, string? genre, int? maxP
 
     var results = await query.ToListAsync();
     return Results.Ok(results);
-});
+})
+.WithTags("Books")
+.WithName("SearchBooks")
+.WithSummary("Search books by keyword, genre, or max price");
 
 //================================================================================
 
@@ -146,7 +163,10 @@ app.MapPost("/api/books", async (Book newBook, LibraryDbContext db) =>
     await db.SaveChangesAsync();
 
     return Results.Created($"/api/books/{newBook.BookID}", newBook);
-});
+})
+.WithTags("Books")
+.WithName("CreateBook")
+.WithSummary("Add a new book to the catalog");
 //================================================================================
 app.MapPut("/api/books/{id}", (int id, Book updatedBook) =>
 {
@@ -165,7 +185,10 @@ app.MapPut("/api/books/{id}", (int id, Book updatedBook) =>
     LibraryDatabase.SaveToFile();
 
     return Results.Ok(book);
-});
+})
+.WithTags("Books")
+.WithName("UpdateBook")
+.WithSummary("Update an existing book's details");
 
 app.MapDelete("/api/books/{id}", (int id) =>
 {
@@ -178,7 +201,10 @@ app.MapDelete("/api/books/{id}", (int id) =>
     LibraryDatabase.SaveToFile();
 
     return Results.NoContent();
-});
+})
+.WithTags("Books")
+.WithName("DeleteBook")
+.WithSummary("Delete a book from the catalog");
 
 // ==================== BORROW / RETURN / FINES ====================
 
@@ -227,7 +253,10 @@ app.MapPost("/api/books/{id}/return", async (int id, LibraryDbContext db) =>
     await db.SaveChangesAsync();
 
     return Results.Ok(new { Message = message, FineAdded = fineAmount, Book = book });
-});
+})
+.WithTags("Borrowing & Fines")
+.WithName("ReturnBook")
+.WithSummary("Return a borrowed book and calculate any late fine");
 
 //================================================================================
 
@@ -265,7 +294,10 @@ app.MapPost("/api/books/{id}/pay-fine", async (int id, PayFineRequest request, L
     await db.SaveChangesAsync();
 
     return Results.Ok(new { Message = "Payment accepted.", RemainingBalance = book.FineDue, Book = book });
-});
+})
+.WithTags("Borrowing & Fines")
+.WithName("PayFine")
+.WithSummary("Pay an outstanding fine on a book");
 
 // ==================== MEMBERS ====================
 
@@ -280,7 +312,10 @@ app.MapGet("/api/members", async (LibraryDbContext db) =>
     }
     
     return Results.Ok(new { Message = "No members found in the database." });
-});
+})
+.WithTags("Members")
+.WithName("GetAllMembers")
+.WithSummary("Get all registered members");
 
 app.MapGet("/api/members/{id}", async (int id, LibraryDbContext db) =>
 {
@@ -293,7 +328,10 @@ app.MapGet("/api/members/{id}", async (int id, LibraryDbContext db) =>
     }
     
     return Results.NotFound(new { Error = $"Member with ID {id} not found." });
-});
+})
+.WithTags("Members")
+.WithName("GetMemberById")
+.WithSummary("Get a single member by ID");
 
 // ==================== HISTORY & ANALYTICS ====================
 
@@ -305,7 +343,10 @@ app.MapGet("/api/history", () =>
         return Results.Ok(Array.Empty<string>());
     }
     return Results.Ok(File.ReadAllLines(path));
-});
+})
+.WithTags("History & Analytics")
+.WithName("GetHistory")
+.WithSummary("Get the raw activity history log");
 
 app.MapGet("/api/analytics", () =>
 {
@@ -345,7 +386,10 @@ app.MapGet("/api/analytics", () =>
         OverdueBooks = overdueBooks,
         TopBorrowers = topBorrowers
     });
-});
+})
+.WithTags("History & Analytics")
+.WithName("GetAnalytics")
+.WithSummary("Get catalog analytics: totals, genre distribution, overdue books, top borrowers");
 
 app.MapPost("/api/books/borrow", async (BorrowRequest request, LibraryDbContext db) =>
 {
@@ -382,7 +426,10 @@ app.MapPost("/api/books/borrow", async (BorrowRequest request, LibraryDbContext 
         Message = $"Successfully borrowed '{book.Name}'.", 
         DueDate = book.DueDate.ToString("yyyy-MM-dd") 
     });
-});
+})
+.WithTags("Borrowing & Fines")
+.WithName("BorrowBook")
+.WithSummary("Borrow a book (max 3 per member, 14-day checkout)");
 
 app.MapGet("/api/books/paginated", async (int? pageNumber, int? pageSize, LibraryDbContext db) =>
 {
@@ -406,7 +453,10 @@ app.MapGet("/api/books/paginated", async (int? pageNumber, int? pageSize, Librar
         Books = books
     });        
 
-});
+})
+.WithTags("Books")
+.WithName("GetPaginatedBooks")
+.WithSummary("Get books with pagination");
 //=======================================================
 
 app.MapGet("/api/books/categories/{categoryId}/books", async (int categoryId, LibraryDbContext db ) =>
@@ -422,7 +472,10 @@ app.MapGet("/api/books/categories/{categoryId}/books", async (int categoryId, Li
 
     return Results.Ok(category);
 
-});
+})
+.WithTags("Categories")
+.WithName("GetBooksByCategory")
+.WithSummary("Get all books belonging to a category");
 //=======================================================
 
 app.MapGet("/api/members/{id}/history", async (int id, LibraryDbContext db) =>
@@ -443,7 +496,10 @@ app.MapGet("/api/members/{id}/history", async (int id, LibraryDbContext db) =>
        CheckedOutBooks = memberBooks
 
     });        
-});
+})
+.WithTags("Members")
+.WithName("GetMemberHistory")
+.WithSummary("Get a member's checked-out book history");
 //=======================================================
 
 app.MapPost("/api/categories", async (Category newCategory, LibraryDbContext db) =>
@@ -452,7 +508,10 @@ app.MapPost("/api/categories", async (Category newCategory, LibraryDbContext db)
     await db.SaveChangesAsync();
 
     return Results.Created($"/api/categories/{newCategory.CategoryId}", newCategory);
-});
+})
+.WithTags("Categories")
+.WithName("CreateCategory")
+.WithSummary("Create a new category");
 //=======================================================
 
 app.MapPut("/api/categories/{id}", async (int id, Category updatedCategory, LibraryDbContext db) =>
@@ -467,7 +526,10 @@ app.MapPut("/api/categories/{id}", async (int id, Category updatedCategory, Libr
     await db.SaveChangesAsync();
 
     return Results.Ok(category);
-});
+})
+.WithTags("Categories")
+.WithName("UpdateCategory")
+.WithSummary("Update an existing category's name");
 //=======================================================
 app.MapPut("/api/books/{id}/category", async (int id, CategoryUpdateDto request, LibraryDbContext db) =>
 {
@@ -490,7 +552,10 @@ app.MapPut("/api/books/{id}/category", async (int id, CategoryUpdateDto request,
     await db.SaveChangesAsync();
 
     return Results.Ok(new { Message = $"Book '{book.Name}' successfully moved to category '{category.Name}'.", Book = book });
-});
+})
+.WithTags("Categories")
+.WithName("MoveBookToCategory")
+.WithSummary("Reassign a book to a different category");
 //=======================================================
 app.Run();
 
