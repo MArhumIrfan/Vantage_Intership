@@ -123,8 +123,8 @@ app.MapGet("/api/books/search", async (string? keyword, string? genre, int? maxP
 
 app.MapPost("/api/books", async (Book newBook, LibraryDbContext db) =>
 {
-    // Ensure default category if none specified
-    if (newBook.CategoryId == 0)
+    // If no category object is provided, assign a default one
+    if (newBook.Category == null)
     {
         var defaultCategory = await db.Categories.FirstOrDefaultAsync(c => c.Name == "General");
         if (defaultCategory == null)
@@ -133,7 +133,7 @@ app.MapPost("/api/books", async (Book newBook, LibraryDbContext db) =>
             db.Categories.Add(defaultCategory);
             await db.SaveChangesAsync();
         }
-        newBook.CategoryId = defaultCategory.CategoryId;
+        newBook.Category = defaultCategory;
     }
 
     db.Books.Add(newBook);
