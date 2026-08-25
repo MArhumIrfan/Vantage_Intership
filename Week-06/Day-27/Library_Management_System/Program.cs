@@ -444,7 +444,53 @@ app.MapGet("/api/members/{id}/history", async (int id, LibraryDbContext db) =>
 
     });        
 });
+//=======================================================
 
+app.MapPost("/api/categories", async (Category newCategory, LibraryDbContext db) =>
+{
+    db.Categories.Add(newCategory);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/api/categories/{newCategory.CategoryId}", newCategory);
+});
+//=======================================================
+
+app.MapPut("/api/categories/{id}", async (int id, Category updatedCategory, LibraryDbContext db) =>
+{
+    var category = await db.Categories.FindAsync(id);
+    if (category == null)
+    {
+        return Results.NotFound(new { Error = $"Category ID {id} not found." });
+    }
+
+    category.Name = updatedCategory.Name;
+    await db.SaveChangesAsync();
+
+    return Results.Ok(category);
+});
+//=======================================================
+app.MapPut("/api/books/{id}/category", async (int id, CategoryUpdateDto request, LibraryDbContext db) =>
+{
+    // 1. Find the book
+    var book = await db.Books.FindAsync(id);
+    if (book == null)
+    {
+        return Results.NotFound(new { Error = $"Book ID {id} not found." });
+    }
+
+    // 2. Verify the new category exists
+    var category = await db.Categories.FindAsync(request.CategoryId);
+    if (category == null)
+    {
+        return Results.NotFound(new { Error = $"Category ID {request.CategoryId} not found." });
+    }
+
+    // 3. Update the category link
+    book.CategoryId = request.CategoryId;
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new { Message = $"Book '{book.Name}' successfully moved to category '{category.Name}'.", Book = book });
+});
 //=======================================================
 app.Run();
 
@@ -455,3 +501,4 @@ public record ReturnRequest(string? Username);
 public record PayFineRequest(int Amount);
 public record RegisterMemberRequest(int MemberId, string Name);
 public record BorrowRequest(int BookId, string MemberName);
+public record CategoryUpdateDto(int CategoryId);
