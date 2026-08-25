@@ -2,6 +2,7 @@ using Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client.NativeInterop;
 using Microsoft.VisualBasic;
+using MyMinimalApi.Migrations;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Swagger services for testing
@@ -144,15 +145,14 @@ app.MapDelete("/api/books/{id}", (int id) =>
 
 // ==================== BORROW / RETURN / FINES ====================
 
-
-app.MapPost("/api/books/{id}/return", (int id, ReturnRequest request) =>
+app.MapPost("/api/books/{id}/return", async (int id, LibraryDbContext db) =>
 {
-    if (!LibraryDatabase.Catalog.ContainsKey(id))
+    // 1. Locate the book in the SQL database
+    var book = await db.Books.FindAsync(id);
+    if (book == null)
     {
         return Results.NotFound(new { Error = $"Book ID {id} not found." });
     }
-
-    var book = LibraryDatabase.Catalog[id];
 
     if (!book.IsBorrowed)
     {
@@ -162,6 +162,7 @@ app.MapPost("/api/books/{id}/return", (int id, ReturnRequest request) =>
     string message = $"Thank you for returning: {book.Name}";
     int fineAmount = 0;
 
+    // 2. Calculate fine if past the due date
     if (DateTime.Now > book.DueDate)
     {
         int daysLate = (DateTime.Now - book.DueDate).Days;
@@ -179,27 +180,28 @@ app.MapPost("/api/books/{id}/return", (int id, ReturnRequest request) =>
         message = $"Book was {daysLate} day(s) late. Fine of {fineAmount} PKR added.";
     }
 
-    string returnedBy = string.IsNullOrWhiteSpace(request.Username) ? book.BorrowedBy : request.Username;
-
+    // 3. Reset the borrowing fields
     book.IsBorrowed = false;
     book.BorrowedBy = "";
     book.BorrowedDate = DateTime.MinValue;
     book.DueDate = DateTime.MinValue;
 
-    LibraryDatabase.SaveToFile();
-    LibraryDatabase.LogTransaction("RETURN", book.BookID, book.Name, returnedBy);
+    // 4. Save changes to SQL Server
+    await db.SaveChangesAsync();
 
     return Results.Ok(new { Message = message, FineAdded = fineAmount, Book = book });
 });
 
-app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
+//================================================================================
+
+app.MapPost("/api/books/{id}/pay-fine", async (int id, PayFineRequest request, LibraryDbContext db) =>
 {
-    if (!LibraryDatabase.Catalog.ContainsKey(id))
+    // 1. Locate the book in the database
+    var book = await db.Books.FindAsync(id);
+    if (book == null)
     {
         return Results.NotFound(new { Error = $"Book ID {id} not found." });
     }
-
-    var book = LibraryDatabase.Catalog[id];
 
     if (book.FineDue <= 0)
     {
@@ -211,16 +213,19 @@ app.MapPost("/api/books/{id}/pay-fine", (int id, PayFineRequest request) =>
         return Results.BadRequest(new { Error = "Payment amount must be greater than zero." });
     }
 
+    // 2. Process the payment and calculate change if they overpaid
     if (request.Amount > book.FineDue)
     {
         int change = request.Amount - book.FineDue;
         book.FineDue = 0;
-        LibraryDatabase.SaveToFile();
+        await db.SaveChangesAsync(); // Save to SQL Server
+        
         return Results.Ok(new { Message = "Transaction completed.", Change = change, Book = book });
     }
 
+    // 3. Deduct standard payment
     book.FineDue -= request.Amount;
-    LibraryDatabase.SaveToFile();
+    await db.SaveChangesAsync();
 
     return Results.Ok(new { Message = "Payment accepted.", RemainingBalance = book.FineDue, Book = book });
 });
