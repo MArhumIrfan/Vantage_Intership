@@ -1,6 +1,7 @@
 using Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client.NativeInterop;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using MyMinimalApi.Migrations;
 var builder = WebApplication.CreateBuilder(args);
@@ -93,13 +94,32 @@ app.MapGet("/api/books/{id}", (int id) =>
     }
     return Results.Ok(LibraryDatabase.Catalog[id]);
 });
+//================================================================================
 
-app.MapGet("/api/books/search", (string? keyword, string? genre, int? maxPrice) =>
+app.MapGet("/api/books/search", async (string? keyword, string? genre, int? maxPrice, LibraryDbContext db) =>
 {
-    var results = LibraryDatabase.SearchBooks(keyword ?? "", genre ?? "", maxPrice ?? int.MaxValue);
+    var query = db.Books.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(keyword))
+    {
+        query = query.Where(b => b.Name.Contains(keyword) || b.Publisher.Contains(keyword));
+    }
+
+    if (!string.IsNullOrWhiteSpace(genre))
+    {
+        query = query.Where(b => b.Genre.ToLower()==genre.ToLower());
+    }
+
+    if (maxPrice.HasValue)
+    {
+        query = query.Where(b => b.Cost <= maxPrice.Value);
+    }
+
+    var results = await query.ToListAsync();
     return Results.Ok(results);
 });
 
+//================================================================================
 app.MapPost("/api/books", (Book newBook) =>
 {
     int newId = LibraryDatabase.Catalog.Keys.Any() ? LibraryDatabase.Catalog.Keys.Max() + 1 : 101;
