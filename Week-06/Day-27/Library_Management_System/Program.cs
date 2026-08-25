@@ -6,6 +6,11 @@ using Microsoft.VisualBasic;
 using MyMinimalApi.Migrations;
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 // Add Swagger services for testing
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
