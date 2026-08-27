@@ -22,7 +22,32 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=LibraryDb;Trusted_Connection=True;MultipleActiveResultSets=true"));
 var app = builder.Build();
+// ==================== GLOBAL EXCEPTION HANDLING MIDDLEWARE ====================
+app.UseExceptionHandler(exceptionHandlerApp =>
+{
+    exceptionHandlerApp.Run(async context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/json";
 
+        var exceptionFeature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        if (exceptionFeature != null)
+        {
+            var exception = exceptionFeature.Error;
+
+            // Log the exception here if you have a logger configured
+            var errorResponse = new
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = "An unexpected error occurred on the server.",
+                Detailed = exception.Message // (Optional: remove 'Detailed' in strict production environments)
+            };
+
+            await context.Response.WriteAsJsonAsync(errorResponse);
+        }
+    });
+});
+//================================================================================
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
