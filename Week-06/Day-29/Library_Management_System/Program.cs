@@ -1,9 +1,5 @@
 using Lib;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client.NativeInterop;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
-using MyMinimalApi.Migrations;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -238,6 +234,7 @@ app.MapPost("/api/books/{id}/return", async (int id, LibraryDbContext db) =>
 
     string message = $"Thank you for returning: {book.Name}";
     int fineAmount = 0;
+    string returningMember = book.BorrowedBy;
 
     // 2. Calculate fine if past the due date
     if (DateTime.Now > book.DueDate)
@@ -263,7 +260,17 @@ app.MapPost("/api/books/{id}/return", async (int id, LibraryDbContext db) =>
     book.BorrowedDate = DateTime.MinValue;
     book.DueDate = DateTime.MinValue;
 
-    // 4. Save changes to SQL Server
+    // 4. Record the transaction in the history table
+    db.History.Add(new HistoryEntry
+    {
+        Action = "RETURN",
+        BookId = book.BookID,
+        BookTitle = book.Name,
+        MemberName = returningMember,
+        Timestamp = DateTime.Now
+    });
+
+    // 5. Save both the book update and the history entry to SQL Server in one round-trip
     await db.SaveChangesAsync();
 
     return Results.Ok(new { Message = message, FineAdded = fineAmount, Book = book });
@@ -349,18 +356,17 @@ app.MapGet("/api/members/{id}", async (int id, LibraryDbContext db) =>
 
 // ==================== HISTORY & ANALYTICS ====================
 
-app.MapGet("/api/history", () =>
+app.MapGet("/api/history", async (LibraryDbContext db) =>
 {
-    const string path = "history.txt";
-    if (!File.Exists(path))
-    {
-        return Results.Ok(Array.Empty<string>());
-    }
-    return Results.Ok(File.ReadAllLines(path));
+    var entries = await db.History
+        .OrderByDescending(h => h.Timestamp)
+        .ToListAsync();
+
+    return Results.Ok(entries);
 })
 .WithTags("History & Analytics")
 .WithName("GetHistory")
-.WithSummary("Get the raw activity history log");
+.WithSummary("Get the activity history log (borrow/return audit trail)");
 
 app.MapGet("/api/analytics", async (LibraryDbContext db) =>
 {
@@ -433,6 +439,17 @@ app.MapPost("/api/books/borrow", async (BorrowRequest request, LibraryDbContext 
     book.BorrowedDate = DateTime.Now;
     book.DueDate = DateTime.Now.AddDays(14); // 14-day checkout rule
 
+    // 5. Record the transaction in the history table
+    db.History.Add(new HistoryEntry
+    {
+        Action = "BORROW",
+        BookId = book.BookID,
+        BookTitle = book.Name,
+        MemberName = request.MemberName,
+        Timestamp = DateTime.Now
+    });
+
+    // 6. Save both the book update and the history entry to SQL Server in one round-trip
     await db.SaveChangesAsync();
 
     return Results.Ok(new 

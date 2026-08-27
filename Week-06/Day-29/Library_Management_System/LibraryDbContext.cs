@@ -12,5 +12,6 @@ namespace Lib
         public DbSet<Book> Books { get; set; }
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<User> Users => Set<User>();
+        public DbSet<HistoryEntry> History => Set<HistoryEntry>();
     }
 }
